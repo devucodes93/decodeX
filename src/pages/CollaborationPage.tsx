@@ -111,7 +111,7 @@ export default function CollaborationPage() {
       </section>
 
       <Marquee />
-      <RegistrationCTA />
+      <RegistrationCTA hasBg={true} />
     </>
   );
 }

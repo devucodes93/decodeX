@@ -2,6 +2,7 @@ import { Mail, Phone } from "lucide-react";
 import { PageHeader, FAQAccordion, RegistrationCTA } from "../components/sections/Blocks";
 import { FAQ } from "../data/faq";
 import { EVENT, isSet } from "../config/event";
+import { CharacterImage } from "../components/ui";
 import { useTitle } from "../hooks";
 
 export default function FAQPage() {
@@ -9,11 +10,14 @@ export default function FAQPage() {
   const hasContact = isSet(EVENT.contact.email) || isSet(EVENT.contact.phone);
   return (
     <>
-      <PageHeader
-        kicker="DECODEX / HELP DESK"
-        title="Frequently asked questions"
-        intro="Confirmed information about eligibility, teams, registration, and the online and offline challenge schedule."
-      />
+      <section className="faq-hero">
+        <PageHeader
+          kicker="DECODEX / HELP DESK"
+          title="Frequently asked questions"
+          intro="Confirmed information about eligibility, teams, registration, and the online and offline challenge schedule."
+        />
+        <CharacterImage src="/assets/photos/char2.png" alt="Help desk character" side="right" variant="faq" />
+      </section>
       <section className="sec light faq-page">
         <div className="wrap narrow">
           <FAQAccordion items={FAQ} />
@@ -39,7 +43,7 @@ export default function FAQPage() {
           </div>
         </div>
       </section>
-      <RegistrationCTA />
+      <RegistrationCTA hasBg={true} />
     </>
   );
 }

@@ -1,23 +1,27 @@
 import { useRef } from "react";
 import { CalendarDays, IndianRupee, Laptop, MapPin, ShieldCheck, Users } from "lucide-react";
 import { useGSAP } from "@gsap/react";
-import { PageHeader, RegistrationCTA } from "../components/sections/Blocks";
+import { RegistrationCTA } from "../components/sections/Blocks";
 import { ScrollReveal, SectionHeading } from "../components/ui";
 import { ANNOUNCING, EVENT, TBA, isSet } from "../config/event";
 import { useTitle } from "../hooks";
 import { gsap, ScrollTrigger } from "../animations/gsap";
 import { Marquee } from "../components/sections/Marquee";
+import { useAboutAnimation } from "../animations/useAboutAnimation";
+import AboutHazardTape from "../components/AboutHazardTape";
 
 const OBJECTIVES = [
-  "Take part in a Signal Processing Based Capture the Flag (CTF) Challenge.",
-  "Participate as a team of 2–4 members.",
-  "Join the online qualifier on 22 November 2026.",
-  "The top 30 teams from the online round advance to the offline challenge.",
-  "Compete in the 24-hour offline challenge at BMS Institute of Technology and Management.",
+  "Promote the practical application of signal processing concepts beyond the classroom.",
+  "Introduce students to CTF-style competition in the signal processing domain.",
+  "Build analytical thinking, problem-solving and teamwork under time pressure.",
+  "Give students from colleges across the country a platform to compete and network.",
+  "Encourage interest in emerging areas like AI/ML for signal processing, biomedical signals and radar sensing.",
+  "Connect students with industry sponsors and the wider IEEE community.",
 ];
 
 export default function AboutPage() {
   useTitle(`About | ${EVENT.name}`);
+  const container = useAboutAnimation();
   const purposeRef = useRef<HTMLElement>(null);
   const detailsRef = useRef<HTMLElement>(null);
   const contact = [EVENT.contact.person, EVENT.contact.email, EVENT.contact.phone]
@@ -76,11 +80,35 @@ export default function AboutPage() {
     });
     return () => mm.revert();
   }, { scope: purposeRef });
+
   return (
     <>
-      <PageHeader kicker="DECODEX / ABOUT" title="About the challenge"
-        intro={EVENT.description}
-      />
+      <div className="about-hero" ref={container}>
+        <img
+          className="about-bg-img"
+          src="/assets/photos/GTA4.jpg"
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          fetchPriority="high"
+        />
+        <div className="about-scrim" aria-hidden="true" />
+        <img
+          src="/assets/photos/char1.png"
+          className="about-character"
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          decoding="async"
+        />
+
+        <div className="about-hero-content">
+          <span className="about-warning-label">DECODEX / ABOUT</span>
+          <h1 className="about-heading">About the challenge</h1>
+          <p className="about-description">{EVENT.description}</p>
+          <AboutHazardTape label="SIGNAL INVESTIGATION" />
+        </div>
+      </div>
 
       <section className="sec light about-purpose" ref={purposeRef}>
         <div className="parallax-background" aria-hidden="true">
@@ -95,14 +123,29 @@ export default function AboutPage() {
           </ScrollReveal>
           <ScrollReveal delay={0.12}>
             <p className="lede">
-              Teams of 2–4 students pursuing bachelor's degrees can participate in an online qualifier
-              followed by an offline challenge.
+              DecodeX '26 is a signal processing competition in the style of a CTF
+              (Capture The Flag), participants decode hidden messages and secrets buried
+              inside real world signals, using filtering, spectral analysis, demodulation
+              and machine learning. Every flag is earned by actually working with the data.
             </p>
-            <p className="body">
-              The online qualifier takes place on 22 November 2026 from 10:00 AM to 12:00 PM. The top
-              30 teams advance to the 24-hour offline challenge on 27–28 November 2026 at BMS Institute
-              of Technology and Management, Bengaluru.
-            </p>
+            <p className="body"><strong>What to Expect:</strong></p>
+            <ul className="ticks">
+              <li>
+                <strong>Challenges on real world signals:</strong> Audio, biomedical,
+                radar and sensor data, with puzzles that need real signal processing, not
+                guesswork.
+              </li>
+              <li>
+                <strong>Hands-on problem solving:</strong> Each challenge hides a flag
+                inside a signal or dataset. Participants identify what they're dealing
+                with, pick the right signal processing or ML technique, and extract the
+                answer.
+              </li>
+              <li>
+                <strong>Rising difficulty:</strong> Start with approachable puzzles and
+                work up to harder multi-stage ones.
+              </li>
+            </ul>
           </ScrollReveal>
         </div>
       </section>
@@ -176,7 +219,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <RegistrationCTA />
+      <RegistrationCTA hasBg={true} />
     </>
   );
 }

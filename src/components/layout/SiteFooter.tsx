@@ -1,24 +1,25 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Calendar, Laptop, User } from "lucide-react";
-import { EVENT, TBA, isSet } from "../../config/event";
+import { Mail, Phone, MapPin, User } from "lucide-react";
+import { EVENT, isSet } from "../../config/event";
 import { NAV } from "../../config/navigation";
 
 const socialLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
 export function SiteFooter() {
   const socials = Object.entries(EVENT.social).filter(([, url]) => isSet(url));
-  const organizer = [EVENT.organizer, EVENT.college].filter(isSet).join(", ");
 
   return (
     <footer className="foot">
       <div className="wrap fgrid">
         <div>
           <b className="fname">{EVENT.name}</b>
+          <p>DECODEX 2026</p>
+          <p>{EVENT.tagline}</p>
+          <h3>Organised by</h3>
           <p>
-            {EVENT.edition ? `${EVENT.edition} · ` : ""}
-            {EVENT.tagline}
+            IEEE Signal Processing Society, BMS Institute of Technology and
+            Management student-run chapter.
           </p>
-          <p>{organizer ? `Organised by ${organizer}.` : "Organizing details to be announced."}</p>
           {socials.length > 0 && (
             <p className="soc">
               {socials.map(([name, url]) => (
@@ -40,16 +41,20 @@ export function SiteFooter() {
         </div>
         <div>
           <h3>Event details</h3>
+          <ul>
+            <li>20 November 2026: Registration closes.</li>
+            <li>22 November 2026, 10:00 AM – 12:00 PM: Online CTF qualifier.</li>
+            <li>27–28 November 2026: 24-hour offline challenge.</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Location</h3>
           <p>
-            <Calendar size={15} /> {TBA(EVENT.dateLabel, "Date")}
+            <MapPin size={15} /> BMS Institute of Technology and Management,
+            Bengaluru.
           </p>
-          <p>
-            <MapPin size={15} /> {TBA(EVENT.venue, "Venue")}
-          </p>
-          <p>
-            <Laptop size={15} /> {TBA(EVENT.mode, "Mode")}
-          </p>
-          {isSet(EVENT.department) && <p>{EVENT.department}</p>}
+          <h3>Event format</h3>
+          <p>Online qualifier followed by an offline challenge.</p>
         </div>
         <div>
           <h3>Contact</h3>
@@ -59,10 +64,10 @@ export function SiteFooter() {
             </a>
           ) : (
             <p>
-              <Mail size={15} /> Email to be announced
+              <Mail size={15} /> decodex26.bmsit@gmail.com
             </p>
           )}
-          {isSet(EVENT.contact.phone) ? (
+          {/* {isSet(EVENT.contact.phone) ? (
             <a href={`tel:${EVENT.contact.phone}`}>
               <Phone size={15} /> {EVENT.contact.phone}
             </a>
@@ -70,12 +75,24 @@ export function SiteFooter() {
             <p>
               <Phone size={15} /> Phone to be announced
             </p>
-          )}
+          )} */}
           {isSet(EVENT.contact.person) && (
             <p>
               <User size={15} /> {EVENT.contact.person}
             </p>
           )}
+          <p>
+            <User size={15} /> Mohith K Aralikatte
+          </p>
+          <a href="tel:+919606802529">
+            <Phone size={15} /> +91 96068 02529
+          </a>
+          <p>
+            <User size={15} /> Kirthana
+          </p>
+          <a href="tel:+916364744793">
+            <Phone size={15} /> +91 63647 44793
+          </a>
           {isSet(EVENT.facultyCoordinator) && <p>Faculty coordinator: {EVENT.facultyCoordinator}</p>}
         </div>
       </div>

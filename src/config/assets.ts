@@ -9,6 +9,7 @@ export const ASSETS = {
 
   gtaHero: "/assets/photos/GTA1.jpg",
   gtaCity: "/assets/photos/GTA2.jpg",
+  gtaPhone: "/assets/photos/GTA_PHONE.jpg",
 
   hero: "/assets/photos/GTA1.jpg",
   title: "/assets/photos/decodex-title.png",

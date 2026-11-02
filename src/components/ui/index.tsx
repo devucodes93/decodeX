@@ -114,6 +114,7 @@ export function Img({
     />
   );
 }
+export { default as CharacterImage } from "./CharacterImage";
 export function BackToTop() {
   const [show, setShow] = useState(false);
   useEffect(() => { const f = () => setShow(window.scrollY > 700); window.addEventListener("scroll", f, { passive: true }); return () => window.removeEventListener("scroll", f); }, []);

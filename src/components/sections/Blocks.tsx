@@ -22,8 +22,6 @@ export const PageHeader = ({
     <img className="phead-bg" src={ASSETS.gtaCity} alt="" aria-hidden="true" loading="eager" fetchPriority="high" />
     <div className="phead-scrim" aria-hidden="true" />
     <div className="grain" aria-hidden="true" />
-    <div className="phead-light" aria-hidden="true" />
-    <div className="phead-grid" aria-hidden="true" />
     <div className="wrap">
       <p className="kicker">{kicker}</p>
       <motion.h1 initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}>
@@ -214,8 +212,8 @@ export function FAQAccordion({ items }: { items: FAQItem[] }) {
   );
 }
 
-export const RegistrationCTA = () => (
-  <section className="rcta">
+export const RegistrationCTA = ({ hasBg = false }: { hasBg?: boolean }) => (
+  <section className={`rcta${hasBg ? " rcta--has-bg" : ""}`}>
     <div className="grain" aria-hidden="true" />
     <ScrollReveal className="wrap rcta-in">
       <p className="kicker">Registration</p>

@@ -5,6 +5,7 @@ import { ASSETS } from "../../config/assets";
 import { SecondaryButton } from "../ui";
 import { RegisterButton } from "../RegisterButton";
 import { gsap } from "../../animations/gsap";
+import { ParticleField } from "../visuals/ParticleField";
 
 export function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -22,67 +23,83 @@ export function Hero() {
     }
   }, []);
 
-  useGSAP(() => {
-    const mm = gsap.matchMedia();
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
 
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.fromTo(
-        ".hero-title-line",
-        { yPercent: 115, opacity: 0 },
-        { yPercent: 0, opacity: 1, duration: 1.1, ease: "power4.out", delay: 0.24 }
-      );
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.fromTo(
+          ".hero-title-line",
+          { yPercent: 115, opacity: 0 },
+          {
+            yPercent: 0,
+            opacity: 1,
+            duration: 1.1,
+            ease: "power4.out",
+            delay: 0.24,
+          },
+        );
 
-      gsap.from(".hero-eyebrow", {
-        y: 16,
-        opacity: 0,
-        duration: 0.7,
-        delay: 0.12,
-        ease: "power3.out",
+        gsap.from(".hero-eyebrow", {
+          y: 16,
+          opacity: 0,
+          duration: 0.7,
+          delay: 0.12,
+          ease: "power3.out",
+        });
+
+        gsap.from(".hero-description, .hero-actions", {
+          y: 22,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.14,
+          delay: 0.82,
+          ease: "power3.out",
+        });
+
+        gsap.from(".hero-foot", {
+          opacity: 0,
+          duration: 0.9,
+          delay: 1.2,
+          ease: "power2.out",
+        });
       });
 
-      gsap.from(".hero-description, .hero-actions", {
-        y: 22,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.14,
-        delay: 0.82,
-        ease: "power3.out",
+      mm.add("(prefers-reduced-motion: reduce)", () => {
+        gsap.set(
+          ".hero-title-line, .hero-eyebrow, .hero-description, .hero-actions, .hero-foot",
+          {
+            clearProps: "all",
+          },
+        );
       });
 
-      gsap.from(".hero-foot", {
-        opacity: 0,
-        duration: 0.9,
-        delay: 1.2,
-        ease: "power2.out",
-      });
-    });
-
-    mm.add("(prefers-reduced-motion: reduce)", () => {
-      gsap.set(".hero-title-line, .hero-eyebrow, .hero-description, .hero-actions, .hero-foot", {
-        clearProps: "all",
-      });
-    });
-
-    return () => mm.revert();
-  }, { scope: heroRef });
+      return () => mm.revert();
+    },
+    { scope: heroRef },
+  );
 
   return (
     <section className="hero" ref={heroRef}>
-      <img
-        ref={heroImgRef}
-        className={`hero-bg${heroLoaded ? " is-loaded" : ""}`}
-        src={ASSETS.gtaHero}
-        alt=""
-        aria-hidden="true"
-        fetchPriority="high"
-        onLoad={() => setHeroLoaded(true)}
-      />
+      <picture>
+        <source media="(max-width: 700px)" srcSet={ASSETS.gtaPhone} />
+        <img
+          ref={heroImgRef}
+          className={`hero-bg${heroLoaded ? " is-loaded" : ""}`}
+          src={ASSETS.gtaHero}
+          alt=""
+          aria-hidden="true"
+          fetchPriority="high"
+          onLoad={() => setHeroLoaded(true)}
+        />
+      </picture>
       <span
         className={`media-placeholder hero-bg-placeholder${heroLoaded ? " is-hidden" : ""}`}
         aria-hidden="true"
       />
       <div className="hero-scrim" aria-hidden="true" />
       <div className="hero-light" aria-hidden="true" />
+      <ParticleField />
       <div className="grain" aria-hidden="true" />
       <div className="wrap hero-in">
         <div className="hero-copy">

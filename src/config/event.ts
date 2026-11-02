@@ -13,9 +13,9 @@ export const EVENT = {
   // Identity
   name: "DECODEX",
   edition: "2026",
-  tagline: "Final tagline to be announced",
+  tagline: "Tagline",
   description:
-    "Signal Processing Based CTF (Capture the Flag) Challenge organised by the Signal Processing Society, student-run chapter of BMS Institute of Technology and Management.",
+    "National Level Signal processing based CTF challenge organised by the IEEE Signal Processing Society, BMS Institute of Technology and Management student-run chapter.",
   college: "BMS Institute of Technology and Management",
   department: "",
   organizer: "IEEE Signal Processing Society (SPS), IIC, STB, SPS Bangalore",
@@ -25,7 +25,7 @@ export const EVENT = {
   // When and where
   date: "2026-11-22T10:00:00+05:30",
   dateLabel:
-    "22 November 2026 | 10:00 AM – 12:00 PM (online qualifier); 27–28 November 2026 (24-hour offline challenge)",
+    "22 November 2026 | 10:00 AM – 12:00 PM (online qualifier);\n27–28 November 2026 (24-hour offline challenge)",
   registrationOpens: "03 November 2026",
   registrationDeadline: "20 November 2026",
   venue: "BMS Institute of Technology and Management, Bengaluru",
@@ -54,7 +54,6 @@ export const EVENT = {
   contact: {
     email: "", // Replace with confirmed contact email address(es).
     phone: "",
-    person: "Contact Person 1 / Contact Person 2",
   },
   social: {
     // Replace these empty values only when the organizers confirm the URLs.
