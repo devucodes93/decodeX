@@ -1,0 +1,128 @@
+.register-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 58px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: #c5ff4a;
+  color: #15170f;
+  font: 700 13px/1 "Manrope", sans-serif;
+  letter-spacing: 0.075em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  isolation: isolate;
+  overflow: hidden;
+  box-shadow:
+    0 12px 28px -20px rgba(197, 255, 74, 0.9),
+    0 0 0 1px rgba(197, 255, 74, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition:
+    background-color 0.28s ease,
+    box-shadow 0.28s ease,
+    color 0.28s ease;
+}
+
+.register-btn::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    105deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.34) 48%,
+    transparent 66%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.register-btn > * {
+  position: relative;
+  z-index: 1;
+}
+
+.register-btn-label {
+  display: block;
+  position: relative;
+  top: 0.5px;
+}
+
+.register-btn-arrow {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  margin-left: 1px;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.register-btn-arrow svg {
+  display: block;
+  width: 14px;
+  height: 14px;
+}
+
+.register-btn:active {
+  background: #b7f13d;
+}
+
+.register-btn:focus-visible {
+  outline: 3px solid #f8f4e8;
+  outline-offset: 4px;
+  box-shadow:
+    0 0 0 6px rgba(197, 255, 74, 0.22),
+    0 16px 34px -18px rgba(197, 255, 74, 0.75);
+}
+
+.register-btn:focus-visible .register-btn-arrow {
+  transform: translate(2px, -2px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .register-btn:hover {
+    background: #d2ff6b;
+    box-shadow:
+      0 18px 38px -18px rgba(197, 255, 74, 0.8),
+      0 0 0 1px rgba(197, 255, 74, 0.45),
+      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+  }
+
+  .register-btn:hover::before {
+    transform: translateX(130%);
+  }
+
+  .register-btn:hover .register-btn-arrow {
+    transform: translate(2px, -2px);
+  }
+}
+
+@media (max-width: 560px) {
+  .cta-row .register-btn {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .register-btn,
+  .register-btn::before,
+  .register-btn-arrow {
+    transition: none;
+  }
+
+  .register-btn:hover::before {
+    transform: translateX(-130%);
+  }
+
+  .register-btn:hover .register-btn-arrow,
+  .register-btn:focus-visible .register-btn-arrow {
+    transform: none;
+  }
+}

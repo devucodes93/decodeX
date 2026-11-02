@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" role="img" aria-labelledby="title">
+  <title>IEEE Student Branch</title>
+  <rect width="640" height="280" fill="#f8f4e8"/>
+  <rect x="24" y="24" width="592" height="232" rx="16" fill="none" stroke="#e2dbc8"/>
+  <circle cx="104" cy="140" r="46" fill="none" stroke="#e7c46a" stroke-width="2"/>
+  <path d="M104 108l10 20 22 3-16 16 4 22-20-11-20 11 4-22-16-16 22-3z" fill="none" stroke="#e8a15b" stroke-width="3" stroke-linejoin="round"/>
+  <text x="178" y="128" fill="#211f18" font-family="Manrope, Arial, sans-serif" font-size="42" font-weight="700" letter-spacing="-1.5">IEEE</text>
+  <text x="178" y="168" fill="#686453" font-family="Manrope, Arial, sans-serif" font-size="25" font-weight="500">Student Branch</text>
+  <text x="178" y="202" fill="#e8a15b" font-family="Manrope, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="3">STUDENT COMMUNITY</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 280" role="img" aria-labelledby="title">
+  <title>BMS Institute of Technology and Management</title>
+  <rect width="640" height="280" fill="#f8f4e8"/>
+  <rect x="24" y="24" width="592" height="232" rx="16" fill="none" stroke="#e2dbc8"/>
+  <rect x="66" y="104" width="76" height="76" rx="10" fill="none" stroke="#e7c46a" stroke-width="2"/>
+  <path d="M80 158l16-22 12 14 10-18 16 26" fill="none" stroke="#e8a15b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="178" y="118" fill="#211f18" font-family="Manrope, Arial, sans-serif" font-size="38" font-weight="700" letter-spacing="-1.5">BMS Institute</text>
+  <text x="178" y="158" fill="#686453" font-family="Manrope, Arial, sans-serif" font-size="22" font-weight="500">of Technology &amp; Management</text>
+  <text x="178" y="202" fill="#e8a15b" font-family="Manrope, Arial, sans-serif" font-size="12" font-weight="700" letter-spacing="3">BENGALURU</text>
+</svg>
