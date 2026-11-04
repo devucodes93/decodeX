@@ -13,7 +13,7 @@ export const EVENT = {
   // Identity
   name: "DECODEX",
   edition: "2026",
-  tagline: "Tagline",
+  tagline: "Enter the Mission. Decode the Unknown.",
   description:
     "National-level Signal Processing Based CTF Challenge organised by IEEE Signal Processing Society, BMS Institute of Technology and Management student branch chapter.",
   college: "BMS Institute of Technology and Management",

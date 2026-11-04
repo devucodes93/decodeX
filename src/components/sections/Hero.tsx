@@ -105,7 +105,14 @@ export function Hero() {
       <div className="wrap hero-in">
         <div className="hero-copy">
           <p className="eyebrow hero-eyebrow">
-            <span className="eyebrow-dot" /> Signal Processing CTF Challenge
+            <span className="eyebrow-dot" />
+            <img
+              src="/assets/photos/sps.png"
+              alt="SPS"
+              className="hero-eyebrow-logo"
+              loading="lazy"
+              decoding="async"
+            />
           </p>
           <div className="hero-title-stage">
             <h1 className="hero-title" aria-label={EVENT.name}>

@@ -24,21 +24,35 @@ export default function App() {
   useLayoutEffect(() => {
     if (hash) {
       const frame = window.requestAnimationFrame(() =>
-        document.querySelector(hash)?.scrollIntoView(),
+        document.querySelector(hash)?.scrollIntoView({ behavior: "instant" }),
       );
       return () => window.cancelAnimationFrame(frame);
     }
 
-    window.scrollTo(0, 0);
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    const resetScroll = () => {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      document.documentElement.scrollTop = 0;
+      document.documentElement.scrollLeft = 0;
+      document.body.scrollTop = 0;
+      document.body.scrollLeft = 0;
+    };
 
-    const frame = window.requestAnimationFrame(() => {
-      window.scrollTo(0, 0);
+    resetScroll();
+
+    const raf = window.requestAnimationFrame(() => {
+      resetScroll();
       ScrollTrigger.refresh();
     });
 
-    return () => window.cancelAnimationFrame(frame);
+    const timeout = window.setTimeout(() => {
+      resetScroll();
+      ScrollTrigger.refresh();
+    }, 50);
+
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.clearTimeout(timeout);
+    };
   }, [pathname, hash]);
   return (
     <MotionConfig reducedMotion="user">
