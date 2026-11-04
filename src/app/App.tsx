@@ -8,6 +8,10 @@ import { IntroOverlay } from "../components/layout/IntroOverlay";
 import { BackToTop } from "../components/ui";
 import { ScrollTrigger } from "../animations/gsap";
 
+if ("scrollRestoration" in window.history) {
+  window.history.scrollRestoration = "manual";
+}
+
 export default function App() {
   const { pathname, hash } = useLocation();
 
@@ -37,7 +41,14 @@ export default function App() {
       ScrollTrigger.refresh();
     });
 
-    return () => window.cancelAnimationFrame(frame);
+    const timers = [60, 180, 420, 800].map((delay) =>
+      window.setTimeout(scrollTop, delay),
+    );
+
+    return () => {
+      window.cancelAnimationFrame(frame);
+      timers.forEach((timer) => window.clearTimeout(timer));
+    };
   }, [pathname, hash]);
   return (
     <MotionConfig reducedMotion="user">
