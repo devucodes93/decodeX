@@ -7,7 +7,7 @@ export const ASSETS = {
   logo: "/assets/logo.svg",
   placeholder: "/assets/placeholder.svg",
 
-  gtaHero: "/assets/photos/GTA1.jpg",
+  gtaHero: "/assets/photos/GTA_register.jpg",
   gtaCity: "/assets/photos/GTA2.jpg",
   gtaPhone: "/assets/photos/GTA_PHONE.jpg",
 

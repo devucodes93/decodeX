@@ -6,6 +6,7 @@ import { SecondaryButton } from "../ui";
 import { RegisterButton } from "../RegisterButton";
 import { gsap } from "../../animations/gsap";
 import { ParticleField } from "../visuals/ParticleField";
+import HeroLightFX from "../visuals/HeroLightFX";
 
 export function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -98,7 +99,7 @@ export function Hero() {
         aria-hidden="true"
       />
       <div className="hero-scrim" aria-hidden="true" />
-      <div className="hero-light" aria-hidden="true" />
+      <HeroLightFX />
       <ParticleField />
       <div className="grain" aria-hidden="true" />
       <div className="wrap hero-in">
