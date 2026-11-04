@@ -135,7 +135,6 @@ export function Hero() {
               </span>
             </h1>
           </div>
-          <p className="hero-tagline">{EVENT.tagline}</p>
           <p className="lead hero-description">{EVENT.description}</p>
           <div className="cta-row center hero-actions">
             <RegisterButton to="/register" />
