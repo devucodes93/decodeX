@@ -81,9 +81,6 @@ export function SiteFooter() {
               <User size={15} /> {EVENT.contact.person}
             </p>
           )}
-          <p>
-            <User size={15} /> Mohith K Aralikatte
-          </p>
           <a href="tel:+919606802529">
             <Phone size={15} /> +91 96068 02529
           </a>

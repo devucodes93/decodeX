@@ -52,6 +52,7 @@ export const EVENT = {
   // Registration and contact
   registrationUrl: "", // Replace with the confirmed Unstop URL. Keep empty until then.
   contact: {
+    person: "Mohith K Aralikatte",
     email: "", // Replace with confirmed contact email address(es).
     phone: "",
   },
