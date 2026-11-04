@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { MotionConfig, motion } from "framer-motion";
 import { SiteHeader } from "../components/layout/SiteHeader";
@@ -10,9 +10,33 @@ import { ScrollTrigger } from "../animations/gsap";
 
 export default function App() {
   const { pathname, hash } = useLocation();
+
   useEffect(() => {
-    if (hash) document.querySelector(hash)?.scrollIntoView(); else window.scrollTo(0, 0);
-    const frame = window.requestAnimationFrame(() => ScrollTrigger.refresh());
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    if (hash) {
+      const frame = window.requestAnimationFrame(() =>
+        document.querySelector(hash)?.scrollIntoView(),
+      );
+      return () => window.cancelAnimationFrame(frame);
+    }
+
+    const scrollTop = () => {
+      window.scrollTo(0, 0);
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+    };
+
+    scrollTop();
+    const frame = window.requestAnimationFrame(() => {
+      scrollTop();
+      ScrollTrigger.refresh();
+    });
+
     return () => window.cancelAnimationFrame(frame);
   }, [pathname, hash]);
   return (
