@@ -85,7 +85,7 @@ export function SiteFooter() {
           )} */}
        
           <p>
-            <User size={15} /> Kirthana
+            <User size={15} /> Kirthana JL
           </p>
           <a href="tel:+916364744793">
             <Phone size={15} /> +91 63647 44793

@@ -37,49 +37,52 @@ export default function AboutPage() {
   ];
 
   useGSAP(() => {
-    const section = detailsRef.current;
-    if (!section) return;
+    const detailsSection = detailsRef.current;
+    const purposeSection = purposeRef.current;
+
     const mm = gsap.matchMedia();
+
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.from(".reveal-tile", {
-        y: 55,
-        opacity: 0,
-        scale: 0.96,
-        duration: 0.85,
-        stagger: { amount: 0.7, from: "start" },
-        ease: "power3.out",
-        scrollTrigger: { trigger: section, start: "top 78%", once: true },
-      });
+      if (detailsSection) {
+        gsap.from(".reveal-tile", {
+          y: 55,
+          opacity: 0,
+          scale: 0.96,
+          duration: 0.85,
+          stagger: { amount: 0.7, from: "start" },
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: detailsSection,
+            start: "top 78%",
+            once: true,
+          },
+        });
+      }
+
+      if (purposeSection) {
+        const layers = Array.from(
+          purposeSection.querySelectorAll<HTMLElement>(".parallax-background [data-speed]")
+        );
+        layers.forEach((layer) => {
+          const speed = Number(layer.dataset.speed || 0.1);
+          gsap.to(layer, {
+            y: () => -window.innerHeight * speed,
+            ease: "none",
+            scrollTrigger: {
+              trigger: purposeSection,
+              start: "top bottom",
+              end: "bottom top",
+              scrub: 1,
+              invalidateOnRefresh: true,
+            },
+          });
+        });
+      }
     });
+
     document.fonts?.ready.then(() => ScrollTrigger.refresh());
     return () => mm.revert();
   }, { scope: detailsRef });
-
-  useGSAP(() => {
-    const section = purposeRef.current;
-    if (!section) return;
-    const mm = gsap.matchMedia();
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      const layers = Array.from(
-        section.querySelectorAll<HTMLElement>(".parallax-background [data-speed]")
-      );
-      layers.forEach((layer) => {
-        const speed = Number(layer.dataset.speed || 0.1);
-        gsap.to(layer, {
-          y: () => -window.innerHeight * speed,
-          ease: "none",
-          scrollTrigger: {
-            trigger: section,
-            start: "top bottom",
-            end: "bottom top",
-            scrub: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-      });
-    });
-    return () => mm.revert();
-  }, { scope: purposeRef });
 
   return (
     <>

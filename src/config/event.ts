@@ -19,8 +19,8 @@ export const EVENT = {
   college: "BMS Institute of Technology and Management",
   department: "",
   organizer: "IEEE Signal Processing Society (SPS)",
-  facultyCoordinator: "Dr, Pallavi Singh",
-  studentCoordinators: "Kirthana",
+  facultyCoordinator: "Dr. Pallavi Singh",
+  studentCoordinators: "Kirthana JL",
 
   // When and where
   date: "2026-11-22T10:00:00+05:30",

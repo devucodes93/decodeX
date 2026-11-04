@@ -23,7 +23,12 @@ export default function EventJourneyMap() {
 
       media.add("(prefers-reduced-motion: no-preference)", () => {
         const heading = section.querySelector<HTMLElement>(".journey-heading");
-        const timeline = section.querySelector<HTMLElement>(".journey-timeline");
+        const timeline =
+          section.querySelector<HTMLElement>(".journey-timeline");
+        const entries = gsap.utils.toArray<HTMLElement>(
+          ".journey-entry",
+          section,
+        );
 
         if (heading) {
           gsap.from(heading.children, {
@@ -54,38 +59,67 @@ export default function EventJourneyMap() {
                 scrub: 0.8,
                 invalidateOnRefresh: true,
               },
-            }
+            },
           );
         }
 
-        gsap.utils.toArray<HTMLElement>(".journey-entry", section).forEach((entry) => {
-          const card = entry.querySelector<HTMLElement>(".journey-card");
-
-          if (card) {
-            gsap.from(card, {
-              y: 26,
-              autoAlpha: 0,
-              duration: 0.72,
-              ease: "power3.out",
-              scrollTrigger: {
-                trigger: entry,
-                start: "top 84%",
-                once: true,
-              },
-            });
-          }
-
-          ScrollTrigger.create({
-            trigger: entry,
-            start: "top 68%",
-            end: "bottom 32%",
-            toggleClass: { targets: entry, className: "is-active" },
+        if (entries.length) {
+          const cardTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: timeline,
+              start: "top 82%",
+              end: "bottom 60%",
+              scrub: 1,
+              invalidateOnRefresh: true,
+              once: false,
+            },
           });
-        });
+
+          entries.forEach((entry) => {
+            const card = entry.querySelector<HTMLElement>(".journey-card");
+            const marker = entry.querySelector<HTMLElement>(".journey-marker");
+
+            cardTl.fromTo(
+              card,
+              { y: 26, autoAlpha: 0 },
+              {
+                y: 0,
+                autoAlpha: 1,
+                duration: 0.7,
+                ease: "power3.out",
+              },
+              "<0.15",
+            );
+
+            if (marker) {
+              cardTl.fromTo(
+                marker,
+                { scale: 0, autoAlpha: 0 },
+                {
+                  scale: 1,
+                  autoAlpha: 1,
+                  duration: 0.5,
+                  ease: "back.out(1.7)",
+                },
+                "<0.1",
+              );
+            }
+
+            ScrollTrigger.create({
+              trigger: entry,
+              start: "top 68%",
+              end: "bottom 32%",
+              toggleClass: { targets: entry, className: "is-active" },
+            });
+          });
+        }
 
         return () => {
           ScrollTrigger.getAll().forEach((trigger) => {
-            if (trigger.vars.trigger === timeline || trigger.vars.trigger === heading) {
+            if (
+              trigger.vars.trigger === timeline ||
+              trigger.vars.trigger === heading
+            ) {
               trigger.kill();
             }
           });
@@ -109,11 +143,15 @@ export default function EventJourneyMap() {
         media.revert();
       };
     },
-    { scope: sectionRef }
+    { scope: sectionRef },
   );
 
   return (
-    <section ref={sectionRef} className="journey-section" aria-labelledby="journey-title">
+    <section
+      ref={sectionRef}
+      className="journey-section"
+      aria-labelledby="journey-title"
+    >
       <div className="journey-ambient" aria-hidden="true" />
 
       <div className="journey-wrap">
@@ -126,8 +164,8 @@ export default function EventJourneyMap() {
               <span>clearly mapped.</span>
             </h1>
             <p className="journey-subtitle">
-              From the first registration window to the final offline build, here is how
-              DecodeX unfolds.
+              From the first registration window to the final offline build,
+              here is how DecodeX unfolds.
             </p>
           </div>
         </header>
@@ -142,7 +180,9 @@ export default function EventJourneyMap() {
               <li
                 key={`${event.title}-${index}`}
                 className={`journey-entry ${
-                  index % 2 === 0 ? "journey-entry--left" : "journey-entry--right"
+                  index % 2 === 0
+                    ? "journey-entry--left"
+                    : "journey-entry--right"
                 }`}
               >
                 <span className="journey-marker" aria-hidden="true">

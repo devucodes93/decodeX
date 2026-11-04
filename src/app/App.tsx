@@ -29,26 +29,16 @@ export default function App() {
       return () => window.cancelAnimationFrame(frame);
     }
 
-    const scrollTop = () => {
-      window.scrollTo(0, 0);
-      document.documentElement.scrollTop = 0;
-      document.body.scrollTop = 0;
-    };
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
 
-    scrollTop();
     const frame = window.requestAnimationFrame(() => {
-      scrollTop();
+      window.scrollTo(0, 0);
       ScrollTrigger.refresh();
     });
 
-    const timers = [60, 180, 420, 800].map((delay) =>
-      window.setTimeout(scrollTop, delay),
-    );
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      timers.forEach((timer) => window.clearTimeout(timer));
-    };
+    return () => window.cancelAnimationFrame(frame);
   }, [pathname, hash]);
   return (
     <MotionConfig reducedMotion="user">
