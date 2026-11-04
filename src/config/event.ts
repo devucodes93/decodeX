@@ -15,17 +15,17 @@ export const EVENT = {
   edition: "2026",
   tagline: "Tagline",
   description:
-    "National Level Signal processing based CTF challenge organised by the IEEE Signal Processing Society, BMS Institute of Technology and Management student-run chapter.",
+    "National-level Signal Processing Based CTF Challenge organised by IEEE Signal Processing Society, BMS Institute of Technology and Management student branch chapter.",
   college: "BMS Institute of Technology and Management",
   department: "",
-  organizer: "IEEE Signal Processing Society (SPS), IIC, STB, SPS Bangalore",
-  facultyCoordinator: "",
-  studentCoordinators: "",
+  organizer: "IEEE Signal Processing Society (SPS)",
+  facultyCoordinator: "Dr, Pallavi Singh",
+  studentCoordinators: "Kirthana",
 
   // When and where
   date: "2026-11-22T10:00:00+05:30",
   dateLabel:
-    "22 November 2026 | 10:00 AM – 12:00 PM (online qualifier);\n27–28 November 2026 (24-hour offline challenge)",
+    "• 22 November 2026 | 10:00 AM – 12:00 PM (Online Qualifier)\n• 27–28 November 2026 (24-hour Offline Challenge)",
   registrationOpens: "03 November 2026",
   registrationDeadline: "20 November 2026",
   venue: "BMS Institute of Technology and Management, Bengaluru",

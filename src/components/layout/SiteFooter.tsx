@@ -18,12 +18,17 @@ export function SiteFooter() {
           <h3>Organised by</h3>
           <p>
             IEEE Signal Processing Society, BMS Institute of Technology and
-            Management student-run chapter.
+            Management student branch chapter.
           </p>
           {socials.length > 0 && (
             <p className="soc">
               {socials.map(([name, url]) => (
-                <a key={name} href={url} target="_blank" rel="noopener noreferrer">
+                <a
+                  key={name}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
                   {socialLabel(name)}
                 </a>
               ))}
@@ -43,7 +48,9 @@ export function SiteFooter() {
           <h3>Event details</h3>
           <ul>
             <li>20 November 2026: Registration closes.</li>
-            <li>22 November 2026, 10:00 AM – 12:00 PM: Online CTF qualifier.</li>
+            <li>
+              22 November 2026, 10:00 AM – 12:00 PM: Online CTF qualifier.
+            </li>
             <li>27–28 November 2026: 24-hour offline challenge.</li>
           </ul>
         </div>
@@ -76,21 +83,22 @@ export function SiteFooter() {
               <Phone size={15} /> Phone to be announced
             </p>
           )} */}
-          {isSet(EVENT.contact.person) && (
-            <p>
-              <User size={15} /> {EVENT.contact.person}
-            </p>
-          )}
-          <a href="tel:+919606802529">
-            <Phone size={15} /> +91 96068 02529
-          </a>
+       
           <p>
             <User size={15} /> Kirthana
           </p>
           <a href="tel:+916364744793">
             <Phone size={15} /> +91 63647 44793
           </a>
-          {isSet(EVENT.facultyCoordinator) && <p>Faculty coordinator: {EVENT.facultyCoordinator}</p>}
+          <p>
+            <User size={15} /> Mohith K Aralikatte
+          </p>{" "}
+          <a href="tel:+919606802529">
+            <Phone size={15} /> +91 96068 02529
+          </a>
+          {isSet(EVENT.facultyCoordinator) && (
+            <p>Faculty coordinator: {EVENT.facultyCoordinator}</p>
+          )}
         </div>
       </div>
       <div className="wrap fbar">
@@ -98,8 +106,12 @@ export function SiteFooter() {
           © {new Date().getFullYear()} {EVENT.organizer || EVENT.name}
         </span>
         <span>
-          {isSet(EVENT.privacyUrl) && <a href={EVENT.privacyUrl}>Privacy policy</a>}
-          {isSet(EVENT.conductUrl) && <a href={EVENT.conductUrl}>Code of conduct</a>}
+          {isSet(EVENT.privacyUrl) && (
+            <a href={EVENT.privacyUrl}>Privacy policy</a>
+          )}
+          {isSet(EVENT.conductUrl) && (
+            <a href={EVENT.conductUrl}>Code of conduct</a>
+          )}
         </span>
       </div>
     </footer>

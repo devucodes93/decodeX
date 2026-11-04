@@ -173,7 +173,7 @@ export default function AboutPage() {
           <SectionHeading
             kicker="Participation"
             title="Eligibility and event format"
-            intro="The event is for students pursuing bachelor's degrees, in teams of 2–4 members."
+            intro=""
           />
           <div className="info-grid">
             {details.map(({ icon: Icon, label, value }) => (
@@ -196,7 +196,7 @@ export default function AboutPage() {
                 <h3>Organizing committee</h3>
                 <p>{TBA(EVENT.organizer, "Organizing committee")}</p>
                 <p>{TBA(EVENT.college, "Host college")}</p>
-                <p>{TBA(EVENT.department, "Department")}</p>
+                
               </div>
             </ScrollReveal>
             <ScrollReveal delay={0.1}>
@@ -207,11 +207,19 @@ export default function AboutPage() {
                 </div>
                 <div>
                   <dt>Student coordinators</dt>
-                  <dd>{TBA(EVENT.studentCoordinators, "Student coordinators")}</dd>
+                  <dd>
+                    <a href="tel:+916364744793">
+                      {TBA(EVENT.studentCoordinators, "Student coordinators")}
+                    </a>
+                  </dd>
                 </div>
                 <div>
                   <dt>Contact</dt>
-                  <dd>{contact || ANNOUNCING}</dd>
+                  <dd>
+                    <a href="tel:+919606802529">
+                      {contact || ANNOUNCING}
+                    </a>
+                  </dd>
                 </div>
               </dl>
             </ScrollReveal>

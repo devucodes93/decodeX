@@ -99,9 +99,11 @@ export default function CollaborationPage() {
                       loading="lazy"
                     />
                   </div>
+                  <div className="collaborator-divider" aria-hidden="true" />
                   <div className="collaborator-meta">
                     <h2>{collaborator.name}</h2>
-                    <span>Collaborating organization</span>
+                    <span></span>
+                 
                   </div>
                 </li>
               ))}

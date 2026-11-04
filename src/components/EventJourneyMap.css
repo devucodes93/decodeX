@@ -367,19 +367,6 @@
   color: #d8b46b;
 }
 
-.journey-card-date {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.journey-card-date::before {
-  content: "";
-  width: 18px;
-  height: 1px;
-  background: rgba(248, 244, 232, 0.24);
-}
-
 .journey-card h3 {
   margin: 0 0 10px;
   color: #f5f0e4;

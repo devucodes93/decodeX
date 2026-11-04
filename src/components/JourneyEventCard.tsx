@@ -29,14 +29,12 @@ export default function JourneyEventCard({
   event: Milestone;
   index: number;
 }) {
-  const number = String(index + 1).padStart(2, "0");
   const date = formatDate(event.date);
 
   return (
     <article className="journey-card" aria-labelledby={`journey-card-${index}`}>
       <div className="journey-card-meta">
-        <span className="journey-card-index">{number}</span>
-        <span className="journey-card-date">{date}</span>
+        <span className="journey-card-index">{date}</span>
       </div>
       <h3 id={`journey-card-${index}`}>{event.title}</h3>
       <p>{event.description}</p>
