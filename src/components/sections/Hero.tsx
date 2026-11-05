@@ -7,6 +7,14 @@ import { RegisterButton } from "../RegisterButton";
 import { gsap } from "../../animations/gsap";
 import { ParticleField } from "../visuals/ParticleField";
 import HeroLightFX from "../visuals/HeroLightFX";
+import { PrizePoolBadge } from "../PrizePoolBadge";
+import "./Hero.css";
+
+/** "22 November 2026" -> "22 Nov" */
+const shortDate = (value: string) =>
+  value
+    .replace(/\s*\d{4}\s*$/, "")
+    .replace(/(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*/, "$1");
 
 export function Hero() {
   const heroRef = useRef<HTMLElement>(null);
@@ -49,7 +57,7 @@ export function Hero() {
           ease: "power3.out",
         });
 
-        gsap.from(".hero-tagline, .hero-description, .hero-actions", {
+        gsap.from(".hero-tagline, .hx-fact, .hero-actions, .hx-meta", {
           y: 22,
           opacity: 0,
           duration: 0.8,
@@ -68,7 +76,7 @@ export function Hero() {
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(
-          ".hero-title-line, .hero-eyebrow, .hero-tagline, .hero-description, .hero-actions, .hero-foot",
+          ".hero-title-line, .hero-eyebrow, .hero-tagline, .hx-fact, .hero-actions, .hx-meta, .hero-foot",
           {
             clearProps: "all",
           },
@@ -81,7 +89,7 @@ export function Hero() {
   );
 
   return (
-    <section className="hero" ref={heroRef}>
+    <section className="hero hero--home" ref={heroRef}>
       <picture>
         <source media="(max-width: 700px)" srcSet={ASSETS.gtaPhone} />
         <img
@@ -136,11 +144,28 @@ export function Hero() {
             </h1>
           </div>
       
-          <p className="lead hero-description">{EVENT.description}</p>
+          <div className="hx-strip">
+            <div className="hx-fact hx-fact--left">
+              <span className="hx-label">Online qualifier</span>
+              <span className="hx-value">{shortDate(EVENT.qualifierDate)}</span>
+              <span className="hx-sub">{EVENT.qualifierTime}</span>
+            </div>
+            <PrizePoolBadge />
+            <div className="hx-fact hx-fact--right">
+              <span className="hx-label">Offline finale</span>
+              <span className="hx-value">{shortDate(EVENT.offlineDate)}</span>
+              <span className="hx-sub">24 hours · BMSIT&amp;M</span>
+            </div>
+          </div>
+          <p className="visually-hidden">{EVENT.description}</p>
           <div className="cta-row center hero-actions">
             <RegisterButton to="/register" />
             <SecondaryButton to="/about">Learn More</SecondaryButton>
           </div>
+          <p className="hx-meta">
+            Teams of {EVENT.teamSize} <i aria-hidden="true">/</i> Registration closes{" "}
+            {shortDate(EVENT.registrationDeadline)}
+          </p>
         </div>
       </div>
       <div className="hero-foot" aria-hidden="true">
