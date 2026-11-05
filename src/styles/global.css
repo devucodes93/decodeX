@@ -5121,3 +5121,111 @@ h4,
   border: 0;
   outline: none;
 }
+
+/* Navbar active item: subtle translucent box instead of the gold pill */
+.dnav a.on {
+  color: #f6ebe3;
+}
+
+/* Active item: thin cream underline (still animates between links) */
+.dnav .pill {
+  inset: auto 12px 3px;
+  height: 1.5px;
+  border: 0;
+  border-radius: 2px;
+  background: #f6ebe3;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+/* Navbar register: cream outline button */
+.hdr-cta .btn.primary {
+  min-height: 40px;
+  padding: 0 20px;
+  border: 1.5px solid #f6ebe3;
+  border-radius: 8px;
+  background: transparent;
+  color: #f6ebe3;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: none;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.hdr-cta .btn.primary::before,
+.hdr-cta .btn.primary::after {
+  display: none;
+}
+
+.hdr-cta .btn.primary:hover {
+  background: #f6ebe3;
+  color: #120f10;
+  transform: none;
+  box-shadow: none;
+}
+
+.hdr-cta .btn.primary:active {
+  background: #e4d9d0;
+  color: #120f10;
+  transform: none;
+}
+
+/* Mobile menu: match the desktop navbar (no gold) */
+.burger {
+  color: #f6ebe3;
+}
+
+.mnav a {
+  color: #c4c1b5;
+}
+
+.mnav a.active {
+  position: relative;
+  color: #f6ebe3;
+  background: transparent;
+}
+
+.mnav a.active::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  bottom: 6px;
+  width: 28px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: #f6ebe3;
+}
+
+.mnav .btn.primary {
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  border: 1.5px solid #f6ebe3;
+  border-radius: 8px;
+  background: transparent;
+  color: #f6ebe3;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: none;
+}
+
+.mnav .btn.primary::before,
+.mnav .btn.primary::after {
+  display: none;
+}
+
+.mnav .btn.primary:hover,
+.mnav .btn.primary:active {
+  background: #f6ebe3;
+  color: #120f10;
+  transform: none;
+  box-shadow: none;
+}

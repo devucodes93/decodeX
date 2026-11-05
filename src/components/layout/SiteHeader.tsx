@@ -23,7 +23,7 @@ export function SiteHeader() {
     <header className={`hdr ${solid || open ? "solid" : ""}`}>
       {EVENT.announcement && <div className="banner">{EVENT.announcement}</div>}
       <div className="hdr-in">
-        <Link to="/" className="brand" onClick={() => setOpen(false)}>        <Img src={ASSETS.navIcon} alt="" className="brand-logo" loading="eager" /><span className="brand-word">{EVENT.name}</span></Link>
+        <Link to="/" className="brand" aria-label={`${EVENT.name} home`} onClick={() => setOpen(false)}>        <Img src={ASSETS.navIcon} alt="" className="brand-logo" loading="eager" /></Link>
         <nav className="dnav" aria-label="Main">
           {NAV.map((i) => <NavLink key={i.to} to={i.to} end={i.to === "/"} className={({ isActive }) => (isActive ? "on" : "")}>{({ isActive }) => <>{i.label}{isActive && <motion.i layoutId="pill" className="pill" transition={{ type: "spring", stiffness: 380, damping: 32 }} />}</>}</NavLink>)}
         </nav>

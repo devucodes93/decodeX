@@ -65,7 +65,7 @@
   font-weight: 600;
   letter-spacing: 0.22em;
   text-transform: uppercase;
-  color: rgba(255, 112, 160, 0.85);
+  color: rgba(246, 235, 227, 0.7);
 }
 
 .hx-value {
@@ -142,46 +142,44 @@
   }
 }
 
-/* Secondary hero button — outlined companion to the pink register sticker */
+/* Secondary hero button — plain cream outline */
 .hero--home .hero-actions {
   gap: 18px;
 }
 
 .hero--home .hero-actions .btn.secondary {
   min-height: 56px;
-  padding: 0 24px;
-  border: 2px solid rgba(246, 235, 227, 0.75);
+  padding: 0 26px;
+  border: 1.5px solid #f6ebe3;
   border-radius: 4px;
-  background: rgba(18, 15, 16, 0.55);
-  backdrop-filter: blur(8px);
+  background: transparent;
+  backdrop-filter: none;
   color: #f6ebe3;
-  font-family: "Bungee", "Teko", sans-serif;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
   font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  box-shadow: 5px 5px 0 rgba(255, 79, 139, 0.45);
+  box-shadow: none;
   transition:
-    transform 0.16s ease,
-    box-shadow 0.16s ease,
-    border-color 0.2s ease,
+    background-color 0.2s ease,
     color 0.2s ease;
 }
 
-.hero--home .hero-actions .btn.secondary::before {
+.hero--home .hero-actions .btn.secondary::before,
+.hero--home .hero-actions .btn.secondary::after {
   display: none;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .hero--home .hero-actions .btn.secondary:hover {
-    color: #ff7aa8;
-    border-color: #ff4f8b;
-    transform: translate(-2px, -2px);
-    box-shadow: 7px 7px 0 rgba(255, 79, 139, 0.6);
-  }
+.hero--home .hero-actions .btn.secondary:hover {
+  background: rgba(246, 235, 227, 0.1);
+  border-color: #f6ebe3;
+  color: #f6ebe3;
+  transform: none;
+  box-shadow: none;
 }
 
 .hero--home .hero-actions .btn.secondary:active {
-  transform: translate(5px, 5px);
-  box-shadow: 0 0 0 rgba(255, 79, 139, 0);
+  background: rgba(246, 235, 227, 0.18);
+  transform: none;
 }
