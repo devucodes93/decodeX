@@ -7,6 +7,10 @@
 
 .hero--home .hero-eyebrow-logo {
   height: 92px;
+  /* Scaled visually (layout box unchanged) so nothing else shifts.
+     Grows upward from its bottom edge into the space above. */
+  transform: scale(1.22);
+  transform-origin: center bottom;
 }
 
 .hero--home .hero-title {

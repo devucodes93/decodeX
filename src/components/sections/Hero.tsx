@@ -113,7 +113,6 @@ export function Hero() {
       <div className="wrap hero-in">
         <div className="hero-copy">
           <p className="eyebrow hero-eyebrow">
-            <span className="eyebrow-dot" />
             <img
               src="/assets/photos/sps.png"
               alt="SPS"
@@ -134,8 +133,8 @@ export function Hero() {
                   className="hero-title-line"
                   src={ASSETS.title}
                   alt=""
-                  width={2245}
-                  height={922}
+                  width={1086}
+                  height={385}
                   fetchPriority="high"
                   draggable={false}
                   onLoad={() => setTitleLoaded(true)}
