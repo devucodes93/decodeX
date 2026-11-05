@@ -16,7 +16,7 @@ export function SiteFooter() {
         <div>
           <div className="fbrand">
             <Img
-              src={ASSETS.title}
+              src={ASSETS.navIcon}
               alt={EVENT.name}
               className="fbrand-title"
               loading="eager"

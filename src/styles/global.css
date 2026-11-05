@@ -5109,3 +5109,15 @@ h4,
     font-size: 18px;
   }
 }
+
+/* Footer brand: DX icon (3:2, own dark background) */
+.fbrand .fbrand-title {
+  width: 57px;
+  height: 38px;
+  max-width: none;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: none;
+  border: 0;
+  outline: none;
+}
