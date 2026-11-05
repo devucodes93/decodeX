@@ -49,7 +49,7 @@ export function Hero() {
           ease: "power3.out",
         });
 
-        gsap.from(".hero-description, .hero-actions", {
+        gsap.from(".hero-tagline, .hero-description, .hero-actions", {
           y: 22,
           opacity: 0,
           duration: 0.8,
@@ -68,7 +68,7 @@ export function Hero() {
 
       mm.add("(prefers-reduced-motion: reduce)", () => {
         gsap.set(
-          ".hero-title-line, .hero-eyebrow, .hero-description, .hero-actions, .hero-foot",
+          ".hero-title-line, .hero-eyebrow, .hero-tagline, .hero-description, .hero-actions, .hero-foot",
           {
             clearProps: "all",
           },
@@ -135,6 +135,7 @@ export function Hero() {
               </span>
             </h1>
           </div>
+      
           <p className="lead hero-description">{EVENT.description}</p>
           <div className="cta-row center hero-actions">
             <RegisterButton to="/register" />

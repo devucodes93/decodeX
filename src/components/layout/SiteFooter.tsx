@@ -2,6 +2,8 @@ import { Link } from "react-router-dom";
 import { Mail, Phone, MapPin, User } from "lucide-react";
 import { EVENT, isSet } from "../../config/event";
 import { NAV } from "../../config/navigation";
+import { ASSETS } from "../../config/assets";
+import { Img } from "../ui";
 
 const socialLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
@@ -12,8 +14,15 @@ export function SiteFooter() {
     <footer className="foot">
       <div className="wrap fgrid">
         <div>
-          <b className="fname">{EVENT.name}</b>
-          <p>DECODEX 2026</p>
+          <div className="fbrand">
+            <Img
+              src={ASSETS.title}
+              alt={EVENT.name}
+              className="fbrand-title"
+              loading="eager"
+            />
+          </div>
+      
           <p>{EVENT.tagline}</p>
           <h3>Organised by</h3>
           <p>
