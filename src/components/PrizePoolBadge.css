@@ -1,6 +1,6 @@
-/* Prize pool sticker — echoes the DECODEX logo (pink, cream, black outline,
-   hard offset shadow) but toned down so it supports the logo rather than
-   competing with it. */
+/* Prize pool sticker — gold amount on a dark card with a soft dark shadow.
+   Gold reads as money and stands out against the logo's pink and the
+   purple hero lights. */
 
 .ppool {
   --pp-cream: #f6ebe3;
