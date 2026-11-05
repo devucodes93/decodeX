@@ -5070,3 +5070,42 @@ h4,
     opacity: 0.24;
   }
 }
+
+/* Navbar icon (icon.png is 3:2 with its own dark background) */
+.brand .brand-logo {
+  width: 51px;
+  height: 34px;
+  object-fit: cover;
+}
+
+@media (max-width: 700px) {
+  .brand .brand-logo {
+    width: 45px;
+    height: 30px;
+  }
+}
+
+/* Navbar wordmark styled after the DECODEX logo:
+   blocky cream letters fading to pink, black outline, hard pink offset. */
+.brand .brand-word {
+  font-family: "Bungee", "Teko", sans-serif;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  background: linear-gradient(180deg, #fbf3ec 0%, #f6e6dc 52%, #ff7aa8 53%, #ff3d84 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-stroke: 1px #120f10;
+  /* drop-shadow (not text-shadow) so the hard shadow sits behind the gradient fill */
+  filter: drop-shadow(2px 2px 0 #120f10) drop-shadow(1.5px 1.5px 0 #ff4f8b);
+  transform: skewX(-6deg);
+}
+
+@media (max-width: 560px) {
+  .brand .brand-word {
+    font-size: 18px;
+  }
+}

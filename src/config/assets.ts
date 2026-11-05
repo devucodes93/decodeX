@@ -5,6 +5,7 @@
 // the art without touching component code.
 export const ASSETS = {
   logo: "/assets/logo.svg",
+  navIcon: "/assets/photos/icon-nav.png",
   placeholder: "/assets/placeholder.svg",
 
   gtaHero: "/assets/photos/GTA_register.jpg",

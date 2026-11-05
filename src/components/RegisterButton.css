@@ -1,47 +1,49 @@
+/* Hero register button — sticker style matching the DECODEX logo and the
+   prize-pool badge: hot pink, black outline, hard cream offset shadow that
+   the button "presses" into. */
+
 .register-btn {
+  --rb-pink: #ff4f8b;
+  --rb-pink-hi: #ff6a9e;
+  --rb-cream: #f6ebe3;
+  --rb-ink: #120f10;
+
   position: relative;
   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 58px;
-  padding: 0 22px;
-  border: 0;
-  border-radius: 999px;
-  background: #c5ff4a;
-  color: #15170f;
-  font: 700 13px/1 "Manrope", sans-serif;
-  letter-spacing: 0.075em;
-  text-transform: uppercase;
+  align-items: stretch;
+  min-height: 56px;
+  padding: 0;
+  border: 2px solid var(--rb-ink);
+  border-radius: 4px;
+  background: var(--rb-pink);
+  color: var(--rb-ink);
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
   isolation: isolate;
   overflow: hidden;
-  box-shadow:
-    0 12px 28px -20px rgba(197, 255, 74, 0.9),
-    0 0 0 1px rgba(197, 255, 74, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  box-shadow: 5px 5px 0 var(--rb-cream);
+  transform: translate(0, 0);
   transition:
-    background-color 0.28s ease,
-    box-shadow 0.28s ease,
-    color 0.28s ease;
+    transform 0.16s ease,
+    box-shadow 0.16s ease,
+    background-color 0.2s ease;
 }
 
+/* Diagonal hazard stripes that slide in on hover */
 .register-btn::before {
   content: "";
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
-  background: linear-gradient(
-    105deg,
-    transparent 30%,
-    rgba(255, 255, 255, 0.34) 48%,
-    transparent 66%
+  background: repeating-linear-gradient(
+    -45deg,
+    rgba(18, 15, 16, 0.1) 0 8px,
+    transparent 8px 16px
   );
-  transform: translateX(-130%);
-  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
 .register-btn > * {
@@ -50,79 +52,88 @@
 }
 
 .register-btn-label {
-  display: block;
-  position: relative;
-  top: 0.5px;
+  display: flex;
+  align-items: center;
+  padding: 2px 22px 0 24px;
+  font-family: "Bungee", "Teko", sans-serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .register-btn-arrow {
   display: grid;
   place-items: center;
-  width: 16px;
-  height: 16px;
-  margin-left: 1px;
-  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  width: 52px;
+  border-left: 2px solid var(--rb-ink);
+  background: var(--rb-ink);
+  color: var(--rb-pink);
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .register-btn-arrow svg {
   display: block;
-  width: 14px;
-  height: 14px;
+  width: 18px;
+  height: 18px;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .register-btn:active {
-  background: #b7f13d;
+  transform: translate(5px, 5px);
+  box-shadow: 0 0 0 var(--rb-cream);
 }
 
 .register-btn:focus-visible {
-  outline: 3px solid #f8f4e8;
-  outline-offset: 4px;
-  box-shadow:
-    0 0 0 6px rgba(197, 255, 74, 0.22),
-    0 16px 34px -18px rgba(197, 255, 74, 0.75);
-}
-
-.register-btn:focus-visible .register-btn-arrow {
-  transform: translate(2px, -2px);
+  outline: 3px solid var(--rb-cream);
+  outline-offset: 5px;
 }
 
 @media (hover: hover) and (pointer: fine) {
   .register-btn:hover {
-    background: #d2ff6b;
-    box-shadow:
-      0 18px 38px -18px rgba(197, 255, 74, 0.8),
-      0 0 0 1px rgba(197, 255, 74, 0.45),
-      inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    background: var(--rb-pink-hi);
+    transform: translate(-2px, -2px);
+    box-shadow: 7px 7px 0 var(--rb-cream);
   }
 
   .register-btn:hover::before {
-    transform: translateX(130%);
+    opacity: 1;
   }
 
   .register-btn:hover .register-btn-arrow {
+    color: var(--rb-cream);
+  }
+
+  .register-btn:hover .register-btn-arrow svg {
     transform: translate(2px, -2px);
+  }
+
+  .register-btn:active {
+    transform: translate(5px, 5px);
+    box-shadow: 0 0 0 var(--rb-cream);
   }
 }
 
 @media (max-width: 560px) {
   .cta-row .register-btn {
     width: 100%;
+    justify-content: space-between;
+  }
+
+  .register-btn-label {
+    flex: 1;
+    justify-content: center;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .register-btn,
   .register-btn::before,
-  .register-btn-arrow {
+  .register-btn-arrow,
+  .register-btn-arrow svg {
     transition: none;
-  }
-
-  .register-btn:hover::before {
-    transform: translateX(-130%);
-  }
-
-  .register-btn:hover .register-btn-arrow,
-  .register-btn:focus-visible .register-btn-arrow {
-    transform: none;
   }
 }
