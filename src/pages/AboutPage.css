@@ -216,40 +216,20 @@
   will-change: transform;
 }
 
-/* ---- Home: About blends out of the hero (no hard seam) ----
-   The section overlaps the end of the hero. Its artwork, scrim and base
-   colour use a FIXED soft mask (transparent at the top), and GSAP fades the
-   artwork in over ~320px of scroll (see AboutHero.tsx). The mask itself is
-   never animated: animating it forced a full-screen repaint every frame,
-   which caused flicker on scroll. */
+/* ---- Home: About slides up over the hero like a card ----
+   The hero stays put (position: sticky, see HomePage.css) and this section
+   scrolls over it with rounded top corners and a shadow, while the hero
+   zooms in underneath (HomePage.tsx). */
 .about-hero--section {
-  --fade-to: 300px;
-
   z-index: 1;
-  margin-top: -200px;
-  background: linear-gradient(to bottom, transparent 0, #080807 var(--fade-to));
-}
-
-.about-hero--section .about-bg-img,
-.about-hero--section .about-scrim,
-.about-hero--section::after {
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-to));
-  mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-to));
-}
-
-/* Content starts below the overlap/blend zone. */
-.about-hero--section .about-hero-content {
-  padding-top: calc(clamp(96px, 12vw, 140px) + 200px);
+  border-radius: 28px 28px 0 0;
+  box-shadow: 0 -24px 60px rgba(0, 0, 0, 0.55);
+  border-top: 1px solid rgba(246, 235, 227, 0.1);
 }
 
 @media (max-width: 700px) {
   .about-hero--section {
-    margin-top: -140px;
-    --fade-to: 240px;
-  }
-
-  .about-hero--section .about-hero-content {
-    padding-top: calc(clamp(96px, 12vw, 140px) + 140px);
+    border-radius: 20px 20px 0 0;
   }
 }
 

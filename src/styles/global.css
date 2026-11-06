@@ -5110,13 +5110,14 @@ h4,
   }
 }
 
-/* Footer brand: DX icon (3:2, own dark background) */
+/* Footer brand: DECODEX title artwork */
 .fbrand .fbrand-title {
-  width: 57px;
-  height: 38px;
-  max-width: none;
-  object-fit: cover;
-  border-radius: 8px;
+  /* DECODEX title artwork: wide image, shown whole (no crop). */
+  width: auto;
+  height: 52px;
+  max-width: 220px;
+  object-fit: contain;
+  border-radius: 0;
   box-shadow: none;
   border: 0;
   outline: none;
@@ -5248,3 +5249,43 @@ h4,
     linear-gradient(90deg, rgba(8, 9, 7, 0.82) 0%, rgba(8, 9, 7, 0.35) 58%, rgba(8, 9, 7, 0.5) 100%),
     linear-gradient(180deg, rgba(8, 9, 7, 0.45) 0%, rgba(8, 9, 7, 0.08) 46%, rgba(8, 9, 7, 0.85) 100%);
 }
+
+/* Phones/tablets: the hero image stays still (no slow ambient zoom), so it
+   never appears to move after scrolling stops; lighter compositing. */
+@media (hover: none), (pointer: coarse) {
+  .hero .hero-bg {
+    animation: none;
+    transform: none;
+    will-change: auto;
+  }
+
+  .hero-bg-wrap,
+  .about-hero .about-bg-img,
+  .about-stage-bg {
+    will-change: auto;
+  }
+}
+
+/* ======================================================================
+   Scroll performance (all pages)
+   Effects that the browser had to recompute on EVERY scroll frame are
+   replaced with near-identical static equivalents:
+   - backdrop blur on the fixed navbar -> solid translucent background
+   - "screen" blend modes on moving layers -> normal blending
+   - constant ambient zoom on the hero image -> off (scroll push-in stays)
+   ====================================================================== */
+.hdr-in {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgba(12, 13, 10, 0.88);
+}
+
+.particle-field {
+  mix-blend-mode: normal;
+}
+
+.about-hero::after {
+  mix-blend-mode: normal;
+  opacity: 0.25;
+}
+

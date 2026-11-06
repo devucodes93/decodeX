@@ -25,3 +25,42 @@
     opacity: calc(0.45 * var(--finale));
   }
 }
+
+/* ---- Hero stays, About slides over it like a card ---------------------
+   The hero is sticky inside .home-stack (hero + About), so it holds still
+   while the About card scrolls up over it, then both leave together.
+   --hero-stick is set in HomePage.tsx: 0, or negative when the hero is
+   taller than the screen (so its bottom is reachable before it sticks). */
+.home-stack {
+  position: relative;
+}
+
+.home-stack .hero.hero--home {
+  position: sticky;
+  top: var(--hero-stick, 0px);
+  z-index: 0;
+}
+
+/* Darkening layer over the hero as the card arrives (GSAP: opacity 0 -> 1). */
+.hero-cover {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  background: rgba(6, 6, 5, 0.6);
+  opacity: 0;
+}
+
+/* Once fully covered, don't paint the hero at all. */
+.home-stack .hero.is-covered {
+  visibility: hidden;
+}
+
+/* Phones/tablets: same sticky hero, but --hero-stick (HomePage.tsx) lets it
+   scroll up ~35% of the screen first, so it moves with the page and only
+   holds lightly while the About card slides over (card-deck effect). */
+@media (hover: none), (pointer: coarse) {
+  .home-stack .hero.hero--home {
+    will-change: transform;
+  }
+}

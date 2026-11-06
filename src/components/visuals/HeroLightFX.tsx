@@ -60,7 +60,8 @@ export default function HeroLightFX() {
       onScreen = entry.isIntersecting;
     });
     io.observe(field);
-    const orbs = Array.from(field.querySelectorAll<HTMLElement>(".hlfx-orb"));
+    // Phones: use half the light layers (still enough for strobes/prisms).
+    const orbs = Array.from(field.querySelectorAll<HTMLElement>(".hlfx-orb")).slice(0, mobile ? 5 : undefined);
     const busy = new Set<HTMLElement>();
     gsap.set(orbs, { xPercent: -50, yPercent: -50, opacity: 0 });
 

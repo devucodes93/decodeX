@@ -41,13 +41,14 @@ export function ParticleField() {
     });
 
     const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      // Tiny soft dots: 1.25x is plenty and ~2.5x cheaper than 2x.
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       width = canvas.clientWidth;
       height = canvas.clientHeight;
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      const target = width < 700 ? 22 : 38;
+      const target = width < 700 ? 14 : 38;
       particles = Array.from({ length: target }, make);
     };
 
@@ -71,17 +72,32 @@ export function ParticleField() {
       frame = window.requestAnimationFrame(tick);
     };
 
-    const onVisibility = () => {
-      visible = document.visibilityState === "visible";
+    // Draw only while the tab is visible AND the canvas is on screen.
+    let tabVisible = true;
+    let onScreen = true;
+    const sync = () => {
+      const next = tabVisible && onScreen;
+      if (next === visible) return;
+      visible = next;
       window.cancelAnimationFrame(frame);
       if (visible) frame = window.requestAnimationFrame(tick);
     };
+    const onVisibility = () => {
+      tabVisible = document.visibilityState === "visible";
+      sync();
+    };
+    const io = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+      sync();
+    });
+    io.observe(canvas);
 
     resize();
     frame = window.requestAnimationFrame(tick);
     window.addEventListener("resize", resize);
     document.addEventListener("visibilitychange", onVisibility);
     return () => {
+      io.disconnect();
       window.cancelAnimationFrame(frame);
       window.removeEventListener("resize", resize);
       document.removeEventListener("visibilitychange", onVisibility);

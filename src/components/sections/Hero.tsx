@@ -3,7 +3,7 @@ import { useGSAP } from "@gsap/react";
 import { EVENT } from "../../config/event";
 import { ASSETS } from "../../config/assets";
 import { RegisterButton } from "../RegisterButton";
-import { gsap } from "../../animations/gsap";
+import { gsap, SCRUB } from "../../animations/gsap";
 import { ParticleField } from "../visuals/ParticleField";
 import HeroLightFX from "../visuals/HeroLightFX";
 import { PrizePoolBadge } from "../PrizePoolBadge";
@@ -79,36 +79,6 @@ export function Hero() {
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         const hero = heroRef.current;
         if (!hero) return;
-        // Touch devices scroll on a separate thread, so big JS-driven offsets
-        // can lag a frame behind and look jittery. Use a lighter offset and
-        // a shorter smoothing there; desktop gets a softer 1s catch-up.
-        const touch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
-        const out = {
-          trigger: hero,
-          start: "top top",
-          end: "bottom top",
-          scrub: touch ? 0.4 : 1,
-        };
-
-        // Background (slowest) + its scrim stay aligned; slow push-in 1 -> 1.07.
-        gsap.fromTo(
-          ".hero-bg-wrap, .hero-scrim",
-          { yPercent: 0 },
-          { yPercent: touch ? 40 : 80, ease: "none", force3D: true, scrollTrigger: out },
-        );
-        gsap.fromTo(
-          ".hero-bg-wrap",
-          { scale: 1 },
-          { scale: 1.07, ease: "none", scrollTrigger: out },
-        );
-
-        // Foreground light + particles: a little slower than the page.
-        gsap.fromTo(
-          ".hlfx, .particle-field",
-          { yPercent: 0 },
-          { yPercent: touch ? 10 : 20, ease: "none", force3D: true, scrollTrigger: out },
-        );
-
         // Bottom strap fades out as the About section takes over.
         gsap.fromTo(
           ".hero-foot",
@@ -117,7 +87,7 @@ export function Hero() {
             opacity: 0,
             ease: "none",
             immediateRender: false,
-            scrollTrigger: { trigger: hero, start: "top top", end: "+=220", scrub: 0.6 },
+            scrollTrigger: { trigger: hero, start: "top top", end: "+=220", scrub: SCRUB },
           },
         );
       });
@@ -159,6 +129,8 @@ export function Hero() {
       <ParticleField />
       <div className="grain" aria-hidden="true" />
       <div className="film film--vignette" aria-hidden="true" />
+      {/* Darkens as the About card slides over (HomePage.tsx). */}
+      <div className="hero-cover" aria-hidden="true" />
       <div className="wrap hero-in">
         <div className="hero-copy">
           <p className="eyebrow hero-eyebrow">

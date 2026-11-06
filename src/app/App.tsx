@@ -32,7 +32,12 @@ function settleScrollTriggers() {
     // the trigger's real progress. Do NOT kill it: ScrollTrigger keeps reusing
     // that tween, and a killed tween can never render again - which froze
     // every scrubbed animation (e.g. Timeline cards stayed invisible).
-    st.getTween()?.progress(1);
+    // With scrub: true (scroll-locked, used site-wide now) there is no
+    // smoothing tween and getTween() returns 0, not a tween - so check it.
+    const smoothing = st.getTween() as unknown;
+    if (smoothing && typeof (smoothing as gsap.core.Tween).progress === "function") {
+      (smoothing as gsap.core.Tween).progress(1);
+    }
     st.animation.progress(st.progress);
   });
 }

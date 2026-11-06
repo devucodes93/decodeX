@@ -5,7 +5,7 @@ import { RegistrationCTA } from "../components/sections/Blocks";
 import { ASSETS } from "../config/assets";
 import { EVENT } from "../config/event";
 import { useTitle } from "../hooks";
-import { gsap } from "../animations/gsap";
+import { gsap, isTouch, SCRUB } from "../animations/gsap";
 
 export default function TimelinePage() {
   const timelineRef = useRef<HTMLDivElement>(null);
@@ -23,6 +23,9 @@ export default function TimelinePage() {
 
       const media = gsap.matchMedia();
       media.add("(prefers-reduced-motion: no-preference)", () => {
+        // Phones/tablets: static (animating object-position repaints the
+        // image every frame, which is heavy on phones).
+        if (isTouch()) return;
         gsap.fromTo(
           image,
           { objectPosition: "center top" },
@@ -33,7 +36,7 @@ export default function TimelinePage() {
               trigger: cta,
               start: "top bottom",
               end: "top 35%",
-              scrub: 1,
+              scrub: SCRUB,
             },
           },
         );

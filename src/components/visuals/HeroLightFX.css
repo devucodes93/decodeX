@@ -7,7 +7,9 @@
   z-index: 2; /* below .hero-title (z-index 4), so light sits behind the logo */
   overflow: hidden;
   pointer-events: none;
-  mix-blend-mode: screen;
+  /* Normal blending: "screen" had to be re-composited every scroll frame
+     over the moving hero image. Over the dark hero it looks nearly the same. */
+  mix-blend-mode: normal;
 }
 
 .hlfx-orb {

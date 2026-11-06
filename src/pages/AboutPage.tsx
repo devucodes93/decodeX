@@ -4,7 +4,7 @@ import { RegistrationCTA } from "../components/sections/Blocks";
 import { ScrollReveal } from "../components/ui";
 import { EVENT, TBA, isSet } from "../config/event";
 import { useTitle } from "../hooks";
-import { gsap, ScrollTrigger } from "../animations/gsap";
+import { gsap, isTouch, ScrollTrigger, SCRUB } from "../animations/gsap";
 import { Marquee } from "../components/sections/Marquee";
 import { AboutHero } from "../components/sections/AboutHero";
 import { MissionDeck, type Mission } from "../components/MissionDeck";
@@ -112,8 +112,8 @@ ${EVENT.duration}`,
     const mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-      if (!stage || !bg) return;
-      const touch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+      // Phones/tablets: static artwork. Laptops: locked to the scroll.
+      if (!stage || !bg || isTouch()) return;
       gsap.fromTo(
         bg,
         { yPercent: 0 },
@@ -121,7 +121,7 @@ ${EVENT.duration}`,
           yPercent: 8,
           ease: "none",
           force3D: true,
-          scrollTrigger: { trigger: stage, start: "top top", end: "bottom top", scrub: touch ? 0.4 : 1 },
+          scrollTrigger: { trigger: stage, start: "top top", end: "bottom top", scrub: SCRUB },
         },
       );
     });

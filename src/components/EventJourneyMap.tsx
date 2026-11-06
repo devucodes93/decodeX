@@ -1,6 +1,6 @@
 ﻿import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
-import { gsap, ScrollTrigger } from "../animations/gsap";
+import { gsap, ScrollTrigger, SCRUB } from "../animations/gsap";
 import { TIMELINE } from "../data/timeline";
 import JourneyEventCard from "./JourneyEventCard";
 import { TitleArt } from "./ui/TitleArt";
@@ -58,7 +58,7 @@ export default function EventJourneyMap() {
                 trigger: timeline,
                 start: "top 72%",
                 end: "bottom 76%",
-                scrub: 0.8,
+                scrub: SCRUB,
                 invalidateOnRefresh: true,
               },
             },
@@ -78,7 +78,7 @@ export default function EventJourneyMap() {
                 trigger: timeline,
                 start: "top 72%",
                 end: "bottom 76%",
-                scrub: 0.8,
+                scrub: SCRUB,
                 invalidateOnRefresh: true,
               },
             },
@@ -91,7 +91,7 @@ export default function EventJourneyMap() {
               trigger: timeline,
               start: "top 82%",
               end: "bottom 60%",
-              scrub: 1,
+              scrub: SCRUB,
               invalidateOnRefresh: true,
               once: false,
             },

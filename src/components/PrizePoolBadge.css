@@ -35,9 +35,9 @@
   display: inline-flex;
   align-items: baseline;
   padding: 12px 22px 6px;
-  background: rgba(14, 11, 12, 0.72);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  background: rgba(14, 11, 12, 0.82);
+  /* No backdrop blur: it was recomputed every frame over the moving hero
+     image. A slightly more solid card looks the same. */
   border: 2px solid rgba(246, 235, 227, 0.4);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
   color: var(--pp-gold);
