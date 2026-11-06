@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap } from "../../animations/gsap";
 import { ASSETS } from "../../config/assets";
+import { TitleArt } from "./TitleArt";
 
 interface BtnProps { to?: string; href?: string; disabled?: boolean; children: ReactNode; variant?: "primary" | "secondary" }
 function Btn({ to, href, disabled, variant = "primary", children }: BtnProps) {
@@ -76,7 +77,9 @@ export function AnimatedAmount({ value, className }: { value: string; className?
 export const SectionHeading = ({ title, intro, kicker }: { title: string; intro?: string; kicker?: string }) => (
   <ScrollReveal className="sh">
     {kicker && <p className="kicker">{kicker}</p>}
-    <h2>{title}</h2>
+    <h2>
+      <TitleArt text={title} />
+    </h2>
     {intro && <p>{intro}</p>}
   </ScrollReveal>
 );

@@ -8,6 +8,7 @@ import { PREVIOUS_EDITION } from "../../data/previousEdition";
 import type { FAQItem, Partner } from "../../types";
 import { ASSETS } from "../../config/assets";
 import { AnimatedAmount, Img, PrimaryButton, ScrollReveal, SectionHeading } from "../ui";
+import { TitleArt } from "../ui/TitleArt";
 
 export const PageHeader = ({
   title,
@@ -25,7 +26,7 @@ export const PageHeader = ({
     <div className="wrap">
       <p className="kicker">{kicker}</p>
       <motion.h1 initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.72, ease: [0.22, 1, 0.36, 1] }}>
-        {title}
+        <TitleArt text={title} size="page" />
       </motion.h1>
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.18, duration: 0.55 }}>
         {intro}
@@ -217,7 +218,9 @@ export const RegistrationCTA = ({ hasBg = false }: { hasBg?: boolean }) => (
     <div className="grain" aria-hidden="true" />
     <ScrollReveal className="wrap rcta-in">
       <p className="kicker">Registration</p>
-      <h2>Register for the challenge.</h2>
+      <h2>
+        <TitleArt text="Register for the challenge." />
+      </h2>
       <p>
         Registration opens {EVENT.registrationOpens} and closes {EVENT.registrationDeadline}. The
         official registration link will be shared once confirmed.

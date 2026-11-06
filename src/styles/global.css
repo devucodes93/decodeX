@@ -5039,7 +5039,7 @@ h4,
   background-position: center 28%;
   background-size: cover;
   background-repeat: no-repeat;
-  opacity: 0.3;
+  opacity: 0.55;
 }
 
 .rcta.rcta--has-bg::after {
@@ -5067,7 +5067,7 @@ h4,
 
   .rcta.rcta--has-bg::before {
     background-position: center 30%;
-    opacity: 0.24;
+    opacity: 0.45;
   }
 }
 

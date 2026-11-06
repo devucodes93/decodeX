@@ -1,0 +1,46 @@
+/* Shared cinematic layers for the Hero and About sections. */
+
+/* ---- Film treatment: barely-there grain + soft vignette ---- */
+.film {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.film::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 75% 70% at 50% 50%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.38) 100%
+  );
+}
+
+.film::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Plain low opacity (no blend mode) keeps the grain cheap to composite. */
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Hero already has its own grain layer — vignette only there. */
+.film--vignette::after {
+  content: none;
+}
+
+.hero .film {
+  z-index: 2;
+}
+
+.hero-bg-wrap {
+  position: absolute;
+  inset: 0;
+  display: block;
+  will-change: transform;
+}
+

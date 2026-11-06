@@ -1,0 +1,86 @@
+{
+  "About the challenge": {
+    "src": "/assets/titles/about-the-challenge.png",
+    "w": 1553,
+    "h": 197,
+    "lines": 1
+  },
+  "Inside the mission": {
+    "src": "/assets/titles/inside-the-mission.png",
+    "w": 1374,
+    "h": 163,
+    "lines": 1
+  },
+  "What the event aims to do.": {
+    "src": "/assets/titles/what-the-event-aims-to-do.png",
+    "w": 1225,
+    "h": 319,
+    "lines": 2
+  },
+  "Eligibility & event format": {
+    "src": "/assets/titles/eligibility-event-format.png",
+    "w": 1065,
+    "h": 319,
+    "lines": 2
+  },
+  "Who organises the event": {
+    "src": "/assets/titles/who-organises-the-event.png",
+    "w": 1125,
+    "h": 319,
+    "lines": 2
+  },
+  "A Signal Processing Based CTF Challenge.": {
+    "src": "/assets/titles/a-signal-processing-based-ctf-challenge.png",
+    "w": 1533,
+    "h": 325,
+    "lines": 2
+  },
+  "In collaboration with": {
+    "src": "/assets/titles/in-collaboration-with.png",
+    "w": 1651,
+    "h": 163,
+    "lines": 1
+  },
+  "Frequently asked questions": {
+    "src": "/assets/titles/frequently-asked-questions.png",
+    "w": 1341,
+    "h": 353,
+    "lines": 2
+  },
+  "Register for the challenge": {
+    "src": "/assets/titles/register-for-the-challenge.png",
+    "w": 1073,
+    "h": 325,
+    "lines": 2
+  },
+  "Register for the challenge.": {
+    "src": "/assets/titles/register-for-the-challenge.png",
+    "w": 1073,
+    "h": 325,
+    "lines": 2
+  },
+  "Sponsors and partners": {
+    "src": "/assets/titles/sponsors-and-partners.png",
+    "w": 1023,
+    "h": 353,
+    "lines": 2
+  },
+  "Results": {
+    "src": "/assets/titles/results.png",
+    "w": 615,
+    "h": 135,
+    "lines": 1
+  },
+  "Page not found": {
+    "src": "/assets/titles/page-not-found.png",
+    "w": 1137,
+    "h": 197,
+    "lines": 1
+  },
+  "DecodeX 2026": {
+    "src": "/assets/titles/decodex-2026.png",
+    "w": 1022,
+    "h": 163,
+    "lines": 1
+  }
+}

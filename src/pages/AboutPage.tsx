@@ -1,14 +1,16 @@
 import { useRef } from "react";
-import { CalendarDays, IndianRupee, Laptop, MapPin, ShieldCheck, Users } from "lucide-react";
 import { useGSAP } from "@gsap/react";
 import { RegistrationCTA } from "../components/sections/Blocks";
-import { ScrollReveal, SectionHeading } from "../components/ui";
-import { ANNOUNCING, EVENT, TBA, isSet } from "../config/event";
+import { ScrollReveal } from "../components/ui";
+import { EVENT, TBA, isSet } from "../config/event";
 import { useTitle } from "../hooks";
 import { gsap, ScrollTrigger } from "../animations/gsap";
 import { Marquee } from "../components/sections/Marquee";
-import { useAboutAnimation } from "../animations/useAboutAnimation";
-import AboutHazardTape from "../components/AboutHazardTape";
+import { AboutHero } from "../components/sections/AboutHero";
+import { MissionDeck, type Mission } from "../components/MissionDeck";
+import "./AboutPage.css";
+import { TitleArt } from "../components/ui/TitleArt";
+import { MissionLobby, type LobbyItem } from "../components/MissionLobby";
 
 const OBJECTIVES = [
   "Promote the practical application of signal processing concepts beyond the classroom.",
@@ -19,45 +21,95 @@ const OBJECTIVES = [
   "Connect students with industry sponsors and the wider IEEE community.",
 ];
 
+const EXPECT: Mission[] = [
+  {
+    title: "Real-world signals",
+    codename: "Signal intercept",
+    body: "Challenges built on audio, biomedical, radar and sensor data, with puzzles that need real signal processing, not guesswork.",
+    meta: ["Signal processing", "Audio / radar / sensor"],
+    image: "/assets/missions/01-signals.jpg",
+  },
+  {
+    title: "Hands-on flag hunting",
+    codename: "Field objective",
+    body: "Each challenge hides a flag inside a signal or dataset. Work out what you're dealing with, pick the right signal processing or ML technique, and extract the answer.",
+    meta: ["Capture the flag", "Find / extract"],
+    image: "/assets/missions/02-flag.jpg",
+  },
+  {
+    title: "Rising difficulty",
+    codename: "Escalation",
+    body: "Start with approachable puzzles and work up to harder, multi-stage ones.",
+    meta: ["Difficulty: rising", "Multi-stage"],
+    image: "/assets/missions/03-difficulty.jpg",
+  },
+  {
+    title: "Two rounds",
+    codename: "Final operation",
+    body: `An online qualifier on ${EVENT.qualifierDate} (${EVENT.qualifierTime}), then a 24-hour offline challenge on ${EVENT.offlineDate} at BMSIT&M.`,
+    meta: ["2 rounds", "24-hour finale"],
+    image: "/assets/missions/04-rounds.jpg",
+  },
+];
+
 export default function AboutPage() {
   useTitle(`About | ${EVENT.name}`);
-  const container = useAboutAnimation();
   const purposeRef = useRef<HTMLElement>(null);
   const detailsRef = useRef<HTMLElement>(null);
-  const contact = [EVENT.contact.person, EVENT.contact.email, EVENT.contact.phone]
-    .filter(isSet)
-    .join(" \u00B7 ");
-  const details = [
-    { icon: ShieldCheck, label: "Eligibility", value: TBA(EVENT.eligibility, "Eligibility") },
-    { icon: Users, label: "Team size", value: TBA(EVENT.teamSize, "Team size") },
-    { icon: MapPin, label: "Venue", value: TBA(EVENT.venue, "Venue") },
-    { icon: Laptop, label: "Mode", value: `${EVENT.mode}; ${EVENT.duration}` },
-    { icon: CalendarDays, label: "Event date", value: TBA(EVENT.dateLabel, "Date") },
-    { icon: IndianRupee, label: "Registration fee", value: TBA(EVENT.fee, "Fee") },
+  // Full values come from src/config/event.ts; `short` is the compact text
+  // shown in the menu row.
+  const details: LobbyItem[] = [
+    {
+      label: "Eligibility",
+      short: "Bachelor's students",
+      value: TBA(EVENT.eligibility, "Eligibility"),
+      tag: "Player requirements",
+      icon: "graduation",
+    },
+    {
+      label: "Team size",
+      short: TBA(EVENT.teamSize, "TBA"),
+      value: TBA(EVENT.teamSize, "Team size"),
+      tag: "Crew size",
+      icon: "users",
+    },
+    {
+      label: "Venue",
+      short: "BMSIT&M",
+      value: TBA(EVENT.venue, "Venue"),
+      tag: "Location",
+      icon: "pin",
+    },
+    {
+      label: "Mode",
+      short: "Online + offline",
+      value: `${EVENT.mode}
+${EVENT.duration}`,
+      tag: "Mission type",
+      icon: "monitor",
+    },
+    {
+      label: "Event date",
+      short: "22, 27–28 Nov",
+      value: TBA(EVENT.dateLabel, "Date"),
+      tag: "Schedule",
+      icon: "calendar",
+    },
+    {
+      label: "Registration fee",
+      short: isSet(EVENT.fee) ? EVENT.fee : "TBA",
+      value: TBA(EVENT.fee, "Fee"),
+      tag: "Buy-in",
+      icon: "ticket",
+    },
   ];
 
   useGSAP(() => {
-    const detailsSection = detailsRef.current;
     const purposeSection = purposeRef.current;
 
     const mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-      if (detailsSection) {
-        gsap.from(".reveal-tile", {
-          y: 55,
-          opacity: 0,
-          scale: 0.96,
-          duration: 0.85,
-          stagger: { amount: 0.7, from: "start" },
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: detailsSection,
-            start: "top 78%",
-            once: true,
-          },
-        });
-      }
 
       if (purposeSection) {
         const layers = Array.from(
@@ -86,32 +138,7 @@ export default function AboutPage() {
 
   return (
     <>
-      <div className="about-hero" ref={container}>
-        <img
-          className="about-bg-img"
-          src="/assets/photos/GTA4.jpg"
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          fetchPriority="high"
-        />
-        <div className="about-scrim" aria-hidden="true" />
-        <img
-          src="/assets/photos/char1.png"
-          className="about-character"
-          alt=""
-          aria-hidden="true"
-          loading="eager"
-          decoding="async"
-        />
-
-        <div className="about-hero-content">
-          <span className="about-warning-label">DECODEX / ABOUT</span>
-          <h1 className="about-heading">About the challenge</h1>
-          <p className="about-description">{EVENT.description}</p>
-          <AboutHazardTape label="SIGNAL INVESTIGATION" />
-        </div>
-      </div>
+      <AboutHero />
 
       <section className="sec light about-purpose" ref={purposeRef}>
         <div className="parallax-background" aria-hidden="true">
@@ -122,7 +149,9 @@ export default function AboutPage() {
         <div className="wrap two">
           <ScrollReveal>
             <p className="kicker">Purpose</p>
-            <h2 className="big">A Signal Processing Based CTF Challenge.</h2>
+            <h2 className="big">
+              <TitleArt text="A Signal Processing Based CTF Challenge." />
+            </h2>
           </ScrollReveal>
           <ScrollReveal delay={0.12}>
             <p className="lede">
@@ -131,25 +160,24 @@ export default function AboutPage() {
               inside real world signals, using filtering, spectral analysis, demodulation
               and machine learning. Every flag is earned by actually working with the data.
             </p>
-            <p className="body"><strong>What to Expect:</strong></p>
-            <ul className="ticks">
-              <li>
-                <strong>Challenges on real world signals:</strong> Audio, biomedical,
-                radar and sensor data, with puzzles that need real signal processing, not
-                guesswork.
-              </li>
-              <li>
-                <strong>Hands-on problem solving:</strong> Each challenge hides a flag
-                inside a signal or dataset. Participants identify what they're dealing
-                with, pick the right signal processing or ML technique, and extract the
-                answer.
-              </li>
-              <li>
-                <strong>Rising difficulty:</strong> Start with approachable puzzles and
-                work up to harder multi-stage ones.
-              </li>
-            </ul>
           </ScrollReveal>
+        </div>
+      </section>
+
+      <section className="expect">
+        <div className="expect-bg" aria-hidden="true" />
+        <div className="wrap">
+          <div className="expect-head">
+            <p className="expect-kicker">What to expect</p>
+            <h2 className="expect-title">
+              <TitleArt text="Inside the mission" />
+            </h2>
+            <p className="expect-hint">
+              <span className="expect-hint--hover">Hover over a card to reveal it</span>
+              <span className="expect-hint--touch">Scroll to reveal each mission</span>
+            </p>
+          </div>
+          <MissionDeck missions={EXPECT} />
         </div>
       </section>
 
@@ -159,7 +187,9 @@ export default function AboutPage() {
         <div className="wrap two">
           <div>
             <p className="kicker">Objectives</p>
-            <h2 className="big">What the event aims to do.</h2>
+            <h2 className="big">
+              <TitleArt text="What the event aims to do." />
+            </h2>
           </div>
           <ul className="ticks">
             {OBJECTIVES.map((objective) => (
@@ -171,62 +201,15 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="sec light about-details" ref={detailsRef}>
+      <section className="brief" ref={detailsRef}>
         <div className="wrap">
-          <SectionHeading
-            kicker="Participation"
-            title="Eligibility and event format"
-            intro=""
-          />
-          <div className="info-grid">
-            {details.map(({ icon: Icon, label, value }) => (
-              <div className="info-card reveal-tile" key={label}>
-                <Icon size={22} />
-                <small>{label}</small>
-                <b>{value}</b>
-              </div>
-            ))}
+          <div className="brief-head">
+            <p className="brief-kicker">Participation</p>
+            <h2 className="brief-title">
+              <TitleArt text="Eligibility & event format" />
+            </h2>
           </div>
-        </div>
-      </section>
-
-      <section className="sec light alt about-organizers">
-        <div className="wrap">
-          <SectionHeading kicker="Organizers" title="Who organises the event" />
-          <div className="organizers">
-            <ScrollReveal>
-              <div className="org-card">
-                <h3>Organizing committee</h3>
-                <p>{TBA(EVENT.organizer, "Organizing committee")}</p>
-                <p>{TBA(EVENT.college, "Host college")}</p>
-                
-              </div>
-            </ScrollReveal>
-            <ScrollReveal delay={0.1}>
-              <dl className="details">
-                <div>
-                  <dt>Faculty coordinator</dt>
-                  <dd>{TBA(EVENT.facultyCoordinator, "Faculty coordinator")}</dd>
-                </div>
-                <div>
-                  <dt>Student coordinators</dt>
-                  <dd>
-                    <a href="tel:+916364744793">
-                      {TBA(EVENT.studentCoordinators, "Student coordinators")}
-                    </a>
-                  </dd>
-                </div>
-                <div>
-                  <dt>Contact</dt>
-                  <dd>
-                    <a href="tel:+919606802529">
-                      {contact || ANNOUNCING}
-                    </a>
-                  </dd>
-                </div>
-              </dl>
-            </ScrollReveal>
-          </div>
+          <MissionLobby items={details} />
         </div>
       </section>
 

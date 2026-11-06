@@ -54,6 +54,12 @@ export default function HeroLightFX() {
     // Tweens created in callbacks aren't tracked by gsap.context, so loops
     // check this flag and cleanup kills anything still running.
     let alive = true;
+    // Only spawn lights while the hero is actually on screen.
+    let onScreen = true;
+    const io = new IntersectionObserver(([entry]) => {
+      onScreen = entry.isIntersecting;
+    });
+    io.observe(field);
     const orbs = Array.from(field.querySelectorAll<HTMLElement>(".hlfx-orb"));
     const busy = new Set<HTMLElement>();
     gsap.set(orbs, { xPercent: -50, yPercent: -50, opacity: 0 });
@@ -150,9 +156,10 @@ export default function HeroLightFX() {
 
       travel(orb, tl.duration());
 
-      // Shape morphs a little while lit, so no two flashes look alike.
+      // Turns a little while lit, so no two flashes look alike. (Only the
+      // rotation is tweened: tweening border-radius forced a repaint of the
+      // light every frame and caused flicker while scrolling.)
       gsap.to(orb, {
-        borderRadius: randomBlob(),
         rotation: `+=${rand(-40, 40)}`,
         duration: tl.duration(),
         ease: "sine.inOut",
@@ -169,7 +176,7 @@ export default function HeroLightFX() {
         rand(r.x0, r.x1),
         rand(r.y0, r.y1),
         pick(SINGLE_COLORS),
-        scale * rand(0.5, 1.8), // uneven proportions → random shapes
+        scale * rand(0.5, 1.8), // uneven proportions -> random shapes
         scale * rand(0.5, 1.8),
         rand(0.22, 0.5) * peakScale,
       );
@@ -234,6 +241,11 @@ export default function HeroLightFX() {
     /** Irregular scheduler: long dark gaps, single pops, and quick bursts. */
     const schedule = () => {
       if (!alive) return;
+      // Hero scrolled out of view: spawn nothing, just check again shortly.
+      if (!onScreen) {
+        gsap.delayedCall(0.5, schedule);
+        return;
+      }
       const roll = Math.random();
       let next: number;
 
@@ -262,6 +274,7 @@ export default function HeroLightFX() {
 
     return () => {
       alive = false;
+      io.disconnect();
       gsap.killTweensOf(orbs);
       gsap.killTweensOf(schedule);
       gsap.set(orbs, { opacity: 0 });

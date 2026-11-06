@@ -183,3 +183,27 @@
   background: rgba(246, 235, 227, 0.18);
   transform: none;
 }
+
+/* Background art: much more visible. A soft dark pool sits behind the
+   centre column so the logo and text stay readable. */
+.hero--home .hero-bg.is-loaded {
+  opacity: 0.85;
+  filter: saturate(1.05) contrast(1.05) brightness(0.78);
+}
+
+.hero.hero--home .hero-scrim {
+  background:
+    radial-gradient(
+      ellipse 46% 62% at 50% 58%,
+      rgba(8, 9, 7, 0.55) 0%,
+      rgba(8, 9, 7, 0.25) 60%,
+      transparent 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(8, 9, 7, 0.55) 0%,
+      rgba(8, 9, 7, 0.08) 28%,
+      rgba(8, 9, 7, 0.12) 70%,
+      rgba(8, 9, 7, 0.9) 100%
+    );
+}

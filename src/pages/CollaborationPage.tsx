@@ -6,110 +6,72 @@ import { EVENT } from "../config/event";
 import { COLLABORATORS } from "../data/collaborators";
 import { useTitle } from "../hooks";
 import { gsap, ScrollTrigger } from "../animations/gsap";
+import "./CollaborationPage.css";
+import { TitleArt } from "../components/ui/TitleArt";
 
 export default function CollaborationPage() {
   useTitle(`Collaboration | ${EVENT.name}`);
   const sectionRef = useRef<HTMLElement>(null);
-  const showcaseRef = useRef<HTMLDivElement>(null);
-  const trackRef = useRef<HTMLUListElement>(null);
 
-  useGSAP(() => {
-    const mm = gsap.matchMedia();
-
-    mm.add("(prefers-reduced-motion: no-preference)", () => {
-      gsap.from(".collaboration-head > *", {
-        y: 34,
-        opacity: 0,
-        duration: 0.8,
-        stagger: 0.1,
-        ease: "power3.out",
+  useGSAP(
+    () => {
+      const mm = gsap.matchMedia();
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        gsap.from(".crew-head > *", {
+          y: 30,
+          opacity: 0,
+          duration: 0.8,
+          stagger: 0.1,
+          ease: "power3.out",
+        });
+        gsap.from(".crew-card", {
+          y: 50,
+          opacity: 0,
+          duration: 0.75,
+          stagger: 0.09,
+          delay: 0.25,
+          ease: "power3.out",
+        });
       });
-
-      gsap.from(".collaborator-card", {
-        y: 42,
-        opacity: 0,
-        duration: 0.7,
-        stagger: 0.08,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: showcaseRef.current,
-          start: "top 68%",
-          once: true,
-        },
-      });
-    });
-
-    mm.add("(min-width: 769px) and (prefers-reduced-motion: no-preference)", () => {
-      const showcase = showcaseRef.current;
-      const track = trackRef.current;
-      if (!showcase || !track) return;
-
-      const distance = () =>
-        Math.max(0, track.scrollWidth - document.documentElement.clientWidth);
-
-      if (!distance()) return;
-
-      gsap.to(track, {
-        x: () => -distance(),
-        ease: "none",
-        scrollTrigger: {
-          trigger: showcase,
-          start: "top top",
-          end: () => `+=${distance()}`,
-          scrub: 1,
-          pin: true,
-          anticipatePin: 1,
-          invalidateOnRefresh: true,
-        },
-      });
-    });
-
-    document.fonts?.ready.then(() => ScrollTrigger.refresh());
-
-    return () => mm.revert();
-  }, { scope: sectionRef });
+      document.fonts?.ready.then(() => ScrollTrigger.refresh());
+      return () => mm.revert();
+    },
+    { scope: sectionRef },
+  );
 
   return (
     <>
-      <section className="collaboration-page" ref={sectionRef}>
-        <div className="collaboration-showcase" ref={showcaseRef}>
-          <div className="wrap collaboration-head">
-            <p className="kicker">DECODEX / COLLABORATION</p>
-            <div className="collaboration-heading-row">
-              <h1>In Collaboration With</h1>
-              <p>
-                Together with these prestigious organizations, we create an unparalleled platform
-                for innovation and learning in signal processing.
-              </p>
-            </div>
-          </div>
-          <div className="collaborators-viewport">
-            <ul className="collaborators-track" ref={trackRef}>
-              {COLLABORATORS.map((collaborator, index) => (
-                <li className="collaborator-card" key={collaborator.name}>
-                  <span className="collaborator-index">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <div className="collaborator-logo">
-                    <img
-                      src={collaborator.logo}
-                      alt={`${collaborator.name} logo`}
-                      width={640}
-                      height={280}
-                      loading="lazy"
-                    />
-                  </div>
-                  <div className="collaborator-divider" aria-hidden="true" />
-                  <div className="collaborator-meta">
-                    <h2>{collaborator.name}</h2>
-                    <span></span>
-                 
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+      <section className="crew-page" ref={sectionRef}>
+        <img className="crew-bg" src="/assets/photos/GTA3-1920.jpg" alt="" aria-hidden="true" />
+        <div className="crew-scrim" aria-hidden="true" />
+
+        <div className="wrap crew-head">
+          <p className="crew-kicker">Collaboration</p>
+          <h1 className="crew-title">
+            <TitleArt text="In collaboration with" size="page" />
+          </h1>
+          <p className="crew-intro">
+            Together with these organisations, we create a platform for innovation and learning
+            in signal processing.
+          </p>
         </div>
+
+        <ul className="wrap crew-grid">
+          {COLLABORATORS.map((c, i) => (
+            <li className="crew-card" key={c.name}>
+              <span className="crew-ring">
+                <span className="crew-logo">
+                  <img src={c.logo} alt={`${c.name} logo`} width={800} height={400} loading="lazy" />
+                </span>
+              </span>
+              <h2 className="crew-name">{c.name}</h2>
+              <p className="crew-role">{c.role}</p>
+              <span className="crew-index" aria-hidden="true">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <Marquee />

@@ -1,3 +1,6 @@
 node_modules
 dist
 .DS_Store
+
+# Licensed desktop fonts: used only to render title images, never served or shared
+design-fonts/

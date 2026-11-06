@@ -1,0 +1,357 @@
+/* In-game "job lobby" for Eligibility & event format.
+   Menu: artwork banner, black sub-bar with counter, translucent rows with
+   the selected row inverted (cream with ink text). Preview: large artwork
+   that cross-fades per row, dark directional shade, condensed type. */
+
+.lobby {
+  --lb-cream: #f6ebe3;
+  --lb-ink: #120f10;
+  --lb-pink: #ff4f8b;
+  --lb-gold: #ffc83d;
+
+  display: grid;
+  gap: 22px;
+}
+
+.lobby--wide {
+  grid-template-columns: minmax(340px, 430px) 1fr;
+  align-items: stretch;
+}
+
+/* ---------------- Menu ---------------- */
+.lb-menu {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.lb-banner {
+  position: relative;
+  height: 96px;
+  overflow: hidden;
+  background: #000;
+}
+
+.lb-banner img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 40%;
+  opacity: 0.9;
+}
+
+.lb-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0) 60%);
+}
+
+.lb-banner-title {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding-left: 16px; /* left side, clear of the character's face */
+  line-height: 0;
+}
+
+.lb-banner-title .title-art {
+  --lh: 40px;
+}
+
+.lb-subbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 38px;
+  padding: 0 16px;
+  background: #000;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--lb-cream);
+}
+
+.lb-subbar span:last-child {
+  font-variant-numeric: tabular-nums;
+  color: rgba(246, 235, 227, 0.7);
+}
+
+.lb-rows {
+  display: flex;
+  flex-direction: column;
+}
+
+.lb-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 50px;
+  padding: 0 16px 0 18px;
+  border: 0;
+  border-top: 1px solid rgba(246, 235, 227, 0.06);
+  background: rgba(8, 6, 10, 0.74);
+  color: var(--lb-cream);
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.lb-row::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: var(--lb-pink);
+  transform: scaleY(0);
+  transition: transform 0.2s ease;
+}
+
+.lb-row-label {
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.lb-row-value {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-body, "Manrope", sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  color: rgba(246, 235, 227, 0.78);
+  white-space: nowrap;
+}
+
+.lb-chev {
+  width: 7px;
+  height: 11px;
+  opacity: 0;
+  transition: opacity 0.16s ease;
+}
+
+/* Selected row: inverted, like an in-game menu cursor. */
+.lb-row.is-active {
+  background: var(--lb-cream);
+  color: var(--lb-ink);
+}
+
+.lb-row.is-active::before {
+  transform: scaleY(1);
+}
+
+.lb-row.is-active .lb-row-value {
+  color: var(--lb-ink);
+}
+
+.lb-row.is-active .lb-chev {
+  opacity: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .lb-row:not(.is-active):hover {
+    background: rgba(28, 22, 32, 0.9);
+  }
+}
+
+.lb-row:focus-visible {
+  outline: 2px solid var(--lb-pink);
+  outline-offset: -2px;
+}
+
+.lb-help {
+  margin: 0;
+  padding: 10px 16px;
+  background: rgba(0, 0, 0, 0.78);
+  border-top: 1px solid rgba(246, 235, 227, 0.08);
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(246, 235, 227, 0.5);
+}
+
+/* ---------------- Preview (desktop) ---------------- */
+.lb-panel {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 460px;
+  background: #0b0910;
+  border: 1px solid rgba(246, 235, 227, 0.1);
+}
+
+.lb-art {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Light cinematic grade so event photos sit in the site's mood. */
+  filter: contrast(1.08) saturate(0.85) brightness(0.92);
+  will-change: opacity, transform;
+}
+
+.lb-panel-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    /* Text sits on the right; the characters in the artwork are on the left. */
+    linear-gradient(270deg, rgba(8, 6, 10, 0.92) 0%, rgba(8, 6, 10, 0.62) 40%, rgba(8, 6, 10, 0.05) 75%),
+    linear-gradient(0deg, rgba(8, 6, 10, 0.75) 0%, transparent 40%),
+    linear-gradient(135deg, rgba(255, 79, 139, 0.1), rgba(40, 120, 255, 0.08));
+}
+
+.lb-panel-text {
+  position: absolute;
+  right: 34px;
+  bottom: 54px;
+  z-index: 2;
+  max-width: min(460px, 60%);
+}
+
+.lb-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 10px;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--lb-cream);
+}
+
+.lb-tag svg {
+  color: var(--lb-pink);
+}
+
+.lb-tag span {
+  color: rgba(246, 235, 227, 0.4);
+}
+
+.lb-panel-sub {
+  margin: 0 0 6px;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--lb-gold);
+}
+
+.lb-panel-value p {
+  margin: 0;
+  font-family: var(--font-display, "Teko", sans-serif);
+  font-size: clamp(32px, 3.4vw, 50px);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--lb-cream);
+  text-shadow: 0 2px 20px rgba(0, 0, 0, 0.6);
+}
+
+.lb-panel-value p + p {
+  margin-top: 8px;
+  font-size: clamp(22px, 2.2vw, 30px);
+  color: rgba(246, 235, 227, 0.85);
+}
+
+.lb-pips {
+  position: absolute;
+  left: 34px;
+  right: 34px;
+  bottom: 24px;
+  z-index: 2;
+  display: flex;
+  gap: 6px;
+}
+
+.lb-pips span {
+  flex: 1;
+  height: 3px;
+  background: rgba(246, 235, 227, 0.18);
+  transition: background-color 0.3s ease;
+}
+
+.lb-pips span.is-on {
+  background: var(--lb-pink);
+}
+
+/* ---------------- Phones: inline detail ---------------- */
+.lb-detail {
+  position: relative;
+  overflow: hidden;
+  background: #0b0910;
+  animation: lb-open 0.35s ease-out;
+}
+
+.lb-detail-art {
+  display: block;
+  filter: contrast(1.08) saturate(0.85) brightness(0.92);
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.lb-detail-text {
+  position: relative;
+  margin-top: -64px;
+  padding: 0 16px 16px;
+  background: linear-gradient(0deg, #0b0910 55%, transparent);
+  padding-top: 40px;
+}
+
+.lb-detail .lb-value {
+  margin: 0;
+  font-family: var(--font-display, "Teko", sans-serif);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.05;
+  text-transform: uppercase;
+  color: var(--lb-cream);
+}
+
+@keyframes lb-open {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-detail {
+    animation: none;
+  }
+
+  .lb-row,
+  .lb-row::before,
+  .lb-chev,
+  .lb-pips span {
+    transition: none;
+  }
+}

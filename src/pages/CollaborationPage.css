@@ -1,0 +1,194 @@
+/* Collaboration page — neon city night: strong background art under a
+   purple/pink wash, capsule cards with a circular logo on top. */
+
+.crew-page {
+  --crew-pink: #ff4f8b;
+  --crew-purple: #2a0f4a;
+  --crew-cream: #f6ebe3;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(130px, 15vh, 170px) 0 clamp(80px, 10vh, 120px);
+  background: #12061f;
+  color: var(--crew-cream);
+}
+
+.crew-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+  opacity: 0.85;
+  filter: saturate(1.1) brightness(0.8);
+}
+
+.crew-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(255, 79, 139, 0.25), transparent 60%),
+    linear-gradient(
+      180deg,
+      rgba(30, 8, 52, 0.55) 0%,
+      rgba(36, 10, 64, 0.72) 40%,
+      rgba(18, 6, 31, 0.96) 100%
+    );
+}
+
+/* ---- Heading ---- */
+.crew-head {
+  text-align: center;
+}
+
+.crew-kicker {
+  margin: 0 0 10px;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(246, 235, 227, 0.75);
+}
+
+.crew-title {
+  margin: 0;
+  font-family: var(--font-display, "Teko", sans-serif);
+  font-size: clamp(44px, 7vw, 92px);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--crew-cream);
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.55);
+}
+
+.crew-intro {
+  max-width: 560px;
+  margin: 16px auto 0;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(246, 235, 227, 0.78);
+}
+
+/* ---- Cards ---- */
+.crew-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+  margin-top: clamp(48px, 7vh, 72px);
+  padding-left: 24px;
+  padding-right: 24px;
+  list-style: none;
+}
+
+.crew-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 200px;
+  padding: 10px 10px 34px;
+  border-radius: 110px 110px 100px 100px;
+  background: linear-gradient(180deg, rgba(58, 20, 100, 0.92), rgba(32, 10, 60, 0.95));
+  border: 1px solid rgba(246, 235, 227, 0.08);
+  box-shadow: 0 24px 50px -24px rgba(0, 0, 0, 0.8);
+  text-align: center;
+  transition:
+    transform 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+/* Gradient neon ring around the logo circle */
+.crew-ring {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  padding: 4px;
+  border-radius: 50%;
+  background: conic-gradient(from 200deg, #ff4f8b, #ff8a3d, #ffc83d, #28dcff, #8c3cdc, #ff4f8b);
+}
+
+.crew-logo {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #fff;
+  overflow: hidden;
+}
+
+.crew-logo img {
+  width: 82%;
+  height: auto;
+  object-fit: contain;
+}
+
+.crew-name {
+  margin: 18px 6px 0;
+  font-family: var(--font-body, "Manrope", sans-serif);
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--crew-cream);
+  text-wrap: balance;
+}
+
+.crew-role {
+  margin: 8px 0 0;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(246, 235, 227, 0.62);
+}
+
+.crew-index {
+  position: absolute;
+  bottom: 12px;
+  font-family: var(--font-display, "Teko", sans-serif);
+  font-size: 15px;
+  letter-spacing: 0.2em;
+  color: rgba(255, 79, 139, 0.7);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .crew-card:hover {
+    transform: translateY(-8px);
+    border-color: rgba(255, 79, 139, 0.45);
+    box-shadow:
+      0 30px 60px -24px rgba(0, 0, 0, 0.85),
+      0 0 40px -10px rgba(255, 79, 139, 0.55);
+  }
+}
+
+@media (max-width: 560px) {
+  .crew-grid {
+    gap: 18px;
+  }
+
+  .crew-card {
+    width: calc(50% - 9px);
+    max-width: 200px;
+  }
+
+  .crew-name {
+    font-size: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crew-card {
+    transition: none;
+  }
+}

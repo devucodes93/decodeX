@@ -1,0 +1,269 @@
+/* About page: brighter hero art, "What to expect" flip cards, and a themed
+   eligibility / format section. Selectors are scoped to win over the
+   stacked legacy rules in global.css. */
+
+/* ---------- Hero: let the background art show through ---------- */
+.about-hero .about-bg-img {
+  opacity: 1;
+  filter: saturate(1.05) contrast(1.05) brightness(0.85);
+}
+
+.about-hero .about-scrim {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 9, 7, 0.78) 0%,
+      rgba(8, 9, 7, 0.32) 55%,
+      rgba(8, 9, 7, 0.45) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(8, 9, 7, 0.45) 0%,
+      rgba(8, 9, 7, 0.05) 40%,
+      rgba(8, 9, 7, 0.85) 100%
+    );
+}
+
+.about-hero .about-heading {
+  font-family: var(--font-display, "Teko", sans-serif);
+  font-size: clamp(48px, 7vw, 96px);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+}
+
+.about-hero .about-description {
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
+}
+
+/* ---------- What to expect (mission select) ---------- */
+.expect {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(90px, 12vh, 130px) 0 clamp(90px, 12vh, 140px);
+  background: #0a080d;
+  color: #f6ebe3;
+}
+
+/* Large, very faint artwork + dark falloff behind the deck. */
+.expect-bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, #0a080d 0%, rgba(10, 8, 13, 0.82) 30%, rgba(10, 8, 13, 0.82) 70%, #0a080d 100%),
+    url("/assets/photos/GTA3-1920.jpg") center 35% / cover no-repeat;
+  filter: grayscale(0.4) blur(2px);
+  opacity: 0.55;
+}
+
+.expect-head {
+  margin-bottom: 44px;
+  text-align: center;
+}
+
+.expect-kicker,
+.brief-kicker {
+  margin: 0 0 10px;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: rgba(246, 235, 227, 0.7);
+}
+
+.expect-title,
+.brief-title {
+  margin: 0;
+  font-family: var(--font-display, "Teko", sans-serif);
+  font-size: clamp(40px, 5.6vw, 72px);
+  font-weight: 600;
+  line-height: 0.95;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #f6ebe3;
+}
+
+.expect-hint {
+  margin: 14px 0 0;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 11.5px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: rgba(246, 235, 227, 0.45);
+}
+
+/* ---------- Eligibility & event format ("mission lobby") ----------
+   Light section (the two sections above are dark). The lobby menu itself
+   stays dark, like a game screen placed on a light page. */
+.brief {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  padding: clamp(84px, 12vh, 130px) 0;
+  background:
+    linear-gradient(rgba(18, 15, 16, 0.045) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(90deg, rgba(18, 15, 16, 0.045) 1px, transparent 1px) 0 0 / 56px 56px,
+    radial-gradient(70% 60% at 85% 10%, rgba(255, 79, 139, 0.08), transparent 70%),
+    #f3ece1;
+  color: #120f10;
+}
+
+/* Hazard stripe along the top edge */
+.brief::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 10px;
+  z-index: 1;
+  background: repeating-linear-gradient(
+    -45deg,
+    #ffc83d 0 14px,
+    #120f10 14px 28px
+  );
+}
+
+.brief .brief-kicker {
+  color: rgba(18, 15, 16, 0.6);
+}
+
+/* Lobby on a light page: lift it off the background. */
+.brief .lb-menu,
+.brief .lb-panel {
+  box-shadow: 0 30px 60px -30px rgba(18, 15, 16, 0.55);
+}
+
+.brief .lb-row {
+  background: rgba(14, 11, 16, 0.92);
+}
+
+.brief .lb-help {
+  background: #0e0b10;
+}
+
+.brief-head {
+  margin-bottom: 40px;
+}
+
+/* ---------- About hero embedded on Home ---------- */
+.about-hero--section .about-hero-content {
+  padding-top: clamp(96px, 12vw, 140px);
+}
+
+.about-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 52px;
+  margin: 0 0 34px;
+  padding: 0 24px;
+  border: 1.5px solid #f6ebe3;
+  border-radius: 4px;
+  background: rgba(18, 15, 16, 0.35);
+  color: #f6ebe3;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.about-more svg {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.22s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.about-more:hover {
+  background: rgba(246, 235, 227, 0.12);
+}
+
+.about-more:hover svg {
+  transform: translateX(3px);
+}
+
+.about-more:focus-visible {
+  outline: 2px solid #f6ebe3;
+  outline-offset: 4px;
+}
+
+/* The hazard tape sits on its own line below the button */
+.about-more + .about-hazard-tape {
+  display: flex;
+}
+
+/* ======================================================================
+   Cinematic scroll layer (GSAP-driven; see AboutHero.tsx / Hero.tsx)
+   ====================================================================== */
+
+/* Artwork is slightly oversized so parallax never reveals an edge. */
+.about-hero .about-bg-img {
+  top: -8%;
+  bottom: auto;
+  height: 116%;
+  will-change: transform;
+}
+
+.about-hero .about-character {
+  will-change: transform;
+}
+
+/* ---- Home: About blends out of the hero (no hard seam) ----
+   The section overlaps the end of the hero. Its artwork, scrim and base
+   colour use a FIXED soft mask (transparent at the top), and GSAP fades the
+   artwork in over ~320px of scroll (see AboutHero.tsx). The mask itself is
+   never animated: animating it forced a full-screen repaint every frame,
+   which caused flicker on scroll. */
+.about-hero--section {
+  --fade-to: 300px;
+
+  z-index: 1;
+  margin-top: -200px;
+  background: linear-gradient(to bottom, transparent 0, #080807 var(--fade-to));
+}
+
+.about-hero--section .about-bg-img,
+.about-hero--section .about-scrim,
+.about-hero--section::after {
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-to));
+  mask-image: linear-gradient(to bottom, transparent 0, #000 var(--fade-to));
+}
+
+/* Content starts below the overlap/blend zone. */
+.about-hero--section .about-hero-content {
+  padding-top: calc(clamp(96px, 12vw, 140px) + 200px);
+}
+
+@media (max-width: 700px) {
+  .about-hero--section {
+    margin-top: -140px;
+    --fade-to: 240px;
+  }
+
+  .about-hero--section .about-hero-content {
+    padding-top: calc(clamp(96px, 12vw, 140px) + 140px);
+  }
+}
+
+/* Mission cards hint: desktop reveals on hover, phones on scroll. */
+.expect-hint--touch {
+  display: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .expect-hint--hover {
+    display: none;
+  }
+
+  .expect-hint--touch {
+    display: inline;
+  }
+}

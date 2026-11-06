@@ -1,0 +1,339 @@
+/* Mission-select cards: artwork first, dark cinematic overlay, condensed
+   type, accent colour used sparingly (marker, line, CTA). Active-state
+   motion is driven by GSAP in MissionDeck.tsx. */
+
+.mdeck {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.mcard {
+  --acc: 255, 79, 139;
+
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: clamp(400px, 34vw, 450px);
+  border-radius: 6px;
+  background: #0b0910;
+  color: #f6ebe3;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 26px 50px -30px rgba(0, 0, 0, 0.9);
+}
+
+.mcard--0 { --acc: 255, 79, 139; }   /* pink */
+.mcard--1 { --acc: 40, 220, 255; }   /* cyan */
+.mcard--2 { --acc: 255, 150, 60; }   /* orange */
+.mcard--3 { --acc: 170, 100, 255; }  /* purple */
+
+/* Thin frame that brightens a touch when active — not a neon border. */
+.mcard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border: 1px solid rgba(246, 235, 227, 0.1);
+  border-radius: inherit;
+  pointer-events: none;
+  transition: border-color 0.4s ease;
+}
+
+.mcard.is-active::after,
+.mcard:focus-visible::after {
+  border-color: rgba(var(--acc), 0.5);
+}
+
+/* ---- Layers ---- */
+.mcard-art {
+  position: absolute;
+  inset: -2% -4%;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: saturate(0.9) contrast(1.05);
+  opacity: 0.72;
+  transform-origin: 50% 60%;
+  will-change: transform;
+}
+
+.mcard-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(8, 6, 10, 0.6) 0%, rgba(8, 6, 10, 0) 24%),
+    linear-gradient(0deg, rgba(8, 6, 10, 0.85) 0%, rgba(8, 6, 10, 0.2) 34%, rgba(8, 6, 10, 0) 60%);
+}
+
+/* Extra bottom darkening that fades in with the text (GSAP). */
+.mcard-text-shade {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  background: linear-gradient(0deg, rgba(8, 6, 10, 0.96) 0%, rgba(8, 6, 10, 0.85) 34%, rgba(8, 6, 10, 0.3) 62%, transparent 82%);
+}
+
+/* ---- Idle prompt ---- */
+.mcard-prompt {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(246, 235, 227, 0.9);
+  text-shadow: 0 1px 10px rgba(0, 0, 0, 0.8);
+}
+
+.mcard-prompt-line {
+  position: relative;
+  flex: none;
+  width: 34px;
+  height: 1px;
+  overflow: hidden;
+  background: rgba(246, 235, 227, 0.25);
+}
+
+/* A short light sweeps along the line — a quiet "press to select" cue. */
+.mcard-prompt-line::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgb(var(--acc));
+  transform: translateX(-100%);
+  animation: mcard-sweep 2.4s ease-in-out infinite;
+}
+
+@keyframes mcard-sweep {
+  0% { transform: translateX(-100%); }
+  55%, 100% { transform: translateX(100%); }
+}
+
+.mcard-prompt-text--touch {
+  display: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .mcard-prompt-text--hover {
+    display: none;
+  }
+
+  .mcard-prompt-text--touch {
+    display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mcard-prompt-line::after {
+    animation: none;
+    transform: none;
+  }
+}
+
+.mcard-grain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---- Content ---- */
+.mcard-content {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 22px 22px 20px;
+}
+
+.mcard-id {
+  position: absolute;
+  top: 18px;
+  left: 22px;
+  right: 22px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(246, 235, 227, 0.85);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
+}
+
+.mcard-marker {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  background: rgb(var(--acc));
+  transform: rotate(45deg);
+}
+
+.mcard-sep {
+  color: rgba(246, 235, 227, 0.4);
+}
+
+/* Large mission number, set into the artwork rather than floating on top. */
+.mcard-bignum {
+  position: absolute;
+  right: 14px;
+  bottom: 38%;
+  font-family: var(--font-display, "Teko", sans-serif);
+  font-size: 120px;
+  font-weight: 600;
+  line-height: 0.8;
+  color: rgba(246, 235, 227, 0.1);
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.mcard-title {
+  margin: 0;
+  max-width: 11ch;
+  font-family: var(--font-display, "Teko", sans-serif);
+  font-size: clamp(34px, 2.8vw, 42px);
+  font-weight: 600;
+  line-height: 0.92;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: #f6ebe3;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+  opacity: 0;
+}
+
+/* Body is collapsed by default; GSAP animates height + opacity. */
+.mcard-reveal {
+  height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.mcard-body {
+  margin: 0;
+  padding-top: 10px;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(246, 235, 227, 0.8);
+}
+
+.mcard-line {
+  display: block;
+  height: 1px;
+  margin: 14px 0 10px;
+  background: linear-gradient(90deg, rgb(var(--acc)), rgba(var(--acc), 0.15));
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.mcard-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mcard-meta li {
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(246, 235, 227, 0.55);
+  opacity: 0;
+}
+
+.mcard-meta li:first-child {
+  color: rgba(var(--acc), 0.9);
+}
+
+.mcard-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #f6ebe3;
+  opacity: 0;
+}
+
+.mcard-cta svg {
+  width: 24px;
+  height: 12px;
+  color: rgb(var(--acc));
+}
+
+.mcard:focus-visible {
+  outline: 2px solid #f6ebe3;
+  outline-offset: 3px;
+}
+
+/* ---- Reduced motion: everything revealed, nothing animates ---- */
+.mdeck--static .mcard-reveal {
+  height: auto;
+  opacity: 1;
+}
+
+.mdeck--static .mcard-meta li,
+.mdeck--static .mcard-cta,
+.mdeck--static .mcard-title,
+.mdeck--static .mcard-text-shade {
+  opacity: 1;
+}
+
+.mdeck--static .mcard-prompt {
+  display: none;
+}
+
+.mdeck--static .mcard-line {
+  transform: none;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 1100px) {
+  .mdeck {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mcard {
+    height: clamp(380px, 52vw, 440px);
+  }
+}
+
+@media (max-width: 640px) {
+  .mdeck {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .mcard {
+    height: clamp(360px, 110vw, 440px);
+  }
+
+  .mcard-title {
+    max-width: 14ch;
+  }
+}

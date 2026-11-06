@@ -1,14 +1,21 @@
 import { useRef } from "react";
-import gsap from "gsap";
+import { gsap } from "./gsap";
 import { useGSAP } from "@gsap/react";
 
-export function useAboutAnimation() {
+/**
+ * Entrance animation for the About hero.
+ * @param onScroll play when the section scrolls into view (used on Home)
+ *                 instead of immediately on page load.
+ */
+export function useAboutAnimation(onScroll = false) {
   const container = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
       const el = container.current;
       if (!el) return;
+      // Respect reduced motion: leave everything in its final, static state.
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
 
       const heading = el.querySelector<HTMLElement>(".about-heading");
       const label = el.querySelector<HTMLElement>(".about-warning-label");
@@ -18,6 +25,7 @@ export function useAboutAnimation() {
 
       const timeline = gsap.timeline({
         defaults: { ease: "power3.out" },
+        scrollTrigger: onScroll ? { trigger: el, start: "top 70%", once: true } : undefined,
       });
 
       if (label) {
@@ -29,10 +37,19 @@ export function useAboutAnimation() {
       }
 
       if (heading) {
+        // Cinematic reveal: the title rises out of a mask (clipped from the
+        // top, opening upward) while sliding into place.
         timeline.fromTo(
           heading,
-          { opacity: 0, y: 35 },
-          { opacity: 1, y: 0, duration: 0.9 },
+          { clipPath: "inset(100% 0% 0% 0%)", y: 46, opacity: 0.35 },
+          {
+            clipPath: "inset(0% 0% 0% 0%)",
+            y: 0,
+            opacity: 1,
+            duration: 0.85,
+            ease: "power4.out",
+            clearProps: "clipPath",
+          },
           "-=0.2"
         );
       }
