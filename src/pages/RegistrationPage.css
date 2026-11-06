@@ -1,0 +1,32 @@
+/* Registration fee: note on its own line, then an aligned tier table
+   (team type left, amount right). */
+.facts .fee-block {
+  display: block;
+  margin-top: 6px;
+}
+
+.facts .fee-note {
+  display: block;
+  line-height: 1.6;
+}
+
+.facts .fee-tiers {
+  display: grid;
+  max-width: 380px;
+  margin-top: 10px;
+  border-top: 1px solid rgba(33, 31, 24, 0.12);
+}
+
+.facts .fee-tier {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(33, 31, 24, 0.12);
+}
+
+.facts .fee-tier b {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}

@@ -12,6 +12,7 @@ import { PageHeader } from "../components/sections/Blocks";
 import { PrimaryButton, ScrollReveal } from "../components/ui";
 import { EVENT, TBA, isSet } from "../config/event";
 import { useTitle } from "../hooks";
+import "./RegistrationPage.css";
 
 const CHECKLIST = [
   "Review the confirmed eligibility and team size.",
@@ -28,7 +29,24 @@ export default function RegistrationPage() {
     { icon: Calendar, label: "Event date", value: TBA(EVENT.dateLabel, "Date") },
     { icon: Clock, label: "Registration deadline", value: TBA(EVENT.registrationDeadline, "Deadline") },
     { icon: Users, label: "Team size", value: TBA(EVENT.teamSize, "Team size") },
-    { icon: IndianRupee, label: "Registration fee", value: TBA(EVENT.fee, "Fee") },
+    {
+      icon: IndianRupee,
+      label: "Registration fee",
+      // Structured: note on its own line, then an aligned tier table.
+      value: (
+        <span className="fee-block">
+          <span className="fee-note">{EVENT.feeNote}</span>
+          <span className="fee-tiers">
+            {EVENT.feeTiers.map((t) => (
+              <span className="fee-tier" key={t.label}>
+                <span>{t.label}</span>
+                <b>{t.amount}</b>
+              </span>
+            ))}
+          </span>
+        </span>
+      ),
+    },
     { icon: MapPin, label: "Venue", value: TBA(EVENT.venue, "Venue") },
     { icon: Laptop, label: "Mode", value: TBA(EVENT.mode, "Mode") },
     { icon: Trophy, label: "Prize pool", value: TBA(EVENT.prizePool, "Prize pool") },
@@ -37,7 +55,7 @@ export default function RegistrationPage() {
 
   return (
     <>
-      <PageHeader kicker="DECODEX / APPLY" title="Register for the challenge"
+      <PageHeader kicker="DECODEX / APPLY" title="Register for the challenge" bright
         intro={`Registration opens ${EVENT.registrationOpens} and closes ${EVENT.registrationDeadline}. The Unstop registration URL has not been confirmed; registration is not yet live.`}
       />
       <section className="sec light reg">

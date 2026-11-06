@@ -38,7 +38,15 @@ export const EVENT = {
   // Participation
   teamSize: "2–4 members",
   eligibility: "Students pursuing bachelor's degrees",
-  fee: "",
+  // Registration fee (confirmed). Paid only by the top 30 qualified teams.
+  fee: "Qualifier free · Top 30 teams ₹1,000–₹1,500",
+  feeTiers: [
+    { label: "Non-IEEE members", amount: "₹1,500" },
+    { label: "Min. 2 IEEE members", amount: "₹1,000" },
+    { label: "Min. 1 IEEE SPS member", amount: "₹1,000" },
+  ],
+  feeNote:
+    "The registration fee is applicable only to the top 30 qualified teams. The qualifier round is free for all.",
 
   // Prizes
   prizePool: "₹50,000",
@@ -82,3 +90,8 @@ export const isSet = (value?: string) => Boolean(value && value.trim());
 
 /** The label used for any required value that is not confirmed yet. */
 export const ANNOUNCING = "To be announced";
+
+/** Full fee explanation (note + every tier), for FAQ / registration text. */
+export const FEE_DETAILS = `${EVENT.feeNote} Fees: ${EVENT.feeTiers
+  .map((t) => `${t.label} ${t.amount}`)
+  .join("; ")}.`;

@@ -267,3 +267,113 @@
     display: inline;
   }
 }
+
+/* ======================================================================
+   About page "stage": one artwork spans the hero AND the purpose section
+   ====================================================================== */
+.about-stage {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: #080807;
+}
+
+/* Taller than the stage so the slow parallax (AboutPage.tsx) never shows
+   an edge. Cover + a tall box means the image's full height is used. */
+.about-stage-bg {
+  position: absolute;
+  top: -4%;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 108%;
+  object-fit: cover;
+  object-position: center top;
+  filter: saturate(1.05) contrast(1.05) brightness(0.85);
+  will-change: transform;
+}
+
+/* Readability: darker behind the hero copy (left), lighter through the
+   middle, darker again under the purpose text, then fading to the dark
+   "What to expect" section so there is no seam. */
+.about-stage-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(8, 9, 7, 0.5) 0%,
+      rgba(8, 9, 7, 0.08) 22%,
+      rgba(8, 9, 7, 0.2) 48%,
+      rgba(8, 9, 7, 0.72) 74%,
+      #0a080d 100%
+    ),
+    linear-gradient(90deg, rgba(8, 9, 7, 0.55) 0%, rgba(8, 9, 7, 0.1) 60%, rgba(8, 9, 7, 0.3) 100%);
+}
+
+.about-stage > .film {
+  z-index: 1;
+}
+
+/* The hero sits on the shared artwork: no background of its own. */
+.about-hero.about-hero--shared {
+  z-index: 2;
+  background: transparent;
+}
+
+.about-hero.about-hero--shared::after {
+  content: none; /* no scanline overlay on the shared artwork */
+}
+
+/* ---- Purpose section on the artwork ---- */
+.about-purpose.about-purpose--on-art {
+  position: relative;
+  z-index: 2;
+  background: transparent;
+  color: #f6ebe3;
+  padding-top: clamp(40px, 6vh, 80px);
+  padding-bottom: clamp(90px, 12vh, 140px);
+}
+
+.about-purpose--on-art .kicker {
+  color: rgba(246, 235, 227, 0.75);
+}
+
+.about-purpose--on-art .lede {
+  color: rgba(246, 235, 227, 0.88);
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.7);
+}
+
+/* Swapped layout on desktop: description on the LEFT, title on the RIGHT.
+   On phones the title still comes first. */
+@media (min-width: 961px) {
+  .about-purpose--on-art .two {
+    align-items: center;
+  }
+
+  .about-purpose--on-art .two > :first-child {
+    order: 2;
+    text-align: right;
+  }
+
+  .about-purpose--on-art .two > :last-child {
+    order: 1;
+  }
+}
+
+/* Phones: tighten the gap between Purpose and What to expect
+   (was ~180px of combined padding). */
+@media (max-width: 700px) {
+  .about-purpose.about-purpose--on-art {
+    padding-bottom: 36px;
+  }
+
+  .expect {
+    padding-top: 44px;
+  }
+
+  .expect-head {
+    margin-bottom: 28px;
+  }
+}

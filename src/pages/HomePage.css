@@ -1,0 +1,27 @@
+/* Home: Register section blends out of the About section above.
+   - Same base colour as the bottom of the About section (no seam).
+   - The artwork is masked so its top edge fades in from transparent.
+   - GSAP scrubs --finale 0 -> 1 on scroll (HomePage.tsx): the artwork fades
+     up and settles from a slight push-in. Default 1 = finished state (no JS
+     or reduced motion). */
+.home-finale {
+  --finale: 1;
+}
+
+.home-finale .rcta.rcta--has-bg {
+  background-color: #080807;
+}
+
+.home-finale .rcta.rcta--has-bg::before {
+  opacity: calc(0.55 * var(--finale));
+  transform: scale(calc(1.08 - 0.08 * var(--finale)));
+  transform-origin: 50% 30%;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 260px);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 260px);
+}
+
+@media (max-width: 700px) {
+  .home-finale .rcta.rcta--has-bg::before {
+    opacity: calc(0.45 * var(--finale));
+  }
+}

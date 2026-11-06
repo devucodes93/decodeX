@@ -23,6 +23,9 @@ export function useAboutAnimation(onScroll = false) {
       const character = el.querySelector<HTMLElement>(".about-character");
       const tape = el.querySelectorAll<HTMLElement>(".about-hazard-tape");
 
+      // Flipped layout (About page): text on the right, character on the left.
+      const dir = el.classList.contains("about-hero--flip") ? -1 : 1;
+
       const timeline = gsap.timeline({
         defaults: { ease: "power3.out" },
         scrollTrigger: onScroll ? { trigger: el, start: "top 70%", once: true } : undefined,
@@ -31,7 +34,7 @@ export function useAboutAnimation(onScroll = false) {
       if (label) {
         timeline.fromTo(
           label,
-          { opacity: 0, x: -20 },
+          { opacity: 0, x: -20 * dir },
           { opacity: 1, x: 0, duration: 0.6 }
         );
       }
@@ -66,7 +69,7 @@ export function useAboutAnimation(onScroll = false) {
       if (character) {
         timeline.fromTo(
           character,
-          { opacity: 0, x: 90, y: 25 },
+          { opacity: 0, x: 90 * dir, y: 25 },
           { opacity: 0.78, x: 0, y: 0, duration: 1.3 },
           "-=0.7"
         );

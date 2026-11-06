@@ -337,3 +337,19 @@
     max-width: 14ch;
   }
 }
+
+/* Layout swap: reveal prompt at the TOP, mission label (Mission 01 /
+   codename) at the BOTTOM. Revealed content stacks above the label. */
+.mcard-prompt {
+  top: 20px;
+  bottom: auto;
+}
+
+.mcard-id {
+  top: auto;
+  bottom: 18px;
+}
+
+.mcard-content {
+  padding-bottom: 50px; /* room for the mission label */
+}

@@ -521,3 +521,121 @@
   }
 }
 
+
+/* ======================================================================
+   Enhancements: three.js route + GSAP details (layout unchanged)
+   ====================================================================== */
+
+/* WebGL "signal route" layer, above the image overlays, below content. */
+.timeline-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+}
+
+.timeline-scene.is-ready {
+  opacity: 0.9;
+}
+
+.timeline-scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Cards sit over a live canvas: a backdrop blur would be recomputed every
+   frame. The card background is already near-opaque, so drop the blur. */
+.journey-card {
+  backdrop-filter: none;
+}
+
+/* Glowing blip riding the tip of the progress line (GSAP moves it). */
+.journey-line-head {
+  position: absolute;
+  top: 28px;
+  left: 50%;
+  z-index: 3;
+  width: 9px;
+  height: 9px;
+  margin: -4.5px 0 0 -4.5px;
+  border-radius: 50%;
+  background: #fff3cc;
+  box-shadow:
+    0 0 0 3px rgba(231, 196, 106, 0.25),
+    0 0 18px 4px rgba(231, 196, 106, 0.7);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Active stage: marker sends out a soft radar ping. */
+.journey-marker::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid rgba(231, 196, 106, 0.7);
+  opacity: 0;
+}
+
+.journey-entry.is-active .journey-marker::after {
+  animation: journey-ping 2.2s ease-out infinite;
+}
+
+@keyframes journey-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(3.2);
+    opacity: 0;
+  }
+}
+
+/* Active card: one gold sheen sweeps across when it becomes active. */
+.journey-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  pointer-events: none;
+  background: linear-gradient(100deg, transparent, rgba(231, 196, 106, 0.14), transparent);
+  transform: skewX(-18deg);
+  opacity: 0;
+}
+
+.journey-entry.is-active .journey-card::after {
+  animation: journey-sheen 1.1s ease-out 0.1s 1 both;
+}
+
+@keyframes journey-sheen {
+  0% {
+    left: -60%;
+    opacity: 1;
+  }
+  100% {
+    left: 130%;
+    opacity: 1;
+  }
+}
+
+@media (max-width: 900px) {
+  .journey-line-head {
+    left: 7px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .journey-line-head {
+    display: none;
+  }
+
+  .journey-entry.is-active .journey-marker::after,
+  .journey-entry.is-active .journey-card::after {
+    animation: none;
+  }
+}

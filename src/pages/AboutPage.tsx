@@ -53,7 +53,7 @@ const EXPECT: Mission[] = [
 ];
 
 export default function AboutPage() {
-  useTitle(`About | ${EVENT.name}`);
+  useTitle(`Mission Briefing | ${EVENT.name}`);
   const purposeRef = useRef<HTMLElement>(null);
   const detailsRef = useRef<HTMLElement>(null);
   // Full values come from src/config/event.ts; `short` is the compact text
@@ -97,55 +97,57 @@ ${EVENT.duration}`,
     },
     {
       label: "Registration fee",
-      short: isSet(EVENT.fee) ? EVENT.fee : "TBA",
-      value: TBA(EVENT.fee, "Fee"),
+      short: "Qualifier free",
+      value: "Qualifier round: free\nTop 30 teams: ₹1,000–₹1,500",
+      details: [...EVENT.feeTiers.map((t) => `${t.label}: ${t.amount}`), "Paid only by the top 30 qualified teams."],
       tag: "Buy-in",
       icon: "ticket",
     },
   ];
 
+  // Shared hero + purpose artwork: slow parallax drift across the stage.
   useGSAP(() => {
-    const purposeSection = purposeRef.current;
-
+    const stage = purposeRef.current?.closest<HTMLElement>(".about-stage");
+    const bg = stage?.querySelector<HTMLElement>(".about-stage-bg");
     const mm = gsap.matchMedia();
 
     mm.add("(prefers-reduced-motion: no-preference)", () => {
-
-      if (purposeSection) {
-        const layers = Array.from(
-          purposeSection.querySelectorAll<HTMLElement>(".parallax-background [data-speed]")
-        );
-        layers.forEach((layer) => {
-          const speed = Number(layer.dataset.speed || 0.1);
-          gsap.to(layer, {
-            y: () => -window.innerHeight * speed,
-            ease: "none",
-            scrollTrigger: {
-              trigger: purposeSection,
-              start: "top bottom",
-              end: "bottom top",
-              scrub: 1,
-              invalidateOnRefresh: true,
-            },
-          });
-        });
-      }
+      if (!stage || !bg) return;
+      const touch = window.matchMedia("(hover: none), (pointer: coarse)").matches;
+      gsap.fromTo(
+        bg,
+        { yPercent: 0 },
+        {
+          yPercent: 8,
+          ease: "none",
+          force3D: true,
+          scrollTrigger: { trigger: stage, start: "top top", end: "bottom top", scrub: touch ? 0.4 : 1 },
+        },
+      );
     });
 
     document.fonts?.ready.then(() => ScrollTrigger.refresh());
     return () => mm.revert();
-  }, { scope: detailsRef });
+  }, { dependencies: [] });
 
   return (
     <>
-      <AboutHero />
+      {/* One artwork spans the hero AND the purpose section. */}
+      <div className="about-stage">
+        <img
+          className="about-stage-bg"
+          src="/assets/photos/GTA4.jpg"
+          alt=""
+          aria-hidden="true"
+          loading="eager"
+          fetchPriority="high"
+        />
+        <div className="about-stage-scrim" aria-hidden="true" />
+        <div className="film" aria-hidden="true" />
 
-      <section className="sec light about-purpose" ref={purposeRef}>
-        <div className="parallax-background" aria-hidden="true">
-          <span className="parallax-glow glow-one" data-speed="0.12" />
-          <span className="parallax-glow glow-two" data-speed="0.2" />
-          <span className="parallax-ring" data-speed="0.08" />
-        </div>
+      <AboutHero sharedBackground />
+
+      <section className="sec about-purpose about-purpose--on-art" ref={purposeRef}>
         <div className="wrap two">
           <ScrollReveal>
             <p className="kicker">Purpose</p>
@@ -163,6 +165,7 @@ ${EVENT.duration}`,
           </ScrollReveal>
         </div>
       </section>
+      </div>
 
       <section className="expect">
         <div className="expect-bg" aria-hidden="true" />

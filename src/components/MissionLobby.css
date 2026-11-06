@@ -13,9 +13,11 @@
   gap: 22px;
 }
 
-.lobby--wide {
-  grid-template-columns: minmax(340px, 430px) 1fr;
-  align-items: stretch;
+@media (min-width: 900px) {
+  .lobby {
+    grid-template-columns: minmax(340px, 430px) 1fr;
+    align-items: stretch;
+  }
 }
 
 /* ---------------- Menu ---------------- */
@@ -262,9 +264,11 @@
 .lb-panel-value p {
   margin: 0;
   font-family: var(--font-display, "Teko", sans-serif);
-  font-size: clamp(32px, 3.4vw, 50px);
+  /* One size for every line and every row, so the preview text is
+     consistent as you move through the menu. */
+  font-size: clamp(26px, 2.6vw, 38px);
   font-weight: 600;
-  line-height: 1;
+  line-height: 1.05;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   color: var(--lb-cream);
@@ -273,8 +277,6 @@
 
 .lb-panel-value p + p {
   margin-top: 8px;
-  font-size: clamp(22px, 2.2vw, 30px);
-  color: rgba(246, 235, 227, 0.85);
 }
 
 .lb-pips {
@@ -298,60 +300,91 @@
   background: var(--lb-pink);
 }
 
-/* ---------------- Phones: inline detail ---------------- */
-.lb-detail {
-  position: relative;
-  overflow: hidden;
-  background: #0b0910;
-  animation: lb-open 0.35s ease-out;
-}
-
-.lb-detail-art {
-  display: block;
-  filter: contrast(1.08) saturate(0.85) brightness(0.92);
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-}
-
-.lb-detail-text {
-  position: relative;
-  margin-top: -64px;
-  padding: 0 16px 16px;
-  background: linear-gradient(0deg, #0b0910 55%, transparent);
-  padding-top: 40px;
-}
-
-.lb-detail .lb-value {
-  margin: 0;
-  font-family: var(--font-display, "Teko", sans-serif);
-  font-size: 28px;
-  font-weight: 600;
-  line-height: 1.05;
-  text-transform: uppercase;
-  color: var(--lb-cream);
-}
-
-@keyframes lb-open {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
+/* ---------------- Phones: compact pinned layout ----------------
+   Preview on top, compact menu below, sized so the whole lobby fits on a
+   phone screen while it is pinned under the navbar. */
+@media (max-width: 899px) {
+  .lobby {
+    gap: 10px;
   }
-  to {
-    opacity: 1;
-    transform: none;
+
+  .lb-panel {
+    order: -1;
+    min-height: 0;
+    height: clamp(190px, 30vh, 260px);
+  }
+
+  .lb-panel-text {
+    left: 18px;
+    right: 18px;
+    bottom: 34px;
+    max-width: none;
+  }
+
+  .lb-panel-value p {
+    font-size: clamp(22px, 6.4vw, 28px);
+  }
+
+  .lb-pips {
+    left: 18px;
+    right: 18px;
+    bottom: 16px;
+  }
+
+  .lb-banner {
+    display: none;
+  }
+
+  .lb-row {
+    min-height: 42px;
+  }
+
+  .lb-row-label {
+    font-size: 12px;
+  }
+
+  .lb-row-value {
+    font-size: 13px;
+  }
+
+  .lb-help {
+    padding: 8px 16px;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .lb-detail {
-    animation: none;
-  }
-
   .lb-row,
   .lb-row::before,
   .lb-chev,
   .lb-pips span {
     transition: none;
+  }
+}
+
+/* Small detail lines under the preview value (e.g. fee tiers). */
+.lb-details {
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-tech, "Chakra Petch", sans-serif);
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(246, 235, 227, 0.82);
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.7);
+}
+
+.lb-details li:last-child {
+  margin-top: 4px;
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(246, 235, 227, 0.6);
+}
+
+/* Phones: the compact pinned panel has no room for detail lines; the full
+   breakdown is on the Register page and in the FAQ. */
+@media (max-width: 899px) {
+  .lb-details {
+    display: none;
   }
 }

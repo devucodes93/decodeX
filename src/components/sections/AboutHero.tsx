@@ -12,9 +12,12 @@ type AboutHeroProps = {
   /** "page" = top of the About page (h1, animates on load).
    *  "section" = embedded on Home (h2, animates on scroll, shows Learn more). */
   variant?: "page" | "section";
+  /** About page: the artwork is drawn once by a parent wrapper that spans
+   *  the hero AND the purpose section, so the hero skips its own. */
+  sharedBackground?: boolean;
 };
 
-export function AboutHero({ variant = "page" }: AboutHeroProps) {
+export function AboutHero({ variant = "page", sharedBackground = false }: AboutHeroProps) {
   const isSection = variant === "section";
   const container = useAboutAnimation(isSection);
   const Heading = isSection ? "h2" : "h1";
@@ -36,8 +39,12 @@ export function AboutHero({ variant = "page" }: AboutHeroProps) {
           end: "bottom top",
           scrub: touch ? 0.4 : 1,
         };
-        gsap.fromTo(".about-bg-img", { yPercent: isSection ? -6 : 0 }, { yPercent: 6, ease: "none", force3D: true, scrollTrigger: range });
-        gsap.fromTo(".about-character", { yPercent: isSection ? -4 : 0 }, { yPercent: 4, ease: "none", scrollTrigger: range });
+        if (!sharedBackground) {
+          gsap.fromTo(".about-bg-img", { yPercent: isSection ? -6 : 0 }, { yPercent: 6, ease: "none", force3D: true, scrollTrigger: range });
+        }
+        if (!sharedBackground) {
+          gsap.fromTo(".about-character", { yPercent: isSection ? -4 : 0 }, { yPercent: 4, ease: "none", scrollTrigger: range });
+        }
         gsap.fromTo(".about-hazard-tape", { y: isSection ? -14 : 0 }, { y: 14, ease: "none", scrollTrigger: range });
 
         if (isSection) {
@@ -60,30 +67,40 @@ export function AboutHero({ variant = "page" }: AboutHeroProps) {
   );
 
   return (
-    <div className={`about-hero${isSection ? " about-hero--section" : ""}`} ref={container}>
-      <img
-        className="about-bg-img"
-        src="/assets/photos/GTA4.jpg"
-        alt=""
-        aria-hidden="true"
-        loading={isSection ? "lazy" : "eager"}
-        fetchPriority={isSection ? "auto" : "high"}
-      />
-      <div className="about-scrim" aria-hidden="true" />
-      <div className="film" aria-hidden="true" />
-      <img
-        src="/assets/photos/char1.png"
-        className="about-character"
-        alt=""
-        aria-hidden="true"
-        loading={isSection ? "lazy" : "eager"}
-        decoding="async"
-      />
+    <div
+      className={`about-hero${isSection ? " about-hero--section" : ""}${sharedBackground ? " about-hero--shared" : ""}`}
+      ref={container}
+    >
+      {!sharedBackground && (
+        <>
+          <img
+            className="about-bg-img"
+            src="/assets/photos/GTA4.jpg"
+            alt=""
+            aria-hidden="true"
+            loading={isSection ? "lazy" : "eager"}
+            fetchPriority={isSection ? "auto" : "high"}
+          />
+          <div className="about-scrim" aria-hidden="true" />
+          <div className="film" aria-hidden="true" />
+        </>
+      )}
+      {/* Character art: Home section only (removed from the About page). */}
+      {!sharedBackground && (
+        <img
+          src="/assets/photos/char1.png"
+          className="about-character"
+          alt=""
+          aria-hidden="true"
+          loading={isSection ? "lazy" : "eager"}
+          decoding="async"
+        />
+      )}
 
       <div className="about-hero-content">
         <span className="about-warning-label">DECODEX / ABOUT</span>
         <Heading className="about-heading">
-          <TitleArt text="About the challenge" size="page" />
+          <TitleArt text="Mission Briefing" size="page" />
         </Heading>
         <p className="about-description">{EVENT.description}</p>
         {isSection && (

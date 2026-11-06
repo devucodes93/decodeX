@@ -1,0 +1,25 @@
+/* FAQ hero: GTA3 artwork, more visible than the default page header
+   (default .phead-bg is opacity 0.4, darkened and desaturated). */
+.faq-hero .phead-bg {
+  opacity: 0.8;
+  object-position: center 35%;
+  filter: saturate(0.95) contrast(1.05) brightness(0.8);
+}
+
+/* Lighter overlay so the artwork shows; still dark on the left behind the
+   title and at the bottom edge. */
+.faq-hero .phead-scrim {
+  background:
+    linear-gradient(
+      90deg,
+      rgba(8, 9, 7, 0.82) 0%,
+      rgba(8, 9, 7, 0.35) 58%,
+      rgba(8, 9, 7, 0.5) 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(8, 9, 7, 0.45) 0%,
+      rgba(8, 9, 7, 0.08) 46%,
+      rgba(8, 9, 7, 0.85) 100%
+    );
+}

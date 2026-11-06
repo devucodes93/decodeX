@@ -82,5 +82,23 @@
     "w": 1022,
     "h": 163,
     "lines": 1
+  },
+  "Mission Briefing": {
+    "src": "/assets/titles/mission-briefing.png",
+    "w": 1228,
+    "h": 169,
+    "lines": 1
+  },
+  "Mission Schedule": {
+    "src": "/assets/titles/mission-schedule.png",
+    "w": 1308,
+    "h": 163,
+    "lines": 1
+  },
+  "Crew Allies": {
+    "src": "/assets/titles/crew-allies.png",
+    "w": 899,
+    "h": 135,
+    "lines": 1
   }
 }

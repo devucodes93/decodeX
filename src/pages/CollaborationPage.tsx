@@ -48,7 +48,7 @@ export default function CollaborationPage() {
         <div className="wrap crew-head">
           <p className="crew-kicker">Collaboration</p>
           <h1 className="crew-title">
-            <TitleArt text="In collaboration with" size="page" />
+            <TitleArt text="Crew Allies" size="page" />
           </h1>
           <p className="crew-intro">
             Together with these organisations, we create a platform for innovation and learning
@@ -61,7 +61,7 @@ export default function CollaborationPage() {
             <li className="crew-card" key={c.name}>
               <span className="crew-ring">
                 <span className="crew-logo">
-                  <img src={c.logo} alt={`${c.name} logo`} width={800} height={400} loading="lazy" />
+                  <img src={c.logo} alt={`${c.name} logo`} width={600} height={600} loading="lazy" />
                 </span>
               </span>
               <h2 className="crew-name">{c.name}</h2>

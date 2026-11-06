@@ -1,8 +1,9 @@
-import { useRef } from "react";
+﻿import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import { gsap, ScrollTrigger } from "../animations/gsap";
 import { TIMELINE } from "../data/timeline";
 import JourneyEventCard from "./JourneyEventCard";
+import { TitleArt } from "./ui/TitleArt";
 import "./EventJourneyMap.css";
 
 const EVENTS = TIMELINE.map((event, index) => ({
@@ -13,6 +14,7 @@ const EVENTS = TIMELINE.map((event, index) => ({
 export default function EventJourneyMap() {
   const sectionRef = useRef<HTMLElement>(null);
   const lineRef = useRef<HTMLSpanElement>(null);
+  const headRef = useRef<HTMLSpanElement>(null);
 
   useGSAP(
     () => {
@@ -63,6 +65,26 @@ export default function EventJourneyMap() {
           );
         }
 
+        // Glowing blip rides the tip of the progress line (same scroll range).
+        const lineTrack = section.querySelector<HTMLElement>(".journey-line");
+        if (headRef.current && lineTrack && timeline) {
+          gsap.fromTo(
+            headRef.current,
+            { y: 0 },
+            {
+              y: () => lineTrack.offsetHeight,
+              ease: "none",
+              scrollTrigger: {
+                trigger: timeline,
+                start: "top 72%",
+                end: "bottom 76%",
+                scrub: 0.8,
+                invalidateOnRefresh: true,
+              },
+            },
+          );
+        }
+
         if (entries.length) {
           const cardTl = gsap.timeline({
             scrollTrigger: {
@@ -81,10 +103,11 @@ export default function EventJourneyMap() {
 
             cardTl.fromTo(
               card,
-              { y: 26, autoAlpha: 0 },
+              { y: 26, autoAlpha: 0, rotateX: 12, transformPerspective: 900, transformOrigin: "50% 0%" },
               {
                 y: 0,
                 autoAlpha: 1,
+                rotateX: 0,
                 duration: 0.7,
                 ease: "power3.out",
               },
@@ -159,9 +182,7 @@ export default function EventJourneyMap() {
           <p className="journey-eyebrow">Event timeline</p>
           <div className="journey-heading-row">
             <h1 id="journey-title">
-              Every stage,
-              <br />
-              <span>clearly mapped.</span>
+              <TitleArt text="Mission Schedule" size="page" />
             </h1>
             <p className="journey-subtitle">
               From the first registration window to the final offline build,
@@ -174,6 +195,7 @@ export default function EventJourneyMap() {
           <div className="journey-line" aria-hidden="true">
             <span ref={lineRef} className="journey-line-progress" />
           </div>
+          <span ref={headRef} className="journey-line-head" aria-hidden="true" />
 
           <ol className="journey-list">
             {EVENTS.map((event, index) => (

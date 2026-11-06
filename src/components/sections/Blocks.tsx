@@ -14,13 +14,19 @@ export const PageHeader = ({
   title,
   intro,
   kicker = "DECODEX / FIELD NOTES",
+  image = ASSETS.gtaCity,
+  bright = false,
 }: {
   title: string;
   intro: string;
   kicker?: string;
+  /** Background artwork (defaults to the shared city plate). */
+  image?: string;
+  /** Show the background artwork more strongly (higher opacity, lighter overlay). */
+  bright?: boolean;
 }) => (
-  <section className="phead">
-    <img className="phead-bg" src={ASSETS.gtaCity} alt="" aria-hidden="true" loading="eager" fetchPriority="high" />
+  <section className={`phead${bright ? " phead--bright" : ""}`}>
+    <img className="phead-bg" src={image} alt="" aria-hidden="true" loading="eager" fetchPriority="high" />
     <div className="phead-scrim" aria-hidden="true" />
     <div className="grain" aria-hidden="true" />
     <div className="wrap">

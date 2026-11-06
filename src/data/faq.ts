@@ -1,5 +1,5 @@
 import type { FAQItem } from "../types";
-import { ANNOUNCING, EVENT, isSet } from "../config/event";
+import { ANNOUNCING, EVENT, FEE_DETAILS, isSet } from "../config/event";
 
 const value = (input: string, fallback: string) => (isSet(input) ? input : fallback);
 const contact = () => {
@@ -26,10 +26,7 @@ export const FAQ: FAQItem[] = [
   },
   {
     q: "Is there a registration fee?",
-    a: value(
-      EVENT.fee,
-      "The registration fee has not been announced. Any fee and payment process will be published on the registration page.",
-    ),
+    a: FEE_DETAILS,
   },
   {
     q: "What is the registration deadline?",

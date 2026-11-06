@@ -4,6 +4,7 @@ import { FAQ } from "../data/faq";
 import { EVENT, isSet } from "../config/event";
 import { CharacterImage } from "../components/ui";
 import { useTitle } from "../hooks";
+import "./FAQPage.css";
 
 export default function FAQPage() {
   useTitle(`FAQ | ${EVENT.name}`);
@@ -13,6 +14,7 @@ export default function FAQPage() {
       <section className="faq-hero">
         <PageHeader
           kicker="DECODEX / HELP DESK"
+          image="/assets/photos/GTA3-1920.jpg"
           title="Frequently asked questions"
           intro="Confirmed information about eligibility, teams, registration, and the online and offline challenge schedule."
         />

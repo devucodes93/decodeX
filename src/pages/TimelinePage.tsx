@@ -9,7 +9,7 @@ import { gsap } from "../animations/gsap";
 
 export default function TimelinePage() {
   const timelineRef = useRef<HTMLDivElement>(null);
-  useTitle(`Timeline | ${EVENT.name}`);
+  useTitle(`Mission Schedule | ${EVENT.name}`);
 
   useGSAP(
     () => {

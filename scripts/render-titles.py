@@ -45,7 +45,14 @@ TITLES = {
     "Results": ["Results"],
     "Page not found": ["Page not found"],
     "DecodeX 2026": ["DecodeX 2026"],
+    "Mission Briefing": ["Mission Briefing"],
+    "Mission Schedule": ["Mission Schedule"],
+    "Crew Allies": ["Crew Allies"],
 }
+
+# Optional per-title overrides of the default title look, e.g.
+#   "Some title": {"fill": (r, g, b, a), "stroke": 5, "shadow": (7, 7)}
+STYLES: dict = {}
 
 # Look: cream fill, heavy black outline, hard drop shadow (classic crime-caper
 # title treatment), matching the site's cream/ink palette.
@@ -62,7 +69,11 @@ def slug(text: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 
-def render(lines: list[str], font: ImageFont.FreeTypeFont) -> Image.Image:
+def render(lines: list[str], font: ImageFont.FreeTypeFont, style=None) -> Image.Image:
+    style = style or {}
+    fill = style.get("fill", FILL)
+    STROKE = style.get("stroke", globals()["STROKE"])
+    SHADOW = style.get("shadow", globals()["SHADOW"])
     probe = ImageDraw.Draw(Image.new("RGBA", (1, 1)))
     boxes = [probe.textbbox((0, 0), ln, font=font, stroke_width=STROKE) for ln in lines]
     widths = [b[2] - b[0] for b in boxes]
@@ -78,9 +89,10 @@ def render(lines: list[str], font: ImageFont.FreeTypeFont) -> Image.Image:
         x = PAD - b[0]
         y = PAD - asc_pad + i * line_h
         # Hard shadow (filled + stroked so it is as fat as the outlined text)
-        d.text((x + SHADOW[0], y + SHADOW[1]), ln, font=font, fill=INK,
-               stroke_width=STROKE, stroke_fill=INK)
-        d.text((x, y), ln, font=font, fill=FILL, stroke_width=STROKE, stroke_fill=INK)
+        if SHADOW != (0, 0):
+            d.text((x + SHADOW[0], y + SHADOW[1]), ln, font=font, fill=INK,
+                   stroke_width=STROKE, stroke_fill=INK)
+        d.text((x, y), ln, font=font, fill=fill, stroke_width=STROKE, stroke_fill=INK)
 
     return img.crop(img.getbbox())
 
@@ -93,8 +105,10 @@ def main() -> None:
 
     manifest = {}
     for key, lines in TITLES.items():
-        name = slug(" ".join(lines))
-        img = render(lines, font)
+        name = slug(" ".join(lines)) or "title"
+        if key in STYLES:
+            name += "-badge"
+        img = render(lines, font, STYLES.get(key))
         path = OUT_DIR / f"{name}.png"
         img.save(path, optimize=True)
         manifest[key] = {

@@ -5229,3 +5229,22 @@ h4,
   transform: none;
   box-shadow: none;
 }
+
+/* Longer nav names (Mission Briefing / Mission Schedule / Crew Allies) stay on one line. */
+.dnav a {
+  white-space: nowrap;
+}
+
+/* Page header with stronger background artwork (e.g. Register page).
+   Same treatment as the FAQ hero: default .phead-bg is 0.4 opacity,
+   darkened and desaturated. */
+.phead.phead--bright .phead-bg {
+  opacity: 0.8;
+  filter: saturate(0.95) contrast(1.05) brightness(0.8);
+}
+
+.phead.phead--bright .phead-scrim {
+  background:
+    linear-gradient(90deg, rgba(8, 9, 7, 0.82) 0%, rgba(8, 9, 7, 0.35) 58%, rgba(8, 9, 7, 0.5) 100%),
+    linear-gradient(180deg, rgba(8, 9, 7, 0.45) 0%, rgba(8, 9, 7, 0.08) 46%, rgba(8, 9, 7, 0.85) 100%);
+}
