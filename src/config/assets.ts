@@ -14,4 +14,5 @@ export const ASSETS = {
 
   hero: "/assets/photos/GTA1.jpg",
   title: "/assets/photos/decodex-title.png",
+  title2: "/assets/photos/decodex-title-footer.png",
 };

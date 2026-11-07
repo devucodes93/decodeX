@@ -1,0 +1,74 @@
+.gta4 { position: relative; width: 210px; aspect-ratio: 1; max-width: 100%; margin: 8px 0 24px; }
+.gta4--fixed { position: fixed; left: 18px; bottom: 18px; z-index: 50; margin: 0; }
+
+.gta4 .gta4-radar {
+  position: absolute; inset: 11%;
+  border-radius: 50%; overflow: hidden; background: #2a3037;
+  border: 3px solid #000;
+  box-shadow: 0 0 0 1.5px rgba(255,255,255,.5), 0 8px 20px rgba(0,0,0,.75);
+}
+
+.gta4 .gta4-tiles {
+  position: absolute; left: 50%; top: 50%; width: 0; height: 0;
+  transform: scale(1.5); /* closer, radar-like view */
+}
+.gta4 .gta4-tile {
+  position: absolute; width: 256px; height: 256px; max-width: none;
+  user-select: none; pointer-events: none;
+  /* lift the dark canvas: lighter roads, cold blue-grey GTA IV tone */
+  filter: brightness(1.6) contrast(1.3) sepia(.25) hue-rotate(170deg) saturate(.9);
+}
+
+.gta4 .gta4-tint { position: absolute; inset: 0; background: rgba(60,85,115,.18); mix-blend-mode: screen; pointer-events: none; }
+.gta4 .gta4-vignette { position: absolute; inset: 0; border-radius: 50%; box-shadow: inset 0 0 16px 3px rgba(0,0,0,.65); pointer-events: none; }
+
+.gta4 .gta4-north {
+  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+  color: #e5453a; font: 800 11px/1 "Arial Narrow", Impact, sans-serif;
+  text-shadow: 1px 1px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000;
+  pointer-events: none;
+}
+
+.gta4 .gta4-arrow {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 3px rgba(0,0,0,.95)); pointer-events: none;
+}
+.gta4 .gta4-pulse {
+  position: absolute; left: 50%; top: 50%; width: 26px; height: 26px; margin: -13px 0 0 -13px;
+  border-radius: 50%; border: 2px solid rgba(255,255,255,.7);
+  animation: gta4-ping 1.8s ease-out infinite; pointer-events: none;
+}
+@keyframes gta4-ping { from { transform: scale(.5); opacity: 1; } to { transform: scale(1.9); opacity: 0; } }
+
+/* tiny "open in maps" icon, only visible on hover */
+.gta4 .gta4-hint {
+  position: absolute; left: 50%; bottom: 9px; transform: translateX(-50%);
+  width: 20px; height: 20px; display: grid; place-items: center; border-radius: 50%;
+  color: #fff; background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.4);
+  opacity: 0; transition: opacity .15s; pointer-events: none;
+}
+.gta4 .gta4-radar:hover .gta4-hint { opacity: 1; }
+
+/* the click target: whole circle */
+.gta4 .gta4-link {
+  position: absolute; inset: 0; display: block; margin: 0; padding: 0;
+  border-radius: 50%; cursor: pointer; z-index: 5;
+}
+
+.gta4 .gta4-ring { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
+.gta4 .gta4-ring path { fill: none; stroke-width: 2.6; stroke-linecap: butt; }
+.gta4 .gta4-track { stroke: rgba(0,0,0,.75); stroke-width: 3.4; }
+.gta4 .gta4-fill--health { stroke: #6fbf6b; }
+.gta4 .gta4-fill--armor { stroke: #6aa4dc; }
+
+.gta4 .gta4-controls { position: absolute; right: -4px; top: 14%; display: flex; flex-direction: column; gap: 5px; }
+.gta4 .gta4-btn {
+  width: 22px; height: 22px; padding: 0; display: grid; place-items: center; cursor: pointer;
+  color: #fff; background: rgba(0,0,0,.75); border: 1px solid rgba(255,255,255,.35); border-radius: 50%;
+}
+.gta4 .gta4-btn:hover { background: #000; border-color: #fff; }
+
+.gta4 .gta4-credit {
+  position: absolute; left: 0; bottom: -18px; display: block;
+  font-size: 8px; line-height: 1; opacity: .45; white-space: nowrap;
+}

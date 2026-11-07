@@ -26,10 +26,10 @@ export const EVENT = {
   date: "2026-11-22T10:00:00+05:30",
   dateLabel:
     "• 22 November 2026 | 10:00 AM – 12:00 PM (Online Qualifier)\n• 27–28 November 2026 (24-hour Offline Challenge)",
-  registrationOpens: "03 November 2026",
+  registrationOpens: "08 November 2026",
   registrationDeadline: "20 November 2026",
   venue: "BMS Institute of Technology and Management, Bengaluru",
-  mode: "Online qualifier followed by an offline challenge",
+  mode: "Online qualifier followed by",
   duration: "24-hour offline challenge",
   qualifierDate: "22 November 2026",
   qualifierTime: "10:00 AM – 12:00 PM",
@@ -58,7 +58,7 @@ export const EVENT = {
   },
 
   // Registration and contact
-  registrationUrl: "", // Replace with the confirmed Unstop URL. Keep empty until then.
+  registrationUrl: "https://unstop.com/hackathons/decodex-26-enter-the-mission-decode-the-unknown-bms-institute-of-technology-and-management-bmsitm-bangalore-1794529", // Replace with the confirmed Unstop URL. Keep empty until then.
   contact: {
     person: "Mohith K Aralikatte",
     email: "", // Replace with confirmed contact email address(es).
@@ -79,6 +79,15 @@ export const EVENT = {
   resultsHeading: "Results",
   resultsBody:
     "The organizers have not published the results yet. Verified results will be posted on this page when they are available.",
+  //location
+  location: {
+  name: "BMS Institute of Technology and Management",
+  lat: 13.1331,
+  lng: 77.5685,
+  zoom: 15,
+  // optional: opens this search in Google Maps instead of raw coordinates
+  query: "BMS Institute of Technology and Management, Yelahanka, Bengaluru",
+},
 };
 
 /** Returns the value, or a clear "to be announced" label when it is empty. */
