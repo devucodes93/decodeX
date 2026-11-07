@@ -3,7 +3,8 @@ import { Mail, Phone, MapPin, User } from "lucide-react";
 import { EVENT, isSet } from "../../config/event";
 import { NAV } from "../../config/navigation";
 import { ASSETS } from "../../config/assets";
-import { Img } from "../ui";
+import { Img  } from "../ui";
+import{MiniMap} from "../ui/MiniMap";
 
 const socialLabel = (key: string) => key.charAt(0).toUpperCase() + key.slice(1);
 
@@ -16,7 +17,7 @@ export function SiteFooter() {
         <div>
           <div className="fbrand">
             <Img
-              src={ASSETS.title}
+              src={ASSETS.title2}
               alt={EVENT.name}
               className="fbrand-title"
               loading="eager"
@@ -64,14 +65,10 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h3>Location</h3>
-          <p>
-            <MapPin size={15} /> BMS Institute of Technology and Management,
-            Bengaluru.
-          </p>
-          <h3>Event format</h3>
-          <p>Online qualifier followed by an offline challenge.</p>
-        </div>
+  <h3>Location</h3>
+  <MiniMap location={EVENT.location} />
+  
+</div>
         <div>
           <h3>Contact</h3>
           {isSet(EVENT.contact.email) ? (
