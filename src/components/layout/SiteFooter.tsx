@@ -93,13 +93,13 @@ export function SiteFooter() {
           <p>
             <User size={15} /> Kirthana JL
           </p>
-          <a href="tel:+916364744793">
+          <a href="https://wa.me/916364744793" target="_blank" rel="noopener noreferrer">
             <Phone size={15} /> +91 63647 44793
           </a>
           <p>
             <User size={15} /> Mohith K Aralikatte
           </p>{" "}
-          <a href="tel:+919606802529">
+          <a href="https://wa.me/919606802529" target="_blank" rel="noopener noreferrer">
             <Phone size={15} /> +91 96068 02529
           </a>
           {isSet(EVENT.facultyCoordinator) && (
