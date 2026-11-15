@@ -101,6 +101,16 @@ export default function RegistrationPage() {
               <li>Open the official registration link when it is published.</li>
               <li>Complete the form and watch for confirmation from the organizers.</li>
             </ol>
+            <p className="body reg-docs">
+              Official document:{" "}
+              <a href={EVENT.rulesUrl} target="_blank" rel="noopener noreferrer">
+                Rules &amp; regulations
+              </a>{" "}
+              |{" "}
+              <a href={EVENT.conductUrl} target="_blank" rel="noopener noreferrer">
+                Code of conduct
+              </a>
+            </p>
             <PrimaryButton href={EVENT.registrationUrl} disabled={!live}>
               {live ? "Open the official registration form" : "Registration link coming soon"}
             </PrimaryButton>
