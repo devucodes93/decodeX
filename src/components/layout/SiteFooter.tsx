@@ -116,7 +116,14 @@ export function SiteFooter() {
             <a href={EVENT.privacyUrl}>Privacy policy</a>
           )}
           {isSet(EVENT.conductUrl) && (
-            <a href={EVENT.conductUrl}>Code of conduct</a>
+            <a href={EVENT.conductUrl} target="_blank" rel="noopener noreferrer">
+              Code of conduct
+            </a>
+          )}
+          {isSet(EVENT.rulesUrl) && (
+            <a href={EVENT.rulesUrl} target="_blank" rel="noopener noreferrer">
+              Rules &amp; regulations
+            </a>
           )}
         </span>
       </div>

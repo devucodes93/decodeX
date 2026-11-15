@@ -72,7 +72,9 @@ export const EVENT = {
     github: "",
   } as Record<string, string>,
   privacyUrl: "",
-  conductUrl: "",
+  // Official document: page 1 = Code of Conduct, pages 2-4 = Rules & Regulations.
+  conductUrl: "/assets/pdf/decodex-rules.pdf",
+  rulesUrl: "/assets/pdf/decodex-rules.pdf#page=2",
   announcement: "", // optional top banner. Empty = no banner
 
   // Results page (keep SHOW_RESULTS false until results are verified)

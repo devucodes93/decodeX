@@ -86,7 +86,17 @@ export default function RegistrationPage() {
           <ScrollReveal delay={0.12}>
             <h2>How to register</h2>
             <ol className="how">
-              <li>Read the official event rules and eligibility criteria.</li>
+              <li>
+                Read the official{" "}
+                <a href={EVENT.rulesUrl} target="_blank" rel="noopener noreferrer">
+                  rules &amp; regulations
+                </a>{" "}
+                and{" "}
+                <a href={EVENT.conductUrl} target="_blank" rel="noopener noreferrer">
+                  code of conduct
+                </a>
+                .
+              </li>
               <li>Form a team within the allowed team size.</li>
               <li>Open the official registration link when it is published.</li>
               <li>Complete the form and watch for confirmation from the organizers.</li>
