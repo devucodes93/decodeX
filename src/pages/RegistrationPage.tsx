@@ -18,7 +18,7 @@ const CHECKLIST = [
   "Review the confirmed eligibility and team size.",
   "Confirm your team size and collect your teammates' details.",
   "Register between 03 November 2026 and 20 November 2026.",
-  "Use the official registration link when it is published.",
+  "Use the official registration link on Unstop.",
 ];
 
 export default function RegistrationPage() {
@@ -56,7 +56,7 @@ export default function RegistrationPage() {
   return (
     <>
       <PageHeader kicker="DECODEX / APPLY" title="Register for the challenge" bright
-        intro={`Registration opens ${EVENT.registrationOpens} and closes ${EVENT.registrationDeadline}. The Unstop registration URL has not been confirmed; registration is not yet live.`}
+        intro={`Registration opens ${EVENT.registrationOpens} and closes ${EVENT.registrationDeadline}.`}
       />
       <section className="sec light reg">
         <div className="wrap two">
@@ -86,31 +86,11 @@ export default function RegistrationPage() {
           <ScrollReveal delay={0.12}>
             <h2>How to register</h2>
             <ol className="how">
-              <li>
-                Read the official{" "}
-                <a href={EVENT.rulesUrl} target="_blank" rel="noopener noreferrer">
-                  rules &amp; regulations
-                </a>{" "}
-                and{" "}
-                <a href={EVENT.conductUrl} target="_blank" rel="noopener noreferrer">
-                  code of conduct
-                </a>
-                .
-              </li>
+              <li>Read the official event rules and eligibility criteria.</li>
               <li>Form a team within the allowed team size.</li>
-              <li>Open the official registration link when it is published.</li>
+              <li>Open the official registration link on Unstop.</li>
               <li>Complete the form and watch for confirmation from the organizers.</li>
             </ol>
-            <p className="body reg-docs">
-              Official document:{" "}
-              <a href={EVENT.rulesUrl} target="_blank" rel="noopener noreferrer">
-                Rules &amp; regulations
-              </a>{" "}
-              |{" "}
-              <a href={EVENT.conductUrl} target="_blank" rel="noopener noreferrer">
-                Code of conduct
-              </a>
-            </p>
             <PrimaryButton href={EVENT.registrationUrl} disabled={!live}>
               {live ? "Open the official registration form" : "Registration link coming soon"}
             </PrimaryButton>

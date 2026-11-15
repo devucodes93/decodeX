@@ -228,8 +228,7 @@ export const RegistrationCTA = ({ hasBg = false }: { hasBg?: boolean }) => (
         <TitleArt text="Register for the challenge." />
       </h2>
       <p>
-        Registration opens {EVENT.registrationOpens} and closes {EVENT.registrationDeadline}. The
-        official registration link will be shared once confirmed.
+        Registration opens {EVENT.registrationOpens} and closes {EVENT.registrationDeadline}.
       </p>
       {EVENT.registrationUrl ? (
         <PrimaryButton href={EVENT.registrationUrl}>Register on the official portal</PrimaryButton>

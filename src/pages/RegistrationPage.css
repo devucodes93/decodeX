@@ -31,20 +31,3 @@
   white-space: nowrap;
 }
 
-/* Rules / code of conduct links above the register button: plain text
-   line, links clearly visible (accent colour, bold, underlined). */
-.reg-docs {
-  margin: 0 0 16px;
-}
-
-.reg-docs a {
-  color: #d6336c;
-  font-weight: 700;
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-thickness: 1.5px;
-}
-
-.reg-docs a:hover {
-  color: #a3204f;
-}
