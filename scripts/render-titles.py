@@ -48,11 +48,23 @@ TITLES = {
     "Mission Briefing": ["Mission Briefing"],
     "Mission Schedule": ["Mission Schedule"],
     "Crew Allies": ["Crew Allies"],
+    # Hidden CTF portal (/ctf, /ctf-admin)
+    "Mission Login": ["Mission Login"],
+    "Briefing Room": ["Briefing Room"],
+    "Control Room": ["Control Room"],
+    "Admin Login": ["Admin Login"],
+    "Event Ended": ["Event Ended"],
+    "Mission Passed": ["Mission Passed"],
+    "Heist Complete": ["Heist Complete"],
 }
 
 # Optional per-title overrides of the default title look, e.g.
 #   "Some title": {"fill": (r, g, b, a), "stroke": 5, "shadow": (7, 7)}
-STYLES: dict = {}
+GOLD = (255, 200, 61, 255)
+STYLES: dict = {
+    "Mission Passed": {"fill": GOLD},
+    "Heist Complete": {"fill": GOLD},
+}
 
 # Look: cream fill, heavy black outline, hard drop shadow (classic crime-caper
 # title treatment), matching the site's cream/ink palette.

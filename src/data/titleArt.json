@@ -100,5 +100,47 @@
     "w": 899,
     "h": 135,
     "lines": 1
+  },
+  "Mission Login": {
+    "src": "/assets/titles/mission-login.png",
+    "w": 1000,
+    "h": 169,
+    "lines": 1
+  },
+  "Briefing Room": {
+    "src": "/assets/titles/briefing-room.png",
+    "w": 1052,
+    "h": 169,
+    "lines": 1
+  },
+  "Control Room": {
+    "src": "/assets/titles/control-room.png",
+    "w": 1049,
+    "h": 135,
+    "lines": 1
+  },
+  "Admin Login": {
+    "src": "/assets/titles/admin-login.png",
+    "w": 868,
+    "h": 197,
+    "lines": 1
+  },
+  "Event Ended": {
+    "src": "/assets/titles/event-ended.png",
+    "w": 904,
+    "h": 163,
+    "lines": 1
+  },
+  "Mission Passed": {
+    "src": "/assets/titles/mission-passed-badge.png",
+    "w": 1153,
+    "h": 163,
+    "lines": 1
+  },
+  "Heist Complete": {
+    "src": "/assets/titles/heist-complete-badge.png",
+    "w": 1186,
+    "h": 169,
+    "lines": 1
   }
 }

@@ -23,7 +23,7 @@ export const EVENT = {
   studentCoordinators: "Kirthana JL",
 
   // When and where
-  date: "2026-11-22T10:00:00+05:30",
+  date: "2026-11-16T10:00:00+05:30",
   dateLabel:
     "• 22 November 2026 | 10:00 AM – 12:00 PM (Online Qualifier)\n• 27–28 November 2026 (24-hour Offline Challenge)",
   registrationOpens: "08 November 2026",

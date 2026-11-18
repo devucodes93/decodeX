@@ -4,3 +4,11 @@ dist
 
 # Licensed desktop fonts: used only to render title images, never served or shared
 design-fonts/
+
+# Local environment (Supabase keys)
+.env
+.env.local
+.env.*.local
+
+# Local SQL with test passwords
+backend/supabase/*.local.sql
