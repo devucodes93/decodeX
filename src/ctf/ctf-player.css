@@ -34,6 +34,14 @@
   }
 }
 
+/* Let the background art show through more on the dense pages; the glass
+   panels keep the text readable. */
+.ctf--player.ctf--dim .ctf-bg::after {
+  background:
+    linear-gradient(90deg, rgba(8, 6, 8, 0.86) 0%, rgba(8, 6, 8, 0.55) 55%, rgba(8, 6, 8, 0.78) 100%),
+    linear-gradient(0deg, rgba(8, 6, 8, 0.85) 0%, rgba(8, 6, 8, 0.1) 60%);
+}
+
 /* Shared glass surfaces */
 .ctf--player :is(.ctf-access, .ctf-rules, .ctf-menu, .ctf-mission, .ctf-debrief-card, .ctf-modal) {
   border: 1px solid var(--glass-line);

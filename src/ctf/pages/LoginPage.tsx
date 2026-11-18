@@ -13,7 +13,7 @@ export default function LoginPage() {
   if (api.getSession()) return <Navigate to={CTF_PATHS.lobby} replace />;
 
   return (
-    <CtfShell art={ASSETS.gtaCity} artPosition="30% 40%" title="Mission login" className="ctf--player">
+    <CtfShell art={ASSETS.ctfBg} artPosition="center 55%" title="Mission login" className="ctf--player">
       <main className="ctf-gate">
         <section className="ctf-gate-intro">
           <p className="ctf-kicker">DECODEX {EVENT.edition} // Virtual CTF</p>

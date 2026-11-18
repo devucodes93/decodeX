@@ -48,7 +48,7 @@ export default function LobbyPage() {
   const status = !event ? "Connecting" : closed ? "Ended" : live ? "Live" : "Standby";
 
   return (
-    <CtfShell art={ASSETS.gtaCity} artPosition="30% 40%" tone="dim" title="Briefing room" className="ctf--player">
+    <CtfShell art={ASSETS.ctfBg} artPosition="center 55%" tone="dim" title="Briefing room" className="ctf--player">
       <CtfHud label="Virtual CTF" onLogout={logout}>
         <HudStat label="Crew" value={session.teamName} />
         <HudStat label="Status" value={<span className={`ctf-pill is-${status.toLowerCase()}`}>{status}</span>} />

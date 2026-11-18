@@ -13,6 +13,8 @@ export const ASSETS = {
   gtaPhone: "/assets/photos/GTA_PHONE.jpg",
 
   hero: "/assets/photos/GTA1.jpg",
+  // CTF participant pages background (1920px copy of /assets/titles/ctf1.jpg).
+  ctfBg: "/assets/photos/ctf-bg.jpg",
   title: "/assets/photos/decodex-title.png",
   title2: "/assets/photos/decodex-title-footer.png",
 };

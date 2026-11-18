@@ -78,7 +78,7 @@ export default function PlayPage() {
   const clockMs = player?.startedAt ? (player.finishedAt ?? now) - player.startedAt : 0;
 
   return (
-    <CtfShell art={ASSETS.gtaCity} artPosition="30% 40%" tone="dim" title={done ? "Debrief" : "Missions"} className="ctf--player">
+    <CtfShell art={ASSETS.ctfBg} artPosition="center 55%" tone="dim" title={done ? "Debrief" : "Missions"} className="ctf--player">
       <CtfHud label={practice ? "Practice mode" : "Virtual CTF"} onLogout={logout}>
         {player && (
           <>
