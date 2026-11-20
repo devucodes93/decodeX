@@ -9,6 +9,7 @@
 // never returned to any browser (players or admins).
 
 import { createClient, type RealtimeChannel, type SupabaseClient } from "@supabase/supabase-js";
+import { defaultLinkLabel } from "./links";
 
 /* ------------------------------------------------------------------ types */
 
@@ -37,9 +38,11 @@ export type Mission = {
 };
 
 export type MissionSlot = {
-  id: string;
+  /** Null for locked missions. */
+  id: string | null;
   order: number;
-  points: number;
+  /** Null for locked missions. */
+  points: number | null;
   status: "solved" | "practice" | "current" | "locked";
   /** Null for locked missions so their names don't leak. */
   title?: string | null;
@@ -70,7 +73,7 @@ export type LeaderboardRow = {
   score: number;
   solved: number;
   total: number;
-  /** From the team's start to its last correct flag. */
+  /** From the event start (set by organisers) to the team's last scoring flag. */
   timeTakenMs: number | null;
   lastSolveAt: number | null;
   finished: boolean;
@@ -248,18 +251,43 @@ function emit() {
   }, wait);
 }
 
+/**
+ * True on the control room. Only admin screens subscribe to database row
+ * changes: player screens never could read those rows, and subscribing ~120
+ * of them would make Supabase run a permission check per player per change.
+ */
+let adminMode = false;
+
 function ensureChannel() {
   if (channel || !isBackendConfigured) return;
   channel = db().channel("ctf-live", { config: { broadcast: { self: false } } });
+  // Organiser actions (hints, event, missions, teams) ping everyone.
   channel.on("broadcast", { event: "changed" }, emit);
-  // Row changes reach admins only (row-level security filters them).
-  for (const table of ["ctf_progress", "ctf_solves", "ctf_hints", "ctf_audit"]) {
-    channel.on("postgres_changes", { event: "*", schema: "public", table }, emit);
+  if (adminMode) {
+    for (const table of ["ctf_progress", "ctf_solves", "ctf_hints", "ctf_audit"]) {
+      channel.on("postgres_changes", { event: "*", schema: "public", table }, emit);
+    }
   }
   channel.subscribe();
 }
 
-/** Tells every open player screen to refetch (no data is sent). */
+function resetChannel() {
+  void channel?.unsubscribe();
+  channel = null;
+  if (listeners.size) ensureChannel();
+}
+
+function setAdminMode(on: boolean) {
+  if (adminMode === on) return;
+  adminMode = on;
+  resetChannel();
+}
+
+/**
+ * Tells every open screen to refetch (no data is sent). Used only for
+ * organiser actions; players' own logins and captures are not broadcast,
+ * so 120 screens don't reload every time any team scores.
+ */
 function ping(scope: string) {
   emit();
   if (!isBackendConfigured) return;
@@ -267,12 +295,26 @@ function ping(scope: string) {
   void channel?.send({ type: "broadcast", event: "changed", payload: { scope } });
 }
 
+/** Backup refresh for player screens in case the live connection drops. */
+const PLAYER_BACKUP_MS = 60_000;
+let backupTimer: number | null = null;
+
 /** Calls `onChange` whenever CTF data may have changed. */
 export function subscribe(onChange: () => void): () => void {
   listeners.add(onChange);
   ensureChannel();
+  if (backupTimer === null) {
+    backupTimer = window.setInterval(() => {
+      // The control room has its own faster poll.
+      if (!adminMode && document.visibilityState === "visible") emit();
+    }, PLAYER_BACKUP_MS);
+  }
   return () => {
     listeners.delete(onChange);
+    if (!listeners.size && backupTimer !== null) {
+      window.clearInterval(backupTimer);
+      backupTimer = null;
+    }
   };
 }
 
@@ -287,8 +329,8 @@ export function getSession(): TeamSession | null {
 export async function login(email: string, password: string): Promise<TeamSession> {
   const res = await rpc<StoredTeamSession>("ctf_team_login", { p_team_id: email.trim(), p_password: password });
   writeTeamSession(res);
-  // Lets the team's other device notice that its session just ended.
-  ping("session");
+  // Not broadcast: the team's other device finds out its session ended on
+  // its next request (any action, or the 60-second backup refresh).
   return { teamId: res.teamId, teamName: res.teamName };
 }
 
@@ -313,7 +355,9 @@ export async function getPlayerState(): Promise<PlayerState> {
 
 export async function submitFlag(missionId: string, flag: string): Promise<SubmitResult> {
   const res = await rpc<SubmitResult>("ctf_submit_flag", { p_token: token(), p_mission_id: missionId, p_flag: flag });
-  if (res.correct) ping("solve");
+  // Refresh this screen only. Other teams aren't told; the control room
+  // sees the capture through its own live database feed.
+  if (res.correct) emit();
   return res;
 }
 
@@ -332,6 +376,7 @@ export async function getAdminSession(): Promise<AdminSession | null> {
   if (!user) return null;
   const { data: ok, error } = await db().rpc("ctf_is_admin");
   if (error || !ok) return null;
+  setAdminMode(true);
   return { email: user.email ?? "" };
 }
 
@@ -344,17 +389,17 @@ export async function adminLogin(email: string, password: string): Promise<Admin
     throw new Error(ERRORS.FORBIDDEN);
   }
   // Reconnect realtime with the admin's token so row changes come through.
-  channel?.unsubscribe();
-  channel = null;
-  ensureChannel();
+  adminMode = true;
+  resetChannel();
   return { email: data.user.email ?? "" };
 }
 
 export async function adminLogout(): Promise<void> {
   if (isBackendConfigured) await db().auth.signOut();
+  setAdminMode(false);
 }
 
-/** Standings: points high to low, then fastest time. Admin only. */
+/** Standings: points high to low; equal points go to whoever scored their last flag first (real time). Admin only. */
 export async function getLeaderboard(): Promise<LeaderboardRow[]> {
   return rpc<LeaderboardRow[]>("ctf_admin_leaderboard");
 }
@@ -384,7 +429,11 @@ export async function saveMission(input: MissionInput): Promise<{ id: string; ti
   if (!input.id && !flag) throw new Error(ERRORS.FLAG_REQUIRED);
   if (!Number.isFinite(input.points) || input.points < 0) throw new Error(ERRORS.BAD_POINTS);
   const attachments = input.attachments
-    .map((a) => ({ label: a.label.trim(), size: a.size?.trim() || undefined, url: a.url?.trim() || undefined }))
+    .map((a) => {
+      const url = a.url?.trim() || undefined;
+      const label = a.label.trim() || (url ? defaultLinkLabel(url) : "");
+      return { label, size: a.size?.trim() || undefined, url };
+    })
     .filter((a) => a.label);
   if (attachments.some((a) => a.url && !/^https?:\/\/\S+$/i.test(a.url))) throw new Error(ERRORS.BAD_URL);
 

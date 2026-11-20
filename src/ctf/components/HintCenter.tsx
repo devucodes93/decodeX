@@ -4,6 +4,7 @@ import { MessageSquareText, X } from "lucide-react";
 import * as api from "../api";
 import type { PlayerHint } from "../api";
 import { useLiveData } from "../hooks";
+import { RichText } from "./RichText";
 
 const seenKey = (teamId: string) => `decodex-ctf-seen-hints-${teamId}`;
 
@@ -137,7 +138,7 @@ export function HintCenter({ teamId }: { teamId: string }) {
                   <small>New intel · {hintLabel(toast)}</small>
                 </span>
               </span>
-              <span className="ctf-phone-msg">{toast.message}</span>
+              <span className="ctf-phone-msg ctf-pre">{toast.message}</span>
             </button>
             <button
               type="button"
@@ -193,7 +194,9 @@ export function HintCenter({ teamId }: { teamId: string }) {
                         <small>{ago(h.createdAt, now)}</small>
                       </div>
                       {h.missionTitle && <b className="ctf-drawer-mission">{h.missionTitle}</b>}
-                      <p>{h.message}</p>
+                      <p className="ctf-pre">
+                        <RichText text={h.message} />
+                      </p>
                     </li>
                   ))}
                 </ol>

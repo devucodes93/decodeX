@@ -185,7 +185,7 @@ export function HintsTab({
                   </small>
                 </span>
               </span>
-              <span className="ctf-phone-msg">{message.trim() || "Your hint shows up here."}</span>
+              <span className="ctf-phone-msg ctf-pre">{message.trim() || "Your hint shows up here."}</span>
             </div>
           </div>
         </div>
@@ -213,7 +213,7 @@ export function HintsTab({
                         <Trash2 size={14} />
                       </button>
                     </div>
-                    <p>{h.message}</p>
+                    <p className="ctf-pre">{h.message}</p>
                   </motion.li>
                 ))}
               </AnimatePresence>

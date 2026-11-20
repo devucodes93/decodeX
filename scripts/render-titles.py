@@ -55,14 +55,17 @@ TITLES = {
     "Admin Login": ["Admin Login"],
     "Event Ended": ["Event Ended"],
     "Mission Passed": ["Mission Passed"],
+    "Mission Failed": ["Mission Failed"],
     "Heist Complete": ["Heist Complete"],
 }
 
 # Optional per-title overrides of the default title look, e.g.
 #   "Some title": {"fill": (r, g, b, a), "stroke": 5, "shadow": (7, 7)}
 GOLD = (255, 200, 61, 255)
+RED = (214, 56, 52, 255)
 STYLES: dict = {
     "Mission Passed": {"fill": GOLD},
+    "Mission Failed": {"fill": RED},
     "Heist Complete": {"fill": GOLD},
 }
 

@@ -311,17 +311,30 @@ function MissionForm({
       </div>
 
       <div className="ctf-attach-edit">
-        <span className="ctf-field-label">Files for players</span>
-        {v.attachments.length === 0 && <p className="ctf-muted ctf-small">No files. Add download links for audio, data or images.</p>}
+        <span className="ctf-field-label">Links for players (Google Drive, etc.)</span>
+        {v.attachments.length === 0 && (
+          <p className="ctf-muted ctf-small">
+            No links. Upload the mission files to Google Drive, set sharing to "Anyone with the link", and paste the link here.
+          </p>
+        )}
         {v.attachments.map((a, i) => (
           <div className="ctf-attach-row" key={i}>
-            <input aria-label="File name" placeholder="File name" value={a.label} onChange={(e) => setFile(i, "label", e.target.value)} />
-            <input aria-label="Download link" placeholder="https:// download link" value={a.url ?? ""} onChange={(e) => setFile(i, "url", e.target.value)} />
-            <input aria-label="Size" placeholder="Size" value={a.size ?? ""} onChange={(e) => setFile(i, "size", e.target.value)} />
+            <input
+              aria-label="Link"
+              placeholder="https://drive.google.com/…"
+              value={a.url ?? ""}
+              onChange={(e) => setFile(i, "url", e.target.value)}
+            />
+            <input
+              aria-label="Button text (optional)"
+              placeholder="Button text (optional)"
+              value={a.label}
+              onChange={(e) => setFile(i, "label", e.target.value)}
+            />
             <button
               type="button"
               className="ctf-icon-btn"
-              aria-label="Remove file"
+              aria-label="Remove link"
               onClick={() =>
                 set(
                   "attachments",
@@ -333,8 +346,8 @@ function MissionForm({
             </button>
           </div>
         ))}
-        <button type="button" className="ctf-link-btn" onClick={() => set("attachments", [...v.attachments, { label: "", url: "", size: "" }])}>
-          + Add file
+        <button type="button" className="ctf-link-btn" onClick={() => set("attachments", [...v.attachments, { label: "", url: "" }])}>
+          + Add link
         </button>
       </div>
 

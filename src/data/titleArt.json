@@ -142,5 +142,11 @@
     "w": 1186,
     "h": 169,
     "lines": 1
+  },
+  "Mission Failed": {
+    "src": "/assets/titles/mission-failed-badge.png",
+    "w": 1073,
+    "h": 163,
+    "lines": 1
   }
 }

@@ -18,7 +18,7 @@ export function LeaderboardTab({ rows, loading }: { rows: LeaderboardRow[]; load
   const exportCsv = () =>
     downloadCsv(
       "decodex-ctf-leaderboard",
-      ["Rank", "Team", "Team ID", "Institution", "Points", "Flags", "Time taken", "Last flag"],
+      ["Rank", "Team", "Team ID", "Institution", "Points", "Flags", "Since event start", "Last flag"],
       ranked.map((r) => [
         r.rank,
         r.teamName,
@@ -57,7 +57,7 @@ export function LeaderboardTab({ rows, loading }: { rows: LeaderboardRow[]; load
               <th scope="col" className="is-hide-sm">Institution</th>
               <th scope="col">Flags</th>
               <th scope="col" className="is-num">Points</th>
-              <th scope="col" className="is-num">Time</th>
+              <th scope="col" className="is-num">Since start</th>
               <th scope="col" className="is-num is-hide-sm">Last flag</th>
             </tr>
           </thead>
@@ -109,7 +109,7 @@ export function LeaderboardTab({ rows, loading }: { rows: LeaderboardRow[]; load
           </tbody>
         </table>
       </div>
-      <p className="ctf-muted ctf-small">Ranked by points, then by fastest time. Only organisers can see this board.</p>
+      <p className="ctf-muted ctf-small">Ranked by points. Teams with the same points are ranked by who scored their last flag first, in real time. "Since start" counts from the event start. Only organisers can see this board.</p>
     </>
   );
 }

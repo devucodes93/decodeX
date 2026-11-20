@@ -14,7 +14,7 @@ import * as api from "../api";
 const RULES = [
   { title: "One mission at a time", body: "Missions unlock in order. Capture the current flag to reveal the next one." },
   { title: "Flag format", body: `Submit flags as ${FLAG_FORMAT}. Flags are not case-sensitive.` },
-  { title: "Points and ties", body: "Harder missions are worth more. Ties are broken by time, which starts when your team opens the first mission." },
+  { title: "Points and ties", body: "Harder missions are worth more. Teams on equal points are ranked by who reached that score first, timed from the event start." },
   { title: "One device per team", body: "Stay signed in on a single device. Signing in somewhere else may end your other session." },
   { title: "Play clean", body: "Don't share flags or solutions with other teams. Copying mission text is disabled." },
   { title: "Standings stay sealed", body: "The leaderboard is kept by the organisers. Results are announced after the event." },

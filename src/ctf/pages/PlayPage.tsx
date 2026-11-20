@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState, type ClipboardEvent, type FormEvent } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
-import { Check, Download, Flag, Lock, MessageSquareText, Paperclip, Send, ShieldAlert, X } from "lucide-react";
+import { Check, ExternalLink, Flag, FolderOpen, Link2, Lock, MessageSquareText, Paperclip, Send, ShieldAlert, X } from "lucide-react";
 import { ASSETS } from "../../config/assets";
 import { TitleArt } from "../../components/ui/TitleArt";
 import { CtfShell } from "../components/CtfShell";
 import { CtfHud, HudStat } from "../components/CtfHud";
 import { HintCenter } from "../components/HintCenter";
+import { RichText } from "../components/RichText";
+import { linkInfo, linkSource } from "../links";
 import { CTF_PATHS, FLAG_FORMAT } from "../config";
 import { formatClock, formatDuration, useLiveData, useNow, useOnSessionExpired } from "../hooks";
 import * as api from "../api";
@@ -37,6 +39,7 @@ export default function PlayPage() {
   );
   useOnSessionExpired(() => navigate(CTF_PATHS.login, { replace: true, state: { expired: true } }));
   const [passed, setPassed] = useState<Passed | null>(null);
+  const [failed, setFailed] = useState(false);
   const [endedNotice, setEndedNotice] = useState(false);
   const [practiceOk, setPracticeOk] = useState(false);
   const wasClosed = useRef<boolean | null>(null);
@@ -75,7 +78,10 @@ export default function PlayPage() {
 
   const practice = closed && practiceOk;
   const done = Boolean(player?.finished);
-  const clockMs = player?.startedAt ? (player.finishedAt ?? now) - player.startedAt : 0;
+  // Everyone's clock runs from the event start set by the organisers (the
+  // same time the leaderboard uses), not from when the team first opened a mission.
+  const eventStart = event ? new Date(event.startsAt).getTime() : null;
+  const clockMs = eventStart !== null ? Math.max(0, (player?.finishedAt ?? now) - eventStart) : 0;
 
   return (
     <CtfShell art={ASSETS.ctfBg} artPosition="center 55%" tone="dim" title={done ? "Debrief" : "Missions"} className="ctf--player">
@@ -99,7 +105,7 @@ export default function PlayPage() {
       {!player || !event ? (
         <Loading error={playerError} />
       ) : done ? (
-        <Debrief player={player} onLogout={logout} />
+        <Debrief player={player} eventStart={eventStart} onLogout={logout} />
       ) : player.total === 0 ? (
         <Loading error="The organisers haven't published any missions yet. This page updates on its own." />
       ) : (
@@ -122,6 +128,7 @@ export default function PlayPage() {
                 })
               }
               onStale={reloadPlayer}
+              onFailed={() => setFailed(true)}
             />
           )}
         </main>
@@ -129,6 +136,19 @@ export default function PlayPage() {
 
       <AnimatePresence>
         {passed && <PassedOverlay passed={passed} onDone={() => setPassed(null)} />}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {failed && (
+          <FailedOverlay
+            onDone={() => {
+              setFailed(false);
+              const input = document.getElementById("flag-input") as HTMLInputElement | null;
+              input?.focus();
+              input?.select();
+            }}
+          />
+        )}
       </AnimatePresence>
 
       <AnimatePresence>
@@ -175,7 +195,7 @@ function MissionMenu({ player }: { player: PlayerState }) {
       </div>
       <ol className="ctf-menu-rows">
         {player.slots.map((s) => (
-          <li key={s.id} className={`ctf-menu-row is-${s.status}`} aria-current={s.status === "current" ? "step" : undefined}>
+          <li key={s.order} className={`ctf-menu-row is-${s.status}`} aria-current={s.status === "current" ? "step" : undefined}>
             <span className="ctf-menu-num">{String(s.order).padStart(2, "0")}</span>
             <span className="ctf-menu-title">
               {s.title ?? "Locked"}
@@ -194,7 +214,7 @@ function MissionMenu({ player }: { player: PlayerState }) {
         <span>Flags captured</span>
         <div className="ctf-flags" aria-label={`${player.solved} of ${player.total} flags captured`}>
           {player.slots.map((s) => (
-            <Flag key={s.id} size={16} className={s.status === "solved" ? "is-on" : s.status === "practice" ? "is-practice" : ""} aria-hidden="true" />
+            <Flag key={s.order} size={16} className={s.status === "solved" ? "is-on" : s.status === "practice" ? "is-practice" : ""} aria-hidden="true" />
           ))}
         </div>
       </div>
@@ -209,6 +229,7 @@ function MissionPanel({
   disabled,
   onStale,
   onPassed,
+  onFailed,
 }: {
   mission: Mission;
   total: number;
@@ -216,6 +237,8 @@ function MissionPanel({
   disabled: boolean;
   onStale: () => void;
   onPassed: (points: number, practice: boolean, finished: boolean) => void;
+  /** Shows the Mission Failed banner for a wrong flag. */
+  onFailed: () => void;
 }) {
   const [flag, setFlag] = useState("");
   const [busy, setBusy] = useState(false);
@@ -250,6 +273,7 @@ function MissionPanel({
         setWrong((n) => n + 1);
         setError("Wrong flag. Check the format and try again.");
         void shake.start({ x: [0, -10, 9, -6, 4, 0], transition: { duration: 0.4 } });
+        onFailed();
         inputRef.current?.focus();
         inputRef.current?.select();
       }
@@ -296,7 +320,9 @@ function MissionPanel({
           onCut={blockCopy}
           onContextMenu={(e) => e.preventDefault()}
         >
-          <p>{mission.prompt}</p>
+          <p className="ctf-pre">
+            <RichText text={mission.prompt} />
+          </p>
         </div>
         <AnimatePresence>
           {copyNote && (
@@ -308,15 +334,22 @@ function MissionPanel({
 
         {mission.attachments && mission.attachments.length > 0 && (
           <div className="ctf-files">
-            <span className="ctf-files-label">Intel</span>
+            <span className="ctf-files-label">Mission files</span>
             <ul>
-              {mission.attachments.map((a) => (
-                <li key={a.label}>
+              {mission.attachments.map((a, i) => (
+                <li key={`${a.label}-${i}`}>
                   {a.url && /^https?:\/\//i.test(a.url) ? (
-                    <a href={a.url} target="_blank" rel="noopener noreferrer" download>
-                      <Download size={15} aria-hidden="true" />
-                      <span>{a.label}</span>
-                      {a.size && <small>{a.size}</small>}
+                    <a className="ctf-file-link" href={a.url} target="_blank" rel="noopener noreferrer nofollow">
+                      {linkInfo(a.url).kind === "drive-folder" ? (
+                        <FolderOpen size={17} aria-hidden="true" />
+                      ) : (
+                        <Link2 size={17} aria-hidden="true" />
+                      )}
+                      <span className="ctf-file-text">
+                        <b>{a.label}</b>
+                        <small>{linkSource(a.url)}</small>
+                      </span>
+                      <ExternalLink size={15} className="ctf-file-go" aria-label="(opens in a new tab)" />
                     </a>
                   ) : (
                     <span className="ctf-file-static">
@@ -345,7 +378,7 @@ function MissionPanel({
               <ul>
                 {hints.map((h) => (
                   <motion.li key={h.id} initial={{ opacity: 0, x: -12 }} animate={{ opacity: 1, x: 0 }}>
-                    {h.message}
+                    <RichText text={h.message} />
                   </motion.li>
                 ))}
               </ul>
@@ -392,6 +425,70 @@ function MissionPanel({
         </form>
       </div>
     </motion.article>
+  );
+}
+
+const FAIL_LINES = [
+  "That flag didn't match. Regroup and go again.",
+  "Wrong frequency. Tune in and try again.",
+  "The signal went cold. Take another look.",
+  "Not this time. Check the format and retry.",
+];
+
+/** Wrong flag: red banner over a drained screen, gone in under 2 seconds. */
+function FailedOverlay({ onDone }: { onDone: () => void }) {
+  const done = useRef(onDone);
+  done.current = onDone;
+  const [line] = useState(() => FAIL_LINES[Math.floor(Math.random() * FAIL_LINES.length)]);
+
+  useEffect(() => {
+    const t = window.setTimeout(() => done.current(), 1800);
+    // Capture phase + preventDefault: Enter closes the banner without
+    // resubmitting the same wrong flag from the input underneath.
+    const key = (e: KeyboardEvent) => {
+      if (e.key === "Enter" || e.key === "Escape") {
+        e.preventDefault();
+        e.stopPropagation();
+        done.current();
+      }
+    };
+    window.addEventListener("keydown", key, true);
+    return () => {
+      window.clearTimeout(t);
+      window.removeEventListener("keydown", key, true);
+    };
+  }, []);
+
+  return (
+    <motion.div
+      className="ctf-failed"
+      role="alert"
+      aria-label={`Mission failed. ${line}`}
+      onClick={() => done.current()}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      <motion.div
+        className="ctf-failed-band"
+        initial={{ scaleY: 0 }}
+        animate={{ scaleY: 1 }}
+        exit={{ scaleY: 0 }}
+        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+      >
+        <motion.h2
+          initial={{ scale: 1.3, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ delay: 0.1, duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <TitleArt text="Mission Failed" size="page" />
+        </motion.h2>
+        <motion.p className="ctf-failed-sub" initial={{ opacity: 0, y: 6 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
+          {line}
+        </motion.p>
+      </motion.div>
+    </motion.div>
   );
 }
 
@@ -490,10 +587,11 @@ function EndedModal({ message, onPractice, onExit }: { message: string; onPracti
   );
 }
 
-function Debrief({ player, onLogout }: { player: PlayerState; onLogout: () => void }) {
+function Debrief({ player, eventStart, onLogout }: { player: PlayerState; eventStart: number | null; onLogout: () => void }) {
   const practiceCount = player.slots.filter((s) => s.status === "practice").length;
   const allScored = player.solved === player.total;
-  const time = player.startedAt && player.finishedAt ? player.finishedAt - player.startedAt : null;
+  // Measured from the event start, matching the leaderboard.
+  const time = eventStart !== null && player.finishedAt ? Math.max(0, player.finishedAt - eventStart) : null;
 
   return (
     <main className="ctf-debrief">
@@ -526,7 +624,7 @@ function Debrief({ player, onLogout }: { player: PlayerState; onLogout: () => vo
             <dd className="is-gold">{player.score.toLocaleString("en-IN")}</dd>
           </div>
           <div>
-            <dt>Total time</dt>
+            <dt>Finished after</dt>
             <dd>{allScored ? formatDuration(time) : "--"}</dd>
           </div>
         </dl>

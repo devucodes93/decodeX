@@ -24,6 +24,8 @@ backend/
     migrations/20261117010000_ctf_hardening.sql  hashed flags, rate limits, activity log
     migrations/20261117020000_ctf_audit_retention.sql  keeps the activity log small
     migrations/20261118000000_ctf_email_login.sql      teams sign in with the team lead's email
+    migrations/20261119000000_ctf_rank_by_event_time.sql  ties ranked by real time from event start
+    migrations/20261120000000_ctf_races_and_privacy.sql   login/team-save races, locked missions hide points
     make-admin.sql                               give an Auth user control-room access
 ```
 
@@ -32,7 +34,7 @@ The frontend talks to it only through [`src/ctf/api.ts`](../src/ctf/api.ts).
 ## Setup
 
 1. **Create a Supabase project** (or reuse one).
-2. **Run the four migrations, in order** (oldest file name first).
+2. **Run all the migrations, in order** (oldest file name first).
    Supabase dashboard → SQL Editor → paste each file in
    `supabase/migrations/` → Run.
    With the Supabase CLI instead: `supabase link` then `supabase db push`
@@ -72,8 +74,11 @@ Only the `anon` key goes in the frontend. Never put the `service_role` key in
   with `practice = true` and not scored. If the event is reopened, those
   missions can be scored for real.
 - **Live updates.** Admin screens get database changes through Supabase
-  Realtime. Player screens listen on the `ctf-live` broadcast channel for
-  "something changed" pings, then refetch through the functions above.
+  Realtime. Player screens only get "something changed" pings for organiser
+  actions (hints, event open/close, mission and team changes) on the
+  `ctf-live` broadcast channel, plus a refresh every 60 seconds as a backup.
+  Other teams' captures and logins are never broadcast, so 120 screens don't
+  reload every time anyone scores (fits Supabase's free plan comfortably).
 
 ## Tables
 
