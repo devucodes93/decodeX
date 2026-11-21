@@ -27,6 +27,8 @@ backend/
     migrations/20261119000000_ctf_rank_by_event_time.sql  ties ranked by real time from event start
     migrations/20261120000000_ctf_races_and_privacy.sql   login/team-save races, locked missions hide points
     migrations/20261121000000_ctf_no_practice.sql         no flags after the event is closed
+    migrations/20261122000000_ctf_flag_cooldown.sql       15-second wait after a wrong flag
+    migrations/20261123000000_ctf_closed_hides_missions.sql  nothing sent while closed/not started; server clock
     make-admin.sql                               give an Auth user control-room access
 ```
 

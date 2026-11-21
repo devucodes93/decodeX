@@ -1,24 +1,17 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowRight, Lock } from "lucide-react";
+import { ArrowDown, ArrowRight, Check, Lock } from "lucide-react";
 import { ASSETS } from "../../config/assets";
 import { EVENT } from "../../config/event";
 import { TitleArt } from "../../components/ui/TitleArt";
 import { CtfShell } from "../components/CtfShell";
 import { CtfHud, HudStat } from "../components/CtfHud";
 import { HintCenter } from "../components/HintCenter";
-import { CTF_PATHS, FLAG_FORMAT } from "../config";
+import { CTF_PATHS } from "../config";
+import { RULES, RULES_ACK, RULES_INTRO, hasAgreedToRules, setAgreedToRules } from "../rules";
 import { splitCountdown, useLiveData, useNow, useOnSessionExpired } from "../hooks";
 import * as api from "../api";
-
-const RULES = [
-  { title: "One mission at a time", body: "Missions unlock in order. Capture the current flag to reveal the next one." },
-  { title: "Flag format", body: `Submit flags as ${FLAG_FORMAT}. Flags are not case-sensitive.` },
-  { title: "Points and ties", body: "Harder missions are worth more. Teams on equal points are ranked by who reached that score first, timed from the event start." },
-  { title: "One device per team", body: "Stay signed in on a single device. Signing in somewhere else may end your other session." },
-  { title: "Play clean", body: "Don't share flags or solutions with other teams. Copying mission text is disabled." },
-  { title: "Standings stay sealed", body: "The leaderboard is kept by the organisers. Results are announced after the event." },
-];
 
 export default function LobbyPage() {
   const navigate = useNavigate();
@@ -30,6 +23,30 @@ export default function LobbyPage() {
     [session?.teamId],
   );
   useOnSessionExpired(() => navigate(CTF_PATHS.login, { replace: true, state: { expired: true } }));
+  const location = useLocation();
+  const [agreed, setAgreed] = useState(() => (session ? hasAgreedToRules(session.teamId) : false));
+  const [nudge, setNudge] = useState(0);
+  const agreeRef = useRef<HTMLDivElement>(null);
+  const checkRef = useRef<HTMLInputElement>(null);
+
+  /** Scroll to the agreement and make it pulse. */
+  const showAgreement = () => {
+    agreeRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+    checkRef.current?.focus({ preventScroll: true });
+    setNudge((n) => n + 1);
+  };
+
+  // Sent back from the mission screen without having agreed.
+  const needRules = Boolean((location.state as { needRules?: boolean } | null)?.needRules);
+  useEffect(() => {
+    if (needRules) window.setTimeout(showAgreement, 400);
+  }, [needRules]);
+
+  useEffect(() => {
+    if (!nudge) return;
+    const t = window.setTimeout(() => setNudge(0), 1400);
+    return () => window.clearTimeout(t);
+  }, [nudge]);
 
   if (!session) return <Navigate to={CTF_PATHS.login} replace />;
 
@@ -39,6 +56,12 @@ export default function LobbyPage() {
   const waiting = event && !live && !closed;
   const finished = Boolean(player?.finished);
   const started = Boolean(player?.startedAt);
+  const needsAgreement = !agreed && !closed && !finished;
+
+  const toggleAgreed = (on: boolean) => {
+    setAgreed(on);
+    setAgreedToRules(session.teamId, on);
+  };
 
   const logout = async () => {
     await api.logout();
@@ -55,7 +78,7 @@ export default function LobbyPage() {
         <HintCenter teamId={session.teamId} />
       </CtfHud>
 
-      <main className="ctf-lobby">
+      <main className="ctf-lobby ctf-lobby--stack">
         <motion.section
           className="ctf-lobby-main"
           initial={{ opacity: 0, y: 24 }}
@@ -114,7 +137,7 @@ export default function LobbyPage() {
                     ? "Your flags are in. See your debrief."
                     : started
                       ? `${player?.solved ?? 0} of ${player?.total ?? 0} flags captured so far.`
-                      : "Your team's clock starts when you open the first mission."}
+                      : "The clock runs from the event start, the same for every team."}
                 </span>
               </div>
             </div>
@@ -137,7 +160,18 @@ export default function LobbyPage() {
                 <span>Locked until start</span>
               </button>
             )}
-            {(live || closed) && (
+            {needsAgreement && (
+              <button type="button" className={`ctf-btn ${live ? "ctf-btn--gold" : "ctf-btn--ghost"}`} onClick={showAgreement}>
+                <span>Read &amp; accept the rules{live ? " to start" : ""}</span>
+                <ArrowDown size={18} aria-hidden="true" />
+              </button>
+            )}
+            {!needsAgreement && waiting && (
+              <p className="ctf-agree-done">
+                <Check size={16} aria-hidden="true" /> Rules accepted. You're ready for the start.
+              </p>
+            )}
+            {(live || closed) && !needsAgreement && (
               <button type="button" className="ctf-btn ctf-btn--gold" onClick={() => navigate(CTF_PATHS.play)}>
                 <span>
                   {finished || closed ? "View debrief" : started ? "Resume mission" : "Start mission"}
@@ -148,29 +182,65 @@ export default function LobbyPage() {
           </div>
         </motion.section>
 
-        <motion.aside
-          className="ctf-rules"
+        <motion.section
+          className="ctf-rules ctf-rules--official"
           aria-labelledby="rules-title"
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
         >
           <div className="ctf-subbar">
-            <span id="rules-title">Rules of engagement</span>
-            <span>{String(RULES.length).padStart(2, "0")}</span>
+            <span id="rules-title">DecodeX · Rules &amp; Regulations</span>
+            <span>{String(RULES.length).padStart(2, "0")} rules</span>
           </div>
+          <p className="ctf-rules-intro">{RULES_INTRO}</p>
           <ol className="ctf-rules-list">
             {RULES.map((r, i) => (
               <li key={r.title}>
                 <span className="ctf-rules-num">{String(i + 1).padStart(2, "0")}</span>
-                <div>
+                <div className="ctf-rules-body">
                   <b>{r.title}</b>
-                  <p>{r.body}</p>
+                  {r.body}
+                  {r.note && <p className="ctf-rules-note">{r.note}</p>}
                 </div>
               </li>
             ))}
           </ol>
-        </motion.aside>
+
+          <div
+            id="rules-agree"
+            ref={agreeRef}
+            className={`ctf-agree${agreed ? " is-on" : ""}${nudge ? " is-nudge" : ""}`}
+          >
+            <label className="ctf-agree-label">
+              <input
+                ref={checkRef}
+                type="checkbox"
+                checked={agreed}
+                disabled={closed || finished}
+                onChange={(e) => toggleAgreed(e.target.checked)}
+              />
+              <span className="ctf-agree-box" aria-hidden="true">
+                <Check size={18} strokeWidth={3} />
+              </span>
+              <span className="ctf-agree-text">
+                <b>I have read the DecodeX Rules &amp; Regulations and agree to abide by them.</b>
+                <small>
+                  I'm agreeing on behalf of my team. {RULES_ACK}
+                </small>
+              </span>
+            </label>
+            {agreed && live && !finished && (
+              <button type="button" className="ctf-btn ctf-btn--gold ctf-agree-go" onClick={() => navigate(CTF_PATHS.play)}>
+                <span>{started ? "Resume mission" : "Start mission"}</span>
+                <ArrowRight size={18} aria-hidden="true" />
+              </button>
+            )}
+            {!agreed && !closed && !finished && (
+              <p className="ctf-agree-hint">Tick the box to unlock the missions.</p>
+            )}
+          </div>
+        </motion.section>
       </main>
     </CtfShell>
   );

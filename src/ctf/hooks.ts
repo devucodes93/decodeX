@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { SESSION_EXPIRED_EVENT, getAdminSession, subscribe, type AdminSession } from "./api";
+import { SESSION_EXPIRED_EVENT, getAdminSession, serverNow, subscribe, type AdminSession } from "./api";
 
 /** The signed-in organiser: "checking" while the server confirms access. */
 export function useAdminSession() {
@@ -77,9 +77,10 @@ export function useLiveData<T>(loader: () => Promise<T>, deps: unknown[] = []) {
 
 /** Current time, refreshed every `ms`. */
 export function useNow(ms = 1000) {
-  const [now, setNow] = useState(Date.now());
+  // The server's clock, not the device's.
+  const [now, setNow] = useState(serverNow);
   useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), ms);
+    const id = window.setInterval(() => setNow(serverNow()), ms);
     return () => window.clearInterval(id);
   }, [ms]);
   return now;

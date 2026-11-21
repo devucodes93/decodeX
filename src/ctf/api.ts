@@ -62,8 +62,12 @@ export type PlayerState = {
   finished: boolean;
 };
 
+/** Seconds a team waits after a wrong flag (the server enforces it). */
+export const FLAG_COOLDOWN_S = 15;
+
 export type SubmitResult =
-  | { correct: false }
+  /** Wrong flag, or (`cooldown`) refused unchecked because the team is still cooling down. */
+  | { correct: false; retryIn: number; cooldown?: boolean }
   | { correct: true; points: number; finished: boolean };
 
 export type LeaderboardRow = {
@@ -231,7 +235,16 @@ function token(): string {
   return s.token;
 }
 
-export const isLive = (e: EventState, now = Date.now()) => !e.closed && new Date(e.startsAt).getTime() <= now;
+/**
+ * Server clock minus this device's clock (ms), measured on every
+ * ctf_get_event. Pages time the event by the server, so a device set to the
+ * wrong date shows the right countdown. (The server enforces the start time
+ * either way: nothing is sent before it.)
+ */
+let clockOffset = 0;
+export const serverNow = () => Date.now() + clockOffset;
+
+export const isLive = (e: EventState, now = serverNow()) => !e.closed && new Date(e.startsAt).getTime() <= now;
 
 /* ------------------------------------------------------------ live updates */
 
@@ -342,7 +355,12 @@ export async function logout(): Promise<void> {
 }
 
 export async function getEvent(): Promise<EventState> {
-  return rpc<EventState>("ctf_get_event");
+  const sent = Date.now();
+  const { serverNow: at, ...event } = await rpc<EventState & { serverNow?: string }>("ctf_get_event");
+  const server = at ? new Date(at).getTime() : NaN;
+  // Assume the server read its clock halfway through the round trip.
+  if (Number.isFinite(server)) clockOffset = server - (sent + Date.now()) / 2;
+  return event;
 }
 
 /** Starts the team's clock the first time it opens a mission while live. */
@@ -355,7 +373,13 @@ export async function getPlayerState(): Promise<PlayerState> {
 }
 
 export async function submitFlag(missionId: string, flag: string): Promise<SubmitResult> {
-  const res = await rpc<SubmitResult>("ctf_submit_flag", { p_token: token(), p_mission_id: missionId, p_flag: flag });
+  const { data, error } = await db().rpc("ctf_submit_flag", { p_token: token(), p_mission_id: missionId, p_flag: flag });
+  if (error) fail(error);
+  const d = (data ?? {}) as { error?: unknown; retryIn?: unknown };
+  if (d.error === "COOLDOWN") return { correct: false, cooldown: true, retryIn: Number(d.retryIn) || FLAG_COOLDOWN_S };
+  if (typeof d.error === "string") fail({ message: d.error });
+  const res = data as SubmitResult;
+  if (!res.correct && !res.retryIn) res.retryIn = FLAG_COOLDOWN_S;
   // Refresh this screen only. Other teams aren't told; the control room
   // sees the capture through its own live database feed.
   if (res.correct) emit();

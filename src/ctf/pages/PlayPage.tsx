@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ClipboardEvent, type FormEvent } from
 import { createPortal } from "react-dom";
 import { Navigate, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
-import { ArrowDown, Check, ExternalLink, Flag, FolderOpen, Link2, Lock, MessageSquareText, Paperclip, Send, ShieldAlert } from "lucide-react";
+import { ArrowDown, Check, ExternalLink, Flag, FolderOpen, Link2, Lock, MessageSquareText, Paperclip, Send, ShieldAlert, Timer } from "lucide-react";
 import { ASSETS } from "../../config/assets";
 import { TitleArt } from "../../components/ui/TitleArt";
 import { CtfShell } from "../components/CtfShell";
@@ -10,6 +10,7 @@ import { CtfHud, HudStat } from "../components/CtfHud";
 import { HintCenter } from "../components/HintCenter";
 import { RichText } from "../components/RichText";
 import { linkInfo, linkSource } from "../links";
+import { hasAgreedToRules } from "../rules";
 import { CTF_PATHS, FLAG_FORMAT } from "../config";
 import { formatClock, formatDuration, useLiveData, useNow, useOnSessionExpired } from "../hooks";
 import * as api from "../api";
@@ -72,6 +73,10 @@ export default function PlayPage() {
 
   if (!session) return <Navigate to={CTF_PATHS.login} replace />;
   if (event && !live && !closed) return <Navigate to={CTF_PATHS.lobby} replace />;
+  // Missions open only after the team ticked the rules on the briefing page.
+  if (event && player && !closed && !player.finished && !hasAgreedToRules(session.teamId)) {
+    return <Navigate to={CTF_PATHS.lobby} replace state={{ needRules: true }} />;
+  }
 
   const logout = async () => {
     await api.logout();
@@ -232,6 +237,20 @@ function MissionPanel({
   const [wrong, setWrong] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [copyNote, setCopyNote] = useState(false);
+  // Cooldown after a wrong flag: the server refuses early tries anyway,
+  // this just shows the countdown.
+  const [cooldownUntil, setCooldownUntil] = useState(0);
+  const [tick, setTick] = useState(() => Date.now());
+  const retryLeft = Math.max(0, Math.ceil((cooldownUntil - tick) / 1000));
+  useEffect(() => {
+    if (cooldownUntil <= Date.now()) return;
+    const id = window.setInterval(() => {
+      const t = Date.now();
+      setTick(t);
+      if (t >= cooldownUntil) window.clearInterval(id);
+    }, 250);
+    return () => window.clearInterval(id);
+  }, [cooldownUntil]);
   const inputRef = useRef<HTMLInputElement>(null);
   const formRef = useRef<HTMLFormElement>(null);
   const shake = useAnimationControls();
@@ -263,7 +282,7 @@ function MissionPanel({
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
-    if (!flag.trim() || inFlight.current || disabled) return;
+    if (!flag.trim() || inFlight.current || disabled || retryLeft > 0) return;
     inFlight.current = true;
     setBusy(true);
     setError(null);
@@ -273,6 +292,14 @@ function MissionPanel({
         // Stay locked: this panel is replaced by the next mission's.
         onPassed(res.points, res.finished);
         return;
+      }
+      const until = Date.now() + res.retryIn * 1000;
+      setTick(Date.now());
+      setCooldownUntil(until);
+      if (res.cooldown) {
+        // Refused unchecked (e.g. after a reload): no banner, just the wait.
+        inFlight.current = false;
+        setError(`Hold on. You can try again in ${res.retryIn}s.`);
       } else {
         inFlight.current = false;
         setWrong((n) => n + 1);
@@ -420,9 +447,15 @@ function MissionPanel({
               // Phones: don't pop the keyboard (and jump past the brief) on load.
               autoFocus={!isPhone}
             />
-            <button type="submit" className={`ctf-btn ctf-btn--gold${busy ? " is-busy" : ""}`} disabled={busy || disabled || !flag.trim()}>
-              <Send size={16} aria-hidden="true" />
-              <span>{busy ? "Checking…" : "Submit"}</span>
+            <button
+              type="submit"
+              className={`ctf-btn ctf-btn--gold${busy ? " is-busy" : ""}${retryLeft > 0 ? " is-cooling" : ""}`}
+              disabled={busy || disabled || retryLeft > 0 || !flag.trim()}
+            >
+              {retryLeft > 0 ? <Timer size={16} aria-hidden="true" /> : <Send size={16} aria-hidden="true" />}
+              <span className={retryLeft > 0 ? "ctf-mono" : undefined}>
+                {busy ? "Checking…" : retryLeft > 0 ? `Wait ${retryLeft}s` : "Submit"}
+              </span>
             </button>
           </motion.div>
           <p id="flag-feedback" className="ctf-flag-feedback" aria-live="polite">
@@ -430,6 +463,7 @@ function MissionPanel({
               <>
                 <ShieldAlert size={15} aria-hidden="true" /> {error}
                 {wrong > 1 && <small>{wrong} wrong attempts</small>}
+                {retryLeft > 0 && <small className="ctf-cooldown">Next try in {retryLeft}s</small>}
               </>
             ) : (
               <span className="ctf-muted">Not case-sensitive. Spaces at the ends are ignored.</span>
@@ -486,11 +520,11 @@ function MissionPanel({
                   />
                   <button
                     type="submit"
-                    className={`ctf-btn ctf-btn--gold ctf-dock-send${busy ? " is-busy" : ""}`}
-                    disabled={busy || disabled || !flag.trim()}
-                    aria-label={busy ? "Checking" : "Submit flag"}
+                    className={`ctf-btn ctf-btn--gold ctf-dock-send${busy ? " is-busy" : ""}${retryLeft > 0 ? " is-cooling" : ""}`}
+                    disabled={busy || disabled || retryLeft > 0 || !flag.trim()}
+                    aria-label={busy ? "Checking" : retryLeft > 0 ? `Wait ${retryLeft} seconds` : "Submit flag"}
                   >
-                    <Send size={18} aria-hidden="true" />
+                    {retryLeft > 0 ? <b className="ctf-mono">{retryLeft}s</b> : <Send size={18} aria-hidden="true" />}
                   </button>
                 </motion.div>
               </motion.form>

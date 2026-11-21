@@ -5,6 +5,10 @@ import * as api from "../api";
 import type { PlayerHint } from "../api";
 import { useLiveData } from "../hooks";
 import { RichText } from "./RichText";
+import { playTing } from "../sound";
+
+/** Hints already chimed for, so moving between pages doesn't ring again. */
+const chimed = new Set<string>();
 
 const seenKey = (teamId: string) => `decodex-ctf-seen-hints-${teamId}`;
 
@@ -69,7 +73,16 @@ export function HintCenter({ teamId }: { teamId: string }) {
   const [toast, setToast] = useState<PlayerHint | null>(null);
   const toasted = useRef(new Set<string>());
   const closeRef = useRef<HTMLButtonElement>(null);
-  const now = Date.now();
+  const now = api.serverNow();
+
+  // Ting once for every new unread hint (also while the inbox is open).
+  useEffect(() => {
+    if (!loaded) return;
+    const fresh = unread.filter((h) => !chimed.has(h.id));
+    if (!fresh.length) return;
+    fresh.forEach((h) => chimed.add(h.id));
+    playTing();
+  }, [unread, loaded]);
 
   // Pop the newest unread hint that hasn't been shown yet.
   useEffect(() => {

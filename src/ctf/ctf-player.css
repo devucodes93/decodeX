@@ -713,3 +713,233 @@
     bottom: calc(120px + env(safe-area-inset-bottom));
   }
 }
+
+/* Cooldown after a wrong flag */
+.ctf--player .ctf-btn.is-cooling:disabled {
+  opacity: 1;
+  background: rgba(255, 200, 61, 0.14);
+  color: #ffc83d;
+  border-color: rgba(255, 200, 61, 0.45);
+  cursor: not-allowed;
+}
+.ctf--player .ctf-cooldown {
+  color: #ffc83d;
+}
+.ctf--player .ctf-dock-send.is-cooling b {
+  font-size: 0.9rem;
+}
+
+/* ------------------------------------------- official rules + agreement */
+
+.ctf--player .ctf-lobby--stack {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 980px;
+  gap: 36px;
+}
+
+.ctf--player .ctf-rules-intro {
+  margin: 0;
+  padding: 18px 22px 6px;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--cream, #f4ead7);
+}
+
+.ctf--player .ctf-rules--official .ctf-rules-list li {
+  grid-template-columns: 52px minmax(0, 1fr);
+  padding: 18px 20px 18px 14px;
+}
+
+.ctf--player .ctf-rules--official .ctf-rules-num {
+  font-size: 34px;
+}
+
+.ctf--player .ctf-rules-body > b {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+  color: #fff;
+}
+
+.ctf--player .ctf-rules-body p,
+.ctf--player .ctf-rules-body li {
+  font-size: 15.5px;
+  line-height: 1.65;
+  color: rgba(244, 234, 215, 0.78);
+}
+
+.ctf--player .ctf-rules-body p + p {
+  margin-top: 8px;
+}
+
+.ctf--player .ctf-rules-body ul {
+  margin: 8px 0 0;
+  padding-left: 20px;
+  display: grid;
+  gap: 6px;
+}
+
+.ctf--player .ctf-rules-body li::marker {
+  color: #ffc83d;
+}
+
+.ctf--player .ctf-rules-body strong {
+  color: #ffd76a;
+  font-weight: 700;
+}
+
+.ctf--player .ctf-rules-note {
+  margin-top: 10px !important;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: rgba(255, 200, 61, 0.08);
+  font-size: 13.5px !important;
+  color: #ffd76a !important;
+}
+
+.ctf--player .ctf-agree {
+  margin: 8px 10px 10px;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1.5px dashed rgba(255, 200, 61, 0.55);
+  background: rgba(255, 200, 61, 0.06);
+  transition: border-color 0.25s, background-color 0.25s, box-shadow 0.25s;
+  scroll-margin: 120px;
+}
+
+.ctf--player .ctf-agree.is-on {
+  border-style: solid;
+  border-color: rgba(74, 222, 128, 0.6);
+  background: rgba(74, 222, 128, 0.08);
+}
+
+.ctf--player .ctf-agree.is-nudge {
+  animation: ctf-agree-pulse 0.7s ease-in-out 2;
+}
+
+@keyframes ctf-agree-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 200, 61, 0); }
+  50% { box-shadow: 0 0 0 6px rgba(255, 200, 61, 0.35); }
+}
+
+.ctf--player .ctf-agree-label {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 14px;
+  align-items: start;
+  cursor: pointer;
+}
+
+.ctf--player .ctf-agree-label input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.ctf--player .ctf-agree-box {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  border: 2px solid #ffc83d;
+  background: rgba(0, 0, 0, 0.35);
+  color: transparent;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.ctf--player .ctf-agree-label:hover .ctf-agree-box {
+  transform: scale(1.06);
+}
+
+.ctf--player .ctf-agree-label input:focus-visible + .ctf-agree-box {
+  outline: 3px solid rgba(255, 200, 61, 0.6);
+  outline-offset: 3px;
+}
+
+.ctf--player .ctf-agree-label input:checked + .ctf-agree-box {
+  background: #4ade80;
+  border-color: #4ade80;
+  color: #08140c;
+}
+
+.ctf--player .ctf-agree-label input:disabled ~ * {
+  cursor: default;
+}
+
+.ctf--player .ctf-agree-text b {
+  display: block;
+  font-size: 16.5px;
+  line-height: 1.4;
+  color: #fff;
+}
+
+.ctf--player .ctf-agree-text small {
+  display: block;
+  margin-top: 6px;
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: rgba(244, 234, 215, 0.7);
+}
+
+.ctf--player .ctf-agree-text strong {
+  color: #ffd76a;
+}
+
+.ctf--player .ctf-agree-hint {
+  margin: 14px 0 0 48px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  color: #ffc83d;
+}
+
+.ctf--player .ctf-agree-go {
+  margin: 16px 0 0 48px;
+  min-height: 54px;
+  padding: 0 26px;
+  border-radius: 14px;
+}
+
+.ctf--player .ctf-agree-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+  color: #4ade80;
+}
+
+@media (max-width: 720px) {
+  .ctf--player .ctf-rules--official .ctf-rules-list li {
+    grid-template-columns: 40px minmax(0, 1fr);
+    padding: 14px 12px 14px 8px;
+  }
+  .ctf--player .ctf-rules--official .ctf-rules-num {
+    font-size: 26px;
+  }
+  .ctf--player .ctf-rules-intro {
+    padding: 16px 16px 4px;
+  }
+  .ctf--player .ctf-agree {
+    margin: 6px 6px 8px;
+    padding: 16px;
+  }
+  .ctf--player .ctf-agree-hint,
+  .ctf--player .ctf-agree-go {
+    margin-left: 0;
+  }
+  .ctf--player .ctf-agree-go {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* Bullets inside a rule are plain list items, not rule rows. */
+.ctf--player .ctf-rules--official .ctf-rules-body li {
+  display: list-item;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+}
