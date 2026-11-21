@@ -1191,10 +1191,6 @@
   fill: rgba(98, 209, 122, 0.35);
 }
 
-.ctf-flags svg.is-practice {
-  color: rgba(255, 200, 61, 0.7);
-}
-
 /* Mission card */
 .ctf-mission {
   background: var(--panel);

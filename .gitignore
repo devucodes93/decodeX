@@ -12,3 +12,6 @@ design-fonts/
 
 # Local SQL with test passwords
 backend/supabase/*.local.sql
+
+# Participant data (names, emails, phone numbers)
+backend/*.xlsx

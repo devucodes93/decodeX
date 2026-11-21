@@ -140,7 +140,7 @@ export default function LobbyPage() {
             {(live || closed) && (
               <button type="button" className="ctf-btn ctf-btn--gold" onClick={() => navigate(CTF_PATHS.play)}>
                 <span>
-                  {finished ? "View debrief" : closed ? "Continue in practice mode" : started ? "Resume mission" : "Start mission"}
+                  {finished || closed ? "View debrief" : started ? "Resume mission" : "Start mission"}
                 </span>
                 <ArrowRight size={18} aria-hidden="true" />
               </button>

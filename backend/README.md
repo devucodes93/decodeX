@@ -26,6 +26,7 @@ backend/
     migrations/20261118000000_ctf_email_login.sql      teams sign in with the team lead's email
     migrations/20261119000000_ctf_rank_by_event_time.sql  ties ranked by real time from event start
     migrations/20261120000000_ctf_races_and_privacy.sql   login/team-save races, locked missions hide points
+    migrations/20261121000000_ctf_no_practice.sql         no flags after the event is closed
     make-admin.sql                               give an Auth user control-room access
 ```
 
@@ -70,9 +71,9 @@ Only the `anon` key goes in the frontend. Never put the `service_role` key in
 - **Admins** sign in with Supabase Auth. Row-level security lets only users in
   `ctf_admins` read or change tables. Password hashes are not readable even
   by admins.
-- **Practice mode.** After an admin closes the event, correct flags are saved
-  with `practice = true` and not scored. If the event is reopened, those
-  missions can be scored for real.
+- **Closing the event.** Once an admin closes the event, every flag is
+  refused (`EVENT_CLOSED`) and players see their final results. Reopening
+  lets them carry on.
 - **Live updates.** Admin screens get database changes through Supabase
   Realtime. Player screens only get "something changed" pings for organiser
   actions (hints, event open/close, mission and team changes) on the
@@ -89,7 +90,7 @@ Only the `anon` key goes in the frontend. Never put the `service_role` key in
 | `ctf_teams` | Team details and password hash (no payment data) |
 | `ctf_sessions` | Active player session per team |
 | `ctf_progress` | When each team started |
-| `ctf_solves` | Captured flags (and practice captures) |
+| `ctf_solves` | Captured flags |
 | `ctf_hints` | Hints to everyone, to a mission, or to one team |
 | `ctf_admins` | Auth users allowed into the control room |
 

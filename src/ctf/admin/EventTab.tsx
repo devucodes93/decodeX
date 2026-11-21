@@ -74,7 +74,7 @@ export function EventTab({ event, now, notify }: { event: EventState; now: numbe
           <h2>{event.closed ? "Event is closed" : "Close the event"}</h2>
         </header>
         <p className="ctf-muted">
-          Closing stops scoring. Players see your message and can keep going in practice mode. Practice flags are not scored.
+          Closing stops the event. No more flags are accepted, and players see your message with their final results.
         </p>
         <label className="ctf-field">
           <span>Message to players</span>

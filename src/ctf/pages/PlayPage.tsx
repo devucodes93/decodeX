@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState, type ClipboardEvent, type FormEvent } from "react";
+import { createPortal } from "react-dom";
 import { Navigate, useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, useAnimationControls } from "framer-motion";
-import { Check, ExternalLink, Flag, FolderOpen, Link2, Lock, MessageSquareText, Paperclip, Send, ShieldAlert, X } from "lucide-react";
+import { ArrowDown, Check, ExternalLink, Flag, FolderOpen, Link2, Lock, MessageSquareText, Paperclip, Send, ShieldAlert } from "lucide-react";
 import { ASSETS } from "../../config/assets";
 import { TitleArt } from "../../components/ui/TitleArt";
 import { CtfShell } from "../components/CtfShell";
@@ -14,6 +15,24 @@ import { formatClock, formatDuration, useLiveData, useNow, useOnSessionExpired }
 import * as api from "../api";
 import type { Mission, PlayerHint, PlayerState } from "../api";
 
+/** Phones get a docked flag bar; keep in sync with the 720px breakpoint in CSS. */
+const PHONE_QUERY = "(max-width: 720px)";
+
+function useMedia(query: string) {
+  const [matches, setMatches] = useState(() => typeof window !== "undefined" && window.matchMedia(query).matches);
+  useEffect(() => {
+    const mq = window.matchMedia(query);
+    const update = () => setMatches(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, [query]);
+  return matches;
+}
+
+/** The flag input the player used last (full form or phone dock), refocused after banners. */
+const lastFlagInput: { el: HTMLInputElement | null } = { el: null };
+
 const MISSION_ART = [
   "/assets/missions/01-signals.jpg",
   "/assets/missions/02-flag.jpg",
@@ -21,7 +40,7 @@ const MISSION_ART = [
   "/assets/missions/04-rounds.jpg",
 ];
 
-type Passed = { order: number; title: string; points: number; practice: boolean; finished: boolean };
+type Passed = { order: number; title: string; points: number; finished: boolean };
 
 export default function PlayPage() {
   const navigate = useNavigate();
@@ -40,9 +59,6 @@ export default function PlayPage() {
   useOnSessionExpired(() => navigate(CTF_PATHS.login, { replace: true, state: { expired: true } }));
   const [passed, setPassed] = useState<Passed | null>(null);
   const [failed, setFailed] = useState(false);
-  const [endedNotice, setEndedNotice] = useState(false);
-  const [practiceOk, setPracticeOk] = useState(false);
-  const wasClosed = useRef<boolean | null>(null);
 
   const live = event ? api.isLive(event, now) : false;
   const closed = Boolean(event?.closed);
@@ -54,20 +70,6 @@ export default function PlayPage() {
     }
   }, [session, live, player, reloadPlayer]);
 
-  // Show the "event ended" notice when it closes (or is already closed on arrival).
-  useEffect(() => {
-    if (!event) return;
-    if (event.closed && wasClosed.current !== true) {
-      setEndedNotice(true);
-      setPracticeOk(false);
-    }
-    if (!event.closed) {
-      setEndedNotice(false);
-      setPracticeOk(false);
-    }
-    wasClosed.current = event.closed;
-  }, [event]);
-
   if (!session) return <Navigate to={CTF_PATHS.login} replace />;
   if (event && !live && !closed) return <Navigate to={CTF_PATHS.lobby} replace />;
 
@@ -76,8 +78,8 @@ export default function PlayPage() {
     navigate(CTF_PATHS.login, { replace: true });
   };
 
-  const practice = closed && practiceOk;
-  const done = Boolean(player?.finished);
+  // Once the organisers close the event, no more flags: straight to the results.
+  const done = Boolean(player?.finished) || closed;
   // Everyone's clock runs from the event start set by the organisers (the
   // same time the leaderboard uses), not from when the team first opened a mission.
   const eventStart = event ? new Date(event.startsAt).getTime() : null;
@@ -85,9 +87,10 @@ export default function PlayPage() {
 
   return (
     <CtfShell art={ASSETS.ctfBg} artPosition="center 55%" tone="dim" title={done ? "Debrief" : "Missions"} className="ctf--player">
-      <CtfHud label={practice ? "Practice mode" : "Virtual CTF"} onLogout={logout}>
+      <CtfHud label="Virtual CTF" onLogout={logout}>
         {player && (
           <>
+            <HudStat label="Crew" value={session.teamName} className="is-crew" />
             <HudStat label="Flags" value={`${player.solved}/${player.total}`} tone="green" />
             <HudStat label="Points" value={player.score.toLocaleString("en-IN")} tone="gold" />
             <HudStat label="Clock" value={<span className="ctf-mono">{formatClock(clockMs)}</span>} />
@@ -96,34 +99,27 @@ export default function PlayPage() {
         <HintCenter teamId={session.teamId} />
       </CtfHud>
 
-      {practice && (
-        <div className="ctf-strip" role="status">
-          <b>Practice mode</b> The event has ended. Flags you capture now are not scored.
-        </div>
-      )}
-
       {!player || !event ? (
         <Loading error={playerError} />
       ) : done ? (
-        <Debrief player={player} eventStart={eventStart} onLogout={logout} />
+        <Debrief player={player} eventStart={eventStart} message={closed ? event?.closedMessage ?? "" : ""} onLogout={logout} />
       ) : player.total === 0 ? (
         <Loading error="The organisers haven't published any missions yet. This page updates on its own." />
       ) : (
         <main className="ctf-play">
-          <MissionMenu player={player} />
+          <MissionMenu player={player} teamName={session.teamName} />
           {player.current && (
             <MissionPanel
               key={player.current.id}
               mission={player.current}
               total={player.total}
               hints={(hints ?? []).filter((h) => h.target.kind === "mission" && h.target.missionId === player.current!.id)}
-              disabled={closed && !practiceOk}
-              onPassed={(points, isPractice, finished) =>
+              disabled={closed}
+              onPassed={(points, finished) =>
                 setPassed({
                   order: player.current!.order,
                   title: player.current!.title,
                   points,
-                  practice: isPractice,
                   finished,
                 })
               }
@@ -143,26 +139,14 @@ export default function PlayPage() {
           <FailedOverlay
             onDone={() => {
               setFailed(false);
-              const input = document.getElementById("flag-input") as HTMLInputElement | null;
-              input?.focus();
+              const input = lastFlagInput.el ?? (document.getElementById("flag-input") as HTMLInputElement | null);
+              input?.focus({ preventScroll: true });
               input?.select();
             }}
           />
         )}
       </AnimatePresence>
 
-      <AnimatePresence>
-        {endedNotice && !done && (
-          <EndedModal
-            message={event?.closedMessage ?? ""}
-            onPractice={() => {
-              setPracticeOk(true);
-              setEndedNotice(false);
-            }}
-            onExit={logout}
-          />
-        )}
-      </AnimatePresence>
     </CtfShell>
   );
 }
@@ -179,7 +163,7 @@ function Loading({ error }: { error?: string | null }) {
   );
 }
 
-function MissionMenu({ player }: { player: PlayerState }) {
+function MissionMenu({ player, teamName }: { player: PlayerState; teamName: string }) {
   const position = player.slots.findIndex((s) => s.status === "current");
   return (
     <nav className="ctf-menu" aria-label="Missions">
@@ -188,7 +172,9 @@ function MissionMenu({ player }: { player: PlayerState }) {
         <span>Missions</span>
       </div>
       <div className="ctf-subbar">
-        <span>Operation Decodex</span>
+        <span className="ctf-menu-team" title={teamName}>
+          {teamName}
+        </span>
         <span>
           {String(position < 0 ? player.total : position + 1).padStart(2, "0")} / {String(player.total).padStart(2, "0")}
         </span>
@@ -203,7 +189,6 @@ function MissionMenu({ player }: { player: PlayerState }) {
             </span>
             <span className="ctf-menu-meta">
               {s.status === "solved" && <Check size={16} aria-label="Solved" />}
-              {s.status === "practice" && <small>Practice</small>}
               {s.status === "locked" && <Lock size={14} aria-label="Locked" />}
               {s.status === "current" && <b>{s.points}</b>}
             </span>
@@ -214,7 +199,7 @@ function MissionMenu({ player }: { player: PlayerState }) {
         <span>Flags captured</span>
         <div className="ctf-flags" aria-label={`${player.solved} of ${player.total} flags captured`}>
           {player.slots.map((s) => (
-            <Flag key={s.order} size={16} className={s.status === "solved" ? "is-on" : s.status === "practice" ? "is-practice" : ""} aria-hidden="true" />
+            <Flag key={s.order} size={16} className={s.status === "solved" ? "is-on" : ""} aria-hidden="true" />
           ))}
         </div>
       </div>
@@ -236,7 +221,7 @@ function MissionPanel({
   hints: PlayerHint[];
   disabled: boolean;
   onStale: () => void;
-  onPassed: (points: number, practice: boolean, finished: boolean) => void;
+  onPassed: (points: number, finished: boolean) => void;
   /** Shows the Mission Failed banner for a wrong flag. */
   onFailed: () => void;
 }) {
@@ -248,7 +233,27 @@ function MissionPanel({
   const [error, setError] = useState<string | null>(null);
   const [copyNote, setCopyNote] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const formRef = useRef<HTMLFormElement>(null);
   const shake = useAnimationControls();
+  const isPhone = useMedia(PHONE_QUERY);
+  const [formInView, setFormInView] = useState(true);
+  const [shellEl, setShellEl] = useState<Element | null>(null);
+
+  // Phones: while the full flag form is off-screen, a docked flag bar is shown.
+  useEffect(() => {
+    setShellEl(document.querySelector(".ctf"));
+    const el = formRef.current;
+    if (!el || !isPhone) {
+      setFormInView(true);
+      return;
+    }
+    const io = new IntersectionObserver(([entry]) => setFormInView(entry.isIntersecting), { threshold: 0.35 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, [isPhone]);
+  const showDock = isPhone && !formInView;
+
+  const scrollToForm = () => formRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
 
   useEffect(() => {
     if (!copyNote) return;
@@ -266,7 +271,7 @@ function MissionPanel({
       const res = await api.submitFlag(mission.id, flag);
       if (res.correct) {
         // Stay locked: this panel is replaced by the next mission's.
-        onPassed(res.points, res.practice, res.finished);
+        onPassed(res.points, res.finished);
         return;
       } else {
         inFlight.current = false;
@@ -274,8 +279,6 @@ function MissionPanel({
         setError("Wrong flag. Check the format and try again.");
         void shake.start({ x: [0, -10, 9, -6, 4, 0], transition: { duration: 0.4 } });
         onFailed();
-        inputRef.current?.focus();
-        inputRef.current?.select();
       }
     } catch (err) {
       inFlight.current = false;
@@ -386,7 +389,15 @@ function MissionPanel({
           )}
         </AnimatePresence>
 
-        <form className={`ctf-flag-form${error ? " has-error" : ""}`} onSubmit={submit}>
+        <motion.form
+          ref={formRef}
+          className={`ctf-flag-form${error ? " has-error" : ""}`}
+          onSubmit={submit}
+          initial={{ opacity: 0, y: 32, scale: 0.97 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ type: "spring", stiffness: 260, damping: 26 }}
+        >
           <label htmlFor="flag-input">Submit flag</label>
           <motion.div className="ctf-flag-row" animate={shake}>
             <input
@@ -405,7 +416,9 @@ function MissionPanel({
               disabled={disabled}
               aria-invalid={Boolean(error)}
               aria-describedby="flag-feedback"
-              autoFocus
+              onFocus={(e) => (lastFlagInput.el = e.currentTarget)}
+              // Phones: don't pop the keyboard (and jump past the brief) on load.
+              autoFocus={!isPhone}
             />
             <button type="submit" className={`ctf-btn ctf-btn--gold${busy ? " is-busy" : ""}`} disabled={busy || disabled || !flag.trim()}>
               <Send size={16} aria-hidden="true" />
@@ -422,8 +435,69 @@ function MissionPanel({
               <span className="ctf-muted">Not case-sensitive. Spaces at the ends are ignored.</span>
             )}
           </p>
-        </form>
+        </motion.form>
       </div>
+
+      {shellEl &&
+        createPortal(
+          <AnimatePresence>
+            {showDock && (
+              <motion.form
+                key="dock"
+                className={`ctf-dock${error ? " has-error" : ""}`}
+                onSubmit={submit}
+                initial={{ y: "115%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "115%" }}
+                transition={{ type: "spring", stiffness: 380, damping: 34 }}
+                aria-label="Submit flag"
+              >
+                <div className="ctf-dock-head">
+                  <span>
+                    Mission {String(mission.order).padStart(2, "0")} · Submit flag
+                  </span>
+                  {error ? (
+                    <b className="ctf-dock-err" role="status">
+                      {error}
+                    </b>
+                  ) : (
+                    <button type="button" className="ctf-dock-jump" onClick={scrollToForm}>
+                      Full view <ArrowDown size={13} aria-hidden="true" />
+                    </button>
+                  )}
+                </div>
+                <motion.div className="ctf-dock-row" animate={shake}>
+                  <input
+                    id="flag-input-dock"
+                    className="ctf-mono"
+                    value={flag}
+                    onChange={(e) => {
+                      setFlag(e.target.value);
+                      if (error) setError(null);
+                    }}
+                    onFocus={(e) => (lastFlagInput.el = e.currentTarget)}
+                    placeholder={FLAG_FORMAT}
+                    autoComplete="off"
+                    spellCheck={false}
+                    autoCapitalize="off"
+                    disabled={disabled}
+                    aria-label="Flag"
+                    aria-invalid={Boolean(error)}
+                  />
+                  <button
+                    type="submit"
+                    className={`ctf-btn ctf-btn--gold ctf-dock-send${busy ? " is-busy" : ""}`}
+                    disabled={busy || disabled || !flag.trim()}
+                    aria-label={busy ? "Checking" : "Submit flag"}
+                  >
+                    <Send size={18} aria-hidden="true" />
+                  </button>
+                </motion.div>
+              </motion.form>
+            )}
+          </AnimatePresence>,
+          shellEl,
+        )}
     </motion.article>
   );
 }
@@ -542,7 +616,7 @@ function PassedOverlay({ passed, onDone }: { passed: Passed; onDone: () => void 
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          {passed.practice ? "Practice · not scored" : `+${passed.points} points`}
+          +{passed.points} points
         </motion.p>
         <motion.p className="ctf-passed-sub" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.55 }}>
           Mission {String(passed.order).padStart(2, "0")} · {passed.title}
@@ -554,41 +628,18 @@ function PassedOverlay({ passed, onDone }: { passed: Passed; onDone: () => void 
   );
 }
 
-function EndedModal({ message, onPractice, onExit }: { message: string; onPractice: () => void; onExit: () => void }) {
-  return (
-    <motion.div className="ctf-modal-wrap" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
-      <motion.div
-        className="ctf-modal"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="ended-title"
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: 20, opacity: 0 }}
-      >
-        <h2 id="ended-title">
-          <TitleArt text="Event Ended" />
-        </h2>
-        {message && <p className="ctf-modal-quote">“{message}”</p>}
-        <p className="ctf-muted">
-          Your scored flags are locked in. You can keep solving the remaining missions for practice. They won't count toward
-          your score.
-        </p>
-        <div className="ctf-modal-actions">
-          <button type="button" className="ctf-btn ctf-btn--gold" onClick={onPractice} autoFocus>
-            Continue in practice mode
-          </button>
-          <button type="button" className="ctf-btn ctf-btn--ghost" onClick={onExit}>
-            <X size={16} aria-hidden="true" /> Log out
-          </button>
-        </div>
-      </motion.div>
-    </motion.div>
-  );
-}
-
-function Debrief({ player, eventStart, onLogout }: { player: PlayerState; eventStart: number | null; onLogout: () => void }) {
-  const practiceCount = player.slots.filter((s) => s.status === "practice").length;
+function Debrief({
+  player,
+  eventStart,
+  message,
+  onLogout,
+}: {
+  player: PlayerState;
+  eventStart: number | null;
+  /** The organisers' closing message, when the event was closed. */
+  message: string;
+  onLogout: () => void;
+}) {
   const allScored = player.solved === player.total;
   // Measured from the event start, matching the leaderboard.
   const time = eventStart !== null && player.finishedAt ? Math.max(0, player.finishedAt - eventStart) : null;
@@ -610,6 +661,7 @@ function Debrief({ player, eventStart, onLogout }: { player: PlayerState; eventS
             ? "Every flag captured. The city's signals are yours."
             : "That's a wrap. Here's what your crew pulled off."}
         </p>
+        {message && <p className="ctf-modal-quote">“{message}”</p>}
 
         <dl className="ctf-debrief-stats">
           <div>
@@ -628,11 +680,6 @@ function Debrief({ player, eventStart, onLogout }: { player: PlayerState; eventS
             <dd>{allScored ? formatDuration(time) : "--"}</dd>
           </div>
         </dl>
-        {practiceCount > 0 && (
-          <p className="ctf-muted">
-            Plus {practiceCount} practice {practiceCount === 1 ? "flag" : "flags"} after the event ended (not scored).
-          </p>
-        )}
 
         <p className="ctf-debrief-note">
           Standings stay with the organisers. Qualified teams will be contacted on their registered email.

@@ -16,7 +16,7 @@ import { defaultLinkLabel } from "./links";
 export type EventState = {
   /** ISO time the missions unlock. */
   startsAt: string;
-  /** Set by an admin to end the event. Players can keep going in practice mode. */
+  /** Set by an admin to end the event. No more flags are accepted. */
   closed: boolean;
   closedMessage: string;
 };
@@ -43,7 +43,7 @@ export type MissionSlot = {
   order: number;
   /** Null for locked missions. */
   points: number | null;
-  status: "solved" | "practice" | "current" | "locked";
+  status: "solved" | "current" | "locked";
   /** Null for locked missions so their names don't leak. */
   title?: string | null;
   category?: string | null;
@@ -58,13 +58,13 @@ export type PlayerState = {
   score: number;
   startedAt: number | null;
   finishedAt: number | null;
-  /** Every mission captured (scored or, after closing, practice). */
+  /** Every mission captured. */
   finished: boolean;
 };
 
 export type SubmitResult =
   | { correct: false }
-  | { correct: true; points: number; practice: boolean; finished: boolean };
+  | { correct: true; points: number; finished: boolean };
 
 export type LeaderboardRow = {
   teamId: string;
@@ -186,6 +186,7 @@ const ERRORS: Record<string, string> = {
   EMAIL_TAKEN: "Another team already uses that email.",
   SESSION_EXPIRED: "Your team signed in on another device, so this session ended.",
   NOT_STARTED: "The event has not started yet.",
+  EVENT_CLOSED: "The event has ended. Flags are no longer accepted.",
   NOT_CURRENT: "The missions were updated by the organisers. Reloading…",
   FORBIDDEN: "This account doesn't have control-room access.",
   TOO_MANY_LOGINS: "Too many wrong passwords. Wait 15 minutes, or ask the organisers for help.",

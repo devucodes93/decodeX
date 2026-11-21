@@ -32,9 +32,19 @@ export function CtfHud({ label, children, onLogout }: Props) {
 }
 
 /** Small HUD readout: label above a value. */
-export function HudStat({ label, value, tone }: { label: string; value: ReactNode; tone?: "gold" | "pink" | "green" }) {
+export function HudStat({
+  label,
+  value,
+  tone,
+  className,
+}: {
+  label: string;
+  value: ReactNode;
+  tone?: "gold" | "pink" | "green";
+  className?: string;
+}) {
   return (
-    <div className={`ctf-hud-stat${tone ? ` is-${tone}` : ""}`}>
+    <div className={`ctf-hud-stat${tone ? ` is-${tone}` : ""}${className ? ` ${className}` : ""}`}>
       <span>{label}</span>
       <b>{value}</b>
     </div>
