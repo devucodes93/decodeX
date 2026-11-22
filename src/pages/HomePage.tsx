@@ -3,6 +3,7 @@ import { useGSAP } from "@gsap/react";
 import { Hero } from "../components/sections/Hero";
 import { AboutHero } from "../components/sections/AboutHero";
 import { RegistrationCTA } from "../components/sections/Blocks";
+import { QualifierResults } from "../components/QualifierResults";
 import { EVENT } from "../config/event";
 import { useTitle } from "../hooks";
 import { gsap, isTouch, SCRUB } from "../animations/gsap";
@@ -116,6 +117,7 @@ export default function HomePage() {
 
   return (
     <>
+      <QualifierResults />
       <div className="home-stack" ref={stackRef}>
         <Hero />
         <AboutHero variant="section" />
