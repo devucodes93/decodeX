@@ -132,6 +132,18 @@ function LiveBoard() {
         </header>
 
         <h1 className="ctf-sr">Live leaderboard</h1>
+        {/* Outline drawn from the letters' silhouette, not the font's
+            contours: Manrope's glyphs are built from overlapping pieces
+            (e.g. the R's leg), which a plain text-stroke shows as extra
+            lines inside the letters. */}
+        <svg className="lb-svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
+          <filter id="lb-outline" x="-2%" y="-10%" width="104%" height="120%" colorInterpolationFilters="sRGB">
+            <feMorphology in="SourceAlpha" operator="dilate" radius="1.6" result="grown" />
+            <feComposite in="grown" in2="SourceAlpha" operator="out" result="ring" />
+            <feFlood floodColor="#ff4f8b" floodOpacity="0.6" />
+            <feComposite in2="ring" operator="in" />
+          </filter>
+        </svg>
         <div className="lb-ghost" aria-hidden="true">
           Leaderboard
         </div>

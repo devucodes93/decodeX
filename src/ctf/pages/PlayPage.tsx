@@ -467,7 +467,7 @@ function MissionPanel({
                 {retryLeft > 0 && <small className="ctf-cooldown">Next try in {retryLeft}s</small>}
               </>
             ) : (
-              <span className="ctf-muted">Not case-sensitive. Spaces at the ends are ignored.</span>
+              <span className="ctf-muted">Case-sensitive: capitals must match exactly. Spaces at the ends are ignored.</span>
             )}
           </p>
         </motion.form>

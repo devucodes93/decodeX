@@ -79,22 +79,31 @@
   left: 50%;
   z-index: 0;
   transform: translate(-50%, -50%);
-  color: transparent;
+  /* solid letters; the #lb-outline SVG filter keeps only a thin pink ring
+     around each letter's outer edge (no inner overlap lines) */
+  color: #000;
   font: 800 clamp(64px, 11.6vw, 250px)/1 "Manrope", sans-serif;
   letter-spacing: 0.01em;
   text-transform: uppercase;
   white-space: nowrap;
-  -webkit-text-stroke: 1.5px rgba(255, 79, 139, 0.55);
+  filter: url(#lb-outline);
   pointer-events: none;
   user-select: none;
+  will-change: opacity;
   animation: lb-breathe 7s ease-in-out infinite;
 }
 
 @keyframes lb-breathe {
   50% {
     opacity: 0.55;
-    letter-spacing: 0.025em;
   }
+}
+
+.lb-svg-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
 }
 
 /* ---------------------------------------------------------- top bar */
