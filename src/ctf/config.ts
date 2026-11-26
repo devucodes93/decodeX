@@ -10,6 +10,8 @@ export const CTF_PATHS = {
   play: "/ctf/play",
   adminLogin: "/ctf-admin/login",
   admin: "/ctf-admin",
+  /** Big-screen live leaderboard (admin only). */
+  leaderboard: "/admin/leaderboard",
 } as const;
 
 /** Flag format shown to players. */

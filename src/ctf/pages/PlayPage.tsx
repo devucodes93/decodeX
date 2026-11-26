@@ -440,6 +440,7 @@ function MissionPanel({
               autoComplete="off"
               spellCheck={false}
               autoCapitalize="off"
+              autoCorrect="off"
               disabled={disabled}
               aria-invalid={Boolean(error)}
               aria-describedby="flag-feedback"
@@ -514,6 +515,7 @@ function MissionPanel({
                     autoComplete="off"
                     spellCheck={false}
                     autoCapitalize="off"
+                    autoCorrect="off"
                     disabled={disabled}
                     aria-label="Flag"
                     aria-invalid={Boolean(error)}

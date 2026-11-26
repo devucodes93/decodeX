@@ -21,6 +21,7 @@ const ctfRoutes = [
   { path: CTF_PATHS.play, lazy: async () => ({ Component: (await import("../ctf/pages/PlayPage")).default }) },
   { path: CTF_PATHS.adminLogin, lazy: async () => ({ Component: (await import("../ctf/pages/AdminLoginPage")).default }) },
   { path: CTF_PATHS.admin, lazy: async () => ({ Component: (await import("../ctf/pages/AdminPage")).default }) },
+  { path: CTF_PATHS.leaderboard, lazy: async () => ({ Component: (await import("../ctf/pages/LeaderboardPage")).default }) },
 ];
 
 export const router = createBrowserRouter([{ path: "/", element: <App />, children: [

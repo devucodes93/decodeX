@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Reorder, useDragControls } from "framer-motion";
-import { ArrowDown, ArrowUp, GripVertical, Lock, MessageSquareText, Paperclip, Pencil, Plus, Trash2, X } from "lucide-react";
+import { AlertTriangle, ArrowDown, ArrowUp, GripVertical, Lock, MessageSquareText, Paperclip, Pencil, Plus, Trash2, X } from "lucide-react";
 import * as api from "../api";
 import type { MissionInput, MissionStat } from "../api";
 import { FLAG_FORMAT } from "../config";
@@ -218,9 +218,18 @@ function MissionRow({
             {m.solves} <small className="ctf-muted">solves</small>
           </span>
         </span>
-        <span className="ctf-flag-sealed" title="Flags are stored as hashes and can't be shown. Edit the mission to replace it.">
-          <Lock size={13} aria-hidden="true" /> Flag sealed
-        </span>
+        {m.caseSensitive === false ? (
+          <span
+            className="ctf-flag-sealed is-legacy"
+            title="This flag was saved before flags became case-sensitive, so it still accepts any capitalisation. Edit the mission and type the flag again to make it case-sensitive."
+          >
+            <AlertTriangle size={13} aria-hidden="true" /> Re-enter flag
+          </span>
+        ) : (
+          <span className="ctf-flag-sealed" title="Flags are stored as hashes and can't be shown. Edit the mission to replace it.">
+            <Lock size={13} aria-hidden="true" /> Flag sealed
+          </span>
+        )}
       </div>
 
       <div className="ctf-mission-actions">
@@ -295,14 +304,21 @@ function MissionForm({
           <span>{initial.id ? "New flag (leave empty to keep the current one)" : `Flag * (format ${FLAG_FORMAT})`}</span>
           <input
             className="ctf-mono"
-            type="password"
-            autoComplete="new-password"
+            type="text"
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            data-1p-ignore
+            data-lpignore="true"
             value={v.flag}
             onChange={(e) => set("flag", e.target.value)}
             spellCheck={false}
-            placeholder={initial.id ? "••••••••  (unchanged)" : FLAG_FORMAT}
+            placeholder={initial.id ? "Leave empty to keep the current flag" : FLAG_FORMAT}
           />
-          <small className="ctf-muted">Saved as a one-way hash. Nobody can view it later, so keep your own answer key.</small>
+          <small className="ctf-muted">
+            Case-sensitive: players must match capitals exactly (DECODEX{"{Abc}"} ≠ decodex{"{abc}"}). Spaces at the ends are ignored.
+            Saved as a one-way hash. Nobody can view it later, so keep your own answer key.
+          </small>
         </label>
         <label className="ctf-field ctf-form-span-3">
           <span>Mission brief (what players read)</span>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Flag, MessageSquareText, Play, RefreshCw, Trophy, Users } from "lucide-react";
+import { Flag, MessageSquareText, MonitorPlay, Play, RefreshCw, Trophy, Users } from "lucide-react";
 import { EVENT } from "../../config/event";
 import { TitleArt } from "../../components/ui/TitleArt";
 import { CtfShell } from "../components/CtfShell";
@@ -114,10 +114,16 @@ function ControlRoom() {
               <TitleArt text="Control Room" size="page" />
             </h1>
           </div>
-          <button type="button" className={`ctf-btn ctf-btn--ghost${board.loading ? " is-spinning" : ""}`} onClick={refreshAll}>
-            <RefreshCw size={16} aria-hidden="true" />
-            <span>Refresh</span>
-          </button>
+          <div className="ctf-admin-actions">
+            <Link to={CTF_PATHS.leaderboard} className="ctf-btn ctf-btn--ghost">
+              <MonitorPlay size={16} aria-hidden="true" />
+              <span>Big screen</span>
+            </Link>
+            <button type="button" className={`ctf-btn ctf-btn--ghost${board.loading ? " is-spinning" : ""}`} onClick={refreshAll}>
+              <RefreshCw size={16} aria-hidden="true" />
+              <span>Refresh</span>
+            </button>
+          </div>
         </header>
 
         <ul className="ctf-tiles">

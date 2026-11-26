@@ -84,7 +84,15 @@ export type LeaderboardRow = {
 };
 
 /** A mission as admins see it. The flag is never sent back, even to admins. */
-export type MissionStat = Mission & { solves: number };
+export type MissionStat = Mission & {
+  solves: number;
+  /**
+   * False for missions whose flag was saved before flags became
+   * case-sensitive (still matched ignoring capitals until re-entered).
+   * Missing if the 20261124 migration hasn't been run.
+   */
+  caseSensitive?: boolean;
+};
 
 /** What an admin fills in to create or edit a mission. */
 export type MissionInput = Omit<Mission, "id" | "order"> & {

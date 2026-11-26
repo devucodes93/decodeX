@@ -1,4 +1,4 @@
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { Lock, Radio, Trophy } from "lucide-react";
 import { CtfShell } from "../components/CtfShell";
 import { AccessPanel } from "../components/AccessPanel";
@@ -8,8 +8,13 @@ import * as api from "../api";
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  // Return to the live leaderboard if that's where the organiser came from
+  // (only known admin pages, never an arbitrary URL).
+  const from = (location.state as { from?: string } | null)?.from;
+  const next = from === CTF_PATHS.leaderboard ? from : CTF_PATHS.admin;
   const admin = useAdminSession();
-  if (admin && admin !== "checking") return <Navigate to={CTF_PATHS.admin} replace />;
+  if (admin && admin !== "checking") return <Navigate to={next} replace />;
 
   return (
     <CtfShell art="/assets/eligibility/lobby-panel.jpg" artPosition="center 30%" title="Admin login" className="ctf--admin">
@@ -62,7 +67,7 @@ export default function AdminLoginPage() {
           busyLabel="Checking clearance…"
           onSubmit={async (v) => {
             await api.adminLogin(v.email, v.password);
-            navigate(CTF_PATHS.admin, { replace: true });
+            navigate(next, { replace: true });
           }}
           footnote="Organisers only. Don't share this link."
         />

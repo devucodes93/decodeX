@@ -2377,6 +2377,12 @@
   color: var(--mute);
 }
 
+/* Flag saved before flags became case-sensitive: needs re-entering. */
+.ctf-flag-sealed.is-legacy {
+  color: var(--gold);
+  cursor: help;
+}
+
 .ctf-field > small {
   font-size: 12px;
   line-height: 1.4;
@@ -3155,4 +3161,15 @@
   .ctf-attach-row {
     grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr) 30px;
   }
+}
+
+/* Control room header buttons (Big screen + Refresh). */
+.ctf-admin-head > .ctf-admin-actions {
+  flex: 0 0 auto;
+}
+
+.ctf-admin-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
 }

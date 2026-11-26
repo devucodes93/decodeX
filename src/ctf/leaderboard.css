@@ -1,0 +1,961 @@
+/* Live leaderboard (/admin/leaderboard).
+   One screen, no scrolling: a dark hot-pink colour wash over the key
+   art, an outlined LEADERBOARD word behind everything, a centred podium and
+   a top-10 table underneath. */
+
+.ctf--board {
+  --ink-olive: #2a0718;
+  --pink: #ff4f8b;
+  --gold-hi: #ffe27a;
+  --gold-lo: #ffc83d;
+  --gold-metal: linear-gradient(135deg, #fff4c2 0%, #ffd34d 35%, #e0a514 65%, #ffe58a 100%);
+  --silver-metal: linear-gradient(135deg, #ffffff 0%, #dfe3ea 40%, #a7adb8 70%, #f4f6f9 100%);
+  --bronze-metal: linear-gradient(135deg, #ffd8b5 0%, #e6995a 40%, #a7612d 70%, #f6bd8e 100%);
+  --silver-hi: rgba(255, 255, 255, 0.42);
+  --bronze-hi: #f0a868;
+  --bronze-lo: #c97a3c;
+  --white: #ffffff;
+  --soft: rgba(255, 255, 255, 0.72);
+  --faint: rgba(255, 255, 255, 0.5);
+
+  --pod-av: clamp(50px, 8.4vh, 96px);
+  --row-av: clamp(26px, 3.6vh, 40px);
+
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+  font-family: "Manrope", sans-serif;
+  color: var(--white);
+}
+
+/* ---------------------------------------------------------- colour wash */
+
+.ctf--board .ctf-bg img {
+  filter: grayscale(1) contrast(1.15) brightness(1.05);
+}
+
+/* duotone: grey photo x hot pink */
+.ctf--board .ctf-bg::after {
+  background: linear-gradient(160deg, #b02a66 0%, #5c0d34 45%, #1c0411 100%);
+  mix-blend-mode: multiply;
+}
+
+.lb-wash {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 45% at 50% 0%, rgba(255, 79, 139, 0.14), transparent 70%),
+    radial-gradient(120% 90% at 50% 50%, rgba(12, 2, 8, 0.35) 30%, rgba(8, 1, 5, 0.85) 100%),
+    linear-gradient(180deg, rgba(12, 2, 8, 0.25) 0%, rgba(8, 1, 5, 0.6) 100%);
+}
+
+/* ---------------------------------------------------------- stage */
+
+.lb-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: clamp(12px, 2vh, 24px) clamp(16px, 2.4vw, 40px) clamp(14px, 2.6vh, 30px);
+}
+
+.lb-main {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* giant outlined word behind the podium/table seam */
+.lb-ghost {
+  position: absolute;
+  top: 47%;
+  left: 50%;
+  z-index: 0;
+  transform: translate(-50%, -50%);
+  color: transparent;
+  font: 800 clamp(64px, 11.6vw, 250px)/1 "Manrope", sans-serif;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  -webkit-text-stroke: 1.5px rgba(255, 79, 139, 0.55);
+  pointer-events: none;
+  user-select: none;
+  animation: lb-breathe 7s ease-in-out infinite;
+}
+
+@keyframes lb-breathe {
+  50% {
+    opacity: 0.55;
+    letter-spacing: 0.025em;
+  }
+}
+
+/* ---------------------------------------------------------- top bar */
+
+.lb-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 38px;
+}
+
+.lb-top-l,
+.lb-top-r {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.lb-brand {
+  font: 600 clamp(22px, 2.6vh, 28px)/1 "Teko", sans-serif;
+  letter-spacing: 0.06em;
+  padding-top: 3px;
+}
+
+.lb-brand b {
+  font-weight: 600;
+  color: #fff;
+  background: var(--pink);
+  padding: 2px 6px 0;
+  margin-left: 4px;
+}
+
+.lb-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(42, 7, 24, 0.55);
+  font: 800 11.5px/1 "Manrope", sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.lb-live i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--pink);
+  animation: lb-pulse 1.8s ease-out infinite;
+}
+
+.lb-live.is-warn {
+  color: #ffd1e3;
+}
+
+.lb-live.is-final {
+  background: var(--white);
+  color: var(--ink-olive);
+}
+
+@keyframes lb-pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 79, 139, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 9px rgba(255, 79, 139, 0);
+  }
+}
+
+.lb-updated {
+  color: var(--soft);
+  font: 500 12.5px/1 "Manrope", sans-serif;
+}
+
+.lb-updated b {
+  color: var(--white);
+  font-weight: 700;
+}
+
+.lb-clock {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-right: 4px;
+}
+
+.lb-clock small {
+  color: var(--soft);
+  font: 600 11px/1 "Manrope", sans-serif;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.lb-clock b {
+  font: 600 clamp(22px, 2.6vh, 28px)/1 "Teko", sans-serif;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
+
+.lb-icon-btn {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(42, 7, 24, 0.4);
+  color: var(--white);
+  cursor: pointer;
+  opacity: 0.7;
+  transition:
+    opacity 0.2s,
+    background-color 0.2s;
+}
+
+.lb-icon-btn:hover {
+  opacity: 1;
+  background: rgba(42, 7, 24, 0.7);
+}
+
+/* ---------------------------------------------------------- podium */
+
+.lb-podium {
+  display: grid;
+  grid-template-columns: repeat(3, clamp(118px, 11.5vw, 200px));
+  align-items: end;
+  gap: clamp(8px, 0.9vw, 14px);
+  height: clamp(190px, 37vh, 400px);
+}
+
+.lb-pod {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.lb-pod-who {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 12px;
+  min-width: 0;
+}
+
+.lb-pod.is-gold {
+  --pod-av: clamp(60px, 10vh, 116px);
+}
+
+.lb-pod-avatar {
+  box-shadow:
+    0 0 0 3px rgba(255, 255, 255, 0.85),
+    0 10px 24px rgba(40, 4, 22, 0.35);
+}
+
+.lb-pod-void {
+  width: var(--pod-av);
+  height: var(--pod-av);
+  border: 2px dashed rgba(255, 255, 255, 0.45);
+  border-radius: 50%;
+}
+
+.lb-pod-name {
+  max-width: 100%;
+  overflow: hidden;
+  font: 700 clamp(13px, 1.8vh, 19px)/1.2 "Manrope", sans-serif;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-shadow: 0 1px 8px rgba(40, 4, 22, 0.35);
+}
+
+.lb-pod.is-gold .lb-pod-name {
+  font-size: clamp(15px, 2.1vh, 22px);
+}
+
+.lb-pod-block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: clamp(6px, 1vh, 12px);
+  padding-top: clamp(14px, 2.6vh, 30px);
+  border-radius: 8px 8px 0 0;
+}
+
+.lb-pod.is-gold .lb-pod-block {
+  height: clamp(86px, 17vh, 190px);
+  background: var(--gold-metal);
+  color: #4a2a00;
+  box-shadow:
+    0 0 0 2px rgba(255, 240, 180, 0.7),
+    0 0 60px rgba(255, 200, 61, 0.45),
+    0 18px 40px rgba(80, 40, 0, 0.35);
+}
+
+.lb-pod.is-silver .lb-pod-block {
+  height: clamp(66px, 12.5vh, 140px);
+  background: var(--silver-metal);
+  color: #2b2f38;
+  box-shadow: 0 0 34px rgba(255, 255, 255, 0.28);
+}
+
+.lb-pod.is-bronze .lb-pod-block {
+  height: clamp(50px, 9vh, 104px);
+  background: var(--bronze-metal);
+  color: #3d1d06;
+  box-shadow: 0 0 34px rgba(240, 168, 104, 0.35);
+}
+
+.lb-pod-place {
+  position: relative;
+  font: 800 clamp(13px, 1.8vh, 19px)/1 "Manrope", sans-serif;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+}
+
+.lb-pod.is-gold .lb-pod-place {
+  font-size: clamp(15px, 2.2vh, 23px);
+}
+
+.lb-pill {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: rgba(16, 3, 10, 0.6);
+  color: #fff;
+  font: 700 clamp(12px, 1.6vh, 16px)/1 "Manrope", sans-serif;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.lb-pod.is-gold .lb-pill {
+  background: rgba(16, 3, 10, 0.78);
+  color: #ffe27a;
+  font-size: clamp(13px, 1.9vh, 19px);
+}
+
+.lb-pill .lb-delta {
+  position: absolute;
+  left: calc(100% + 6px);
+  top: 50%;
+  translate: 0 -50%;
+}
+
+/* ---------------------------------------------------------- caption */
+
+.lb-caption {
+  margin: clamp(10px, 1.8vh, 20px) 0 clamp(8px, 1.4vh, 16px);
+  color: var(--white);
+  font: 500 clamp(13px, 1.7vh, 17px)/1.2 "Manrope", sans-serif;
+  text-align: center;
+  text-shadow: 0 1px 8px rgba(40, 4, 22, 0.4);
+}
+
+.lb-caption b {
+  margin-right: 4px;
+  font-weight: 800;
+  font-size: 1.12em;
+}
+
+/* ---------------------------------------------------------- table */
+
+.lb-table {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  width: min(860px, 100%);
+  overflow: hidden;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 79, 139, 0.22);
+  background: rgba(16, 3, 10, 0.74);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  box-shadow: 0 24px 60px rgba(40, 4, 22, 0.3);
+}
+
+.lb-thead,
+.lb-tr {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px 90px 120px;
+  align-items: center;
+  column-gap: 12px;
+  padding: 0 clamp(14px, 1.6vw, 26px);
+}
+
+.lb-thead {
+  flex: none;
+  min-height: clamp(34px, 4.6vh, 48px);
+  background: rgba(255, 79, 139, 0.2);
+  color: #ffc2d8;
+  font: 700 clamp(12px, 1.6vh, 15px)/1 "Manrope", sans-serif;
+  letter-spacing: 0.02em;
+}
+
+.lb-thead span:nth-child(n + 2) {
+  text-align: center;
+}
+
+.lb-thead span:last-child {
+  text-align: right;
+}
+
+.lb-tbody {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-rows: repeat(10, minmax(0, 1fr));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.lb-tr {
+  position: relative;
+  min-height: 0;
+  border-bottom: 1px solid rgba(255, 79, 139, 0.1);
+  transition: background-color 0.25s;
+}
+
+.lb-tr:last-child {
+  border-bottom: 0;
+}
+
+.lb-tr:hover {
+  background: rgba(255, 79, 139, 0.08);
+}
+
+.lb-team {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.lb-team .team-avatar {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
+}
+
+.lb-team-name {
+  min-width: 0;
+  overflow: hidden;
+  font: 600 clamp(13px, 1.9vh, 19px)/1.2 "Manrope", sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lb-place {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lb-place-n {
+  display: grid;
+  place-items: center;
+  min-width: clamp(24px, 3.2vh, 32px);
+  height: clamp(24px, 3.2vh, 32px);
+  border-radius: 999px;
+  font: 700 clamp(13px, 1.8vh, 17px)/1 "Manrope", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.lb-place-n.is-gold {
+  background: var(--gold-hi);
+  color: var(--ink-olive);
+}
+
+.lb-place-n.is-silver {
+  background: rgba(255, 255, 255, 0.85);
+  color: var(--ink-olive);
+}
+
+.lb-place-n.is-bronze {
+  background: var(--bronze-hi);
+  color: var(--ink-olive);
+}
+
+.lb-move {
+  position: absolute;
+  left: calc(50% + clamp(18px, 2.4vh, 24px));
+  display: inline-flex;
+  align-items: center;
+  font: 800 11px/1 "Manrope", sans-serif;
+}
+
+.lb-move.is-up {
+  color: #b6ff9c;
+}
+
+.lb-move.is-down {
+  color: #ffb4a8;
+}
+
+.lb-flags {
+  color: var(--soft);
+  font: 600 clamp(12px, 1.7vh, 16px)/1 "Manrope", sans-serif;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+}
+
+.lb-points {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  font: 700 clamp(14px, 2vh, 20px)/1 "Manrope", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+.lb-delta {
+  display: inline-block;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: var(--white);
+  color: #c2185b;
+  font: 800 12px/1 "Manrope", sans-serif;
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(40, 4, 22, 0.3);
+}
+
+.lb-tr.is-flash,
+.lb-pod-block.is-flash {
+  animation: lb-flash 1.8s ease-out;
+}
+
+@keyframes lb-flash {
+  0%,
+  25% {
+    background-color: rgba(255, 255, 255, 0.22);
+  }
+}
+
+.lb-pod-block.is-flash {
+  animation-name: lb-glow;
+}
+
+@keyframes lb-glow {
+  0%,
+  25% {
+    filter: brightness(1.25);
+  }
+}
+
+.lb-empty {
+  display: grid;
+  place-items: center;
+  flex: 1;
+  margin: 0;
+  padding: 20px;
+  color: var(--soft);
+  font: 600 clamp(14px, 1.9vh, 18px)/1.4 "Manrope", sans-serif;
+  text-align: center;
+}
+
+/* ---------------------------------------------------------- avatar */
+
+.team-avatar {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--ta-size);
+  height: var(--ta-size);
+  overflow: hidden;
+  border-radius: 50%;
+  color: #fff;
+  font-size: calc(var(--ta-size) * var(--ta-k, 0.4));
+  line-height: 1;
+}
+
+.team-avatar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1.5px var(--ta-ring);
+  background: radial-gradient(70% 55% at 30% 20%, rgba(255, 255, 255, 0.28), transparent 70%);
+  pointer-events: none;
+}
+
+.team-avatar-txt {
+  position: relative;
+  z-index: 1;
+  padding-top: 0.12em;
+  font-family: "Teko", sans-serif;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+/* ---------------------------------------------------------- skeleton / error */
+
+.lb-skeleton {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.lb-skeleton .lb-pod-block {
+  opacity: 0.55;
+}
+
+.lb-sk {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.12) 25%, rgba(255, 255, 255, 0.28) 50%, rgba(255, 255, 255, 0.12) 75%) 0 0 / 200% 100%;
+  animation: lb-shimmer 1.4s linear infinite;
+}
+
+.lb-sk-av {
+  width: var(--pod-av);
+  height: var(--pod-av);
+  border-radius: 50%;
+}
+
+.lb-sk-line {
+  width: 70%;
+  height: 12px;
+}
+
+.lb-sk-dot {
+  width: var(--row-av);
+  height: var(--row-av);
+  border-radius: 50%;
+}
+
+.lb-sk-short {
+  justify-self: center;
+  width: 36px;
+  height: 12px;
+}
+
+.lb-sk-short.lb-points {
+  justify-self: end;
+}
+
+@keyframes lb-shimmer {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.lb-error {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  max-width: 520px;
+  margin: auto;
+  padding: 36px 28px;
+  border-radius: 12px;
+  background: rgba(16, 3, 10, 0.8);
+  backdrop-filter: blur(6px);
+  text-align: center;
+}
+
+.lb-error h2 {
+  margin: 0;
+  font: 800 24px/1.2 "Manrope", sans-serif;
+  letter-spacing: 0;
+}
+
+.lb-error p {
+  margin: 0 0 8px;
+  color: var(--soft);
+  font-size: 14.5px;
+}
+
+.lb-retry {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--ink-olive);
+  font: 700 14px/1 "Manrope", sans-serif;
+  cursor: pointer;
+}
+
+.lb-retry:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.lb-retry .is-spinning {
+  animation: lb-spin 0.9s linear infinite;
+}
+
+@keyframes lb-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------------------------------------------------------- smaller screens */
+
+@media (max-width: 760px) {
+  .lb-updated,
+  .lb-clock small {
+    display: none;
+  }
+  .lb-thead,
+  .lb-tr {
+    grid-template-columns: minmax(0, 1fr) 58px 48px 76px;
+    column-gap: 8px;
+  }
+  .lb-podium {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-live i,
+  .lb-sk,
+  .lb-tr.is-flash,
+  .lb-pod-block.is-flash {
+    animation: none;
+  }
+}
+
+/* ================================================================
+   Top-3 emphasis
+   ================================================================ */
+
+/* podium avatars: metal ring; the champion gets a spinning halo + crown */
+.lb-pod-ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 4px;
+  border-radius: 50%;
+  background: var(--gold-metal);
+}
+
+.lb-pod.is-silver .lb-pod-ring {
+  background: var(--silver-metal);
+}
+
+.lb-pod.is-bronze .lb-pod-ring {
+  background: var(--bronze-metal);
+}
+
+.lb-pod-ring .lb-pod-avatar {
+  box-shadow: 0 10px 24px rgba(40, 4, 22, 0.4);
+}
+
+/* halo is its own layer so only it spins (badge + crown stay still) */
+.lb-pod.is-gold .lb-pod-ring {
+  padding: 5px;
+  background: none;
+  box-shadow: 0 0 44px rgba(255, 200, 61, 0.55);
+}
+
+.lb-pod.is-gold .lb-pod-ring::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #fff4c2, #ffc83d, #ff4f8b, #ffc83d, #fff4c2, #ffd34d, #fff4c2);
+  animation: lb-spin 6s linear infinite;
+}
+
+.lb-pod.is-gold .lb-pod-ring .lb-pod-avatar {
+  position: relative;
+}
+
+.lb-crown {
+  position: absolute;
+  top: -32px;
+  left: 50%;
+  z-index: 2;
+  color: #ffd34d;
+  fill: #ffd34d;
+  stroke: #7a4a00;
+  stroke-width: 1.5;
+  filter: drop-shadow(0 3px 6px rgba(40, 4, 22, 0.5));
+  animation: lb-crown 2.8s ease-in-out infinite;
+}
+
+@keyframes lb-crown {
+  0%,
+  100% {
+    transform: translate(-50%, 0) rotate(-6deg);
+  }
+  50% {
+    transform: translate(-50%, -5px) rotate(6deg);
+  }
+}
+
+.lb-pod.is-gold .lb-pod-name {
+  color: #fff3c4;
+  text-shadow: 0 0 18px rgba(255, 200, 61, 0.65);
+}
+
+/* light sweep across the podium blocks (clipped here, not on the block,
+   so the "+100" next to the points pill can overflow) */
+.lb-shine {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.lb-shine::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 35%, rgba(255, 255, 255, 0.65) 50%, transparent 65%);
+  transform: translateX(-120%);
+  animation: lb-sweep 5s ease-in-out infinite;
+}
+
+.lb-pod.is-silver .lb-shine::before {
+  animation-delay: 1.2s;
+}
+
+.lb-pod.is-bronze .lb-shine::before {
+  animation-delay: 2.4s;
+}
+
+@keyframes lb-sweep {
+  0%,
+  55% {
+    transform: translateX(-120%);
+  }
+  85%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+/* table rows 1-3 */
+.lb-tr.is-top {
+  --m: var(--gold-lo);
+  --metal: var(--gold-metal);
+  background: linear-gradient(90deg, color-mix(in srgb, var(--m) 34%, transparent), color-mix(in srgb, var(--m) 6%, transparent) 70%);
+}
+
+.lb-tr.is-top.is-silver {
+  --m: #e6e9ef;
+  --metal: var(--silver-metal);
+}
+
+.lb-tr.is-top.is-bronze {
+  --m: var(--bronze-hi);
+  --metal: var(--bronze-metal);
+}
+
+.lb-tr.is-top::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--metal);
+}
+
+.lb-tr.is-top .lb-team-name {
+  font-weight: 800;
+  font-size: clamp(14px, 2.05vh, 21px);
+}
+
+.lb-tr.is-top .lb-points {
+  font-weight: 800;
+  font-size: clamp(15px, 2.2vh, 22px);
+}
+
+.lb-tr.is-top.is-gold .lb-points,
+.lb-tr.is-top.is-gold .lb-team-name {
+  color: #fff3c4;
+  text-shadow: 0 0 14px rgba(255, 200, 61, 0.55);
+}
+
+.lb-tr.is-top .team-avatar {
+  box-shadow: 0 0 0 2px var(--m);
+}
+
+.lb-place-n.is-gold {
+  background: var(--gold-metal);
+  box-shadow: 0 0 14px rgba(255, 200, 61, 0.6);
+}
+
+.lb-place-n.is-silver {
+  background: var(--silver-metal);
+}
+
+.lb-place-n.is-bronze {
+  background: var(--bronze-metal);
+}
+
+/* ================================================================
+   Background effects (transform / opacity only, so cheap to run all day)
+   ================================================================ */
+
+.lb-fx {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* rising specks of light */
+.lb-spark {
+  position: absolute;
+  bottom: -10px;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+  background: #ffd1e3;
+  box-shadow: 0 0 10px 2px rgba(255, 79, 139, 0.75);
+  opacity: 0;
+  animation: lb-rise var(--d) linear var(--dl) infinite;
+}
+
+@keyframes lb-rise {
+  0% {
+    transform: translate(0, 0);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  80% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(var(--dx), -105vh);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-ghost,
+  .lb-pod.is-gold .lb-pod-ring::before,
+  .lb-crown,
+  .lb-shine::before {
+    animation: none !important;
+  }
+  .lb-shine,
+  .lb-spark {
+    display: none;
+  }
+}
