@@ -30,6 +30,7 @@ backend/
     migrations/20261122000000_ctf_flag_cooldown.sql       15-second wait after a wrong flag
     migrations/20261123000000_ctf_closed_hides_missions.sql  nothing sent while closed/not started; server clock
     migrations/20261124000000_ctf_case_sensitive_flags.sql   flags must match capitals exactly
+    migrations/20261125000000_site_maintenance.sql          website maintenance switch (Event control)
     make-admin.sql                               give an Auth user control-room access
 ```
 

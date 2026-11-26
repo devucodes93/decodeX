@@ -448,6 +448,20 @@ export async function updateEvent(patch: Partial<EventState>): Promise<void> {
   ping("event");
 }
 
+/* -------- website maintenance */
+
+/** Whether the public website shows the maintenance page. */
+export async function getSiteStatus(): Promise<{ maintenance: boolean }> {
+  const res = await rpc<{ maintenance?: boolean }>("ctf_site_status");
+  return { maintenance: Boolean(res?.maintenance) };
+}
+
+/** Turns the public website's maintenance page on or off. Admin only. */
+export async function setMaintenance(on: boolean): Promise<void> {
+  await rpc("ctf_admin_set_maintenance", { p_on: on });
+  ping("event");
+}
+
 /* -------- missions */
 
 export async function getMissionStats(): Promise<MissionStat[]> {

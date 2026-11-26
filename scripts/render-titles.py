@@ -44,6 +44,7 @@ TITLES = {
     "Sponsors and partners": ["Sponsors and", "partners"],
     "Results": ["Results"],
     "Page not found": ["Page not found"],
+    "Under Maintenance": ["Under Maintenance"],
     "DecodeX 2026": ["DecodeX 2026"],
     "Mission Briefing": ["Mission Briefing"],
     "Mission Schedule": ["Mission Schedule"],

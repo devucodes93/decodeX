@@ -9,6 +9,13 @@
 
 export const SHOW_RESULTS = false; // set to true ONLY when verified results are published
 
+// Maintenance mode: every public page shows the "Under maintenance" page.
+// The hidden CTF portal (/ctf, /ctf-admin, /admin/leaderboard) keeps working.
+// Normally switched from the control room (Event control -> Website
+// maintenance), no redeploy needed. This build-time flag is a backup: set it
+// to true, or VITE_MAINTENANCE=true in Vercel, to force it on (redeploy).
+export const MAINTENANCE = false || import.meta.env.VITE_MAINTENANCE === "true";
+
 export const EVENT = {
   // Identity
   name: "DECODEX",

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { CalendarClock, Lock, Play, Unlock } from "lucide-react";
+import { CalendarClock, ExternalLink, Lock, Play, Unlock, Wrench } from "lucide-react";
 import * as api from "../api";
 import type { EventState } from "../api";
 import { Confirm, type Notify } from "./ui";
+import { useLiveData } from "../hooks";
 
 const toLocalInput = (iso: string) => {
   const d = new Date(iso);
@@ -13,7 +14,8 @@ const toLocalInput = (iso: string) => {
 export function EventTab({ event, now, notify }: { event: EventState; now: number; notify: Notify }) {
   const [start, setStart] = useState(() => toLocalInput(event.startsAt));
   const [message, setMessage] = useState(event.closedMessage);
-  const [confirm, setConfirm] = useState<"close" | null>(null);
+  const [confirm, setConfirm] = useState<"close" | "maint" | null>(null);
+  const site = useLiveData(api.getSiteStatus);
   const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => setStart(toLocalInput(event.startsAt)), [event.startsAt]);
@@ -31,6 +33,20 @@ export function EventTab({ event, now, notify }: { event: EventState; now: numbe
   };
 
   const live = api.isLive(event, now);
+  const maint = site.data?.maintenance ?? false;
+
+  const setMaint = async (on: boolean) => {
+    setBusy("maint");
+    try {
+      await api.setMaintenance(on);
+      await site.reload();
+      notify(on ? "Website is now in maintenance mode." : "Website is back online.");
+    } catch (e) {
+      notify(e instanceof Error ? e.message : "Couldn't save.", "error");
+    } finally {
+      setBusy(null);
+    }
+  };
 
   return (
     <div className="ctf-control">
@@ -103,6 +119,52 @@ export function EventTab({ event, now, notify }: { event: EventState; now: numbe
           )}
         </div>
       </article>
+
+      <article className={`ctf-card${maint ? " is-ended" : ""}`}>
+        <header>
+          <Wrench size={18} aria-hidden="true" />
+          <h2>Website maintenance</h2>
+          {site.data && <span className={`ctf-pill is-${maint ? "ended" : "live"}`}>{maint ? "Maintenance" : "Online"}</span>}
+        </header>
+        <p className="ctf-muted">
+          Shows an "Under maintenance" page on the whole public website and the player pages (login, lobby, missions), right
+          away (open tabs switch within a minute). This control room and the live leaderboard keep working.
+        </p>
+        {site.error && !site.data ? (
+          <p className="ctf-muted">
+            Can't read the setting. Run the <code>20261125000000_site_maintenance.sql</code> migration in Supabase first.
+          </p>
+        ) : (
+          <div className="ctf-card-actions">
+            {maint ? (
+              <button type="button" className="ctf-btn ctf-btn--cream" disabled={busy !== null} onClick={() => void setMaint(false)}>
+                {busy === "maint" ? "Turning off…" : "Turn off maintenance"}
+              </button>
+            ) : (
+              <button type="button" className="ctf-btn ctf-btn--danger" disabled={busy !== null || !site.data} onClick={() => setConfirm("maint")}>
+                <Wrench size={15} aria-hidden="true" />
+                <span>Turn on maintenance</span>
+              </button>
+            )}
+            <a className="ctf-btn ctf-btn--ghost" href="/" target="_blank" rel="noreferrer">
+              <ExternalLink size={15} aria-hidden="true" />
+              <span>View website</span>
+            </a>
+          </div>
+        )}
+      </article>
+
+      <Confirm
+        open={confirm === "maint"}
+        title="Put the website in maintenance mode?"
+        body="Visitors and players will see the maintenance page instead of the website and the mission pages until you turn it off."
+        confirmLabel="Yes, turn it on"
+        onCancel={() => setConfirm(null)}
+        onConfirm={async () => {
+          await setMaint(true);
+          setConfirm(null);
+        }}
+      />
 
       <Confirm
         open={confirm === "close"}

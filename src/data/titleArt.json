@@ -77,6 +77,12 @@
     "h": 197,
     "lines": 1
   },
+  "Under Maintenance": {
+    "src": "/assets/titles/under-maintenance.png",
+    "w": 1468,
+    "h": 163,
+    "lines": 1
+  },
   "DecodeX 2026": {
     "src": "/assets/titles/decodex-2026.png",
     "w": 1022,
@@ -137,16 +143,16 @@
     "h": 163,
     "lines": 1
   },
-  "Heist Complete": {
-    "src": "/assets/titles/heist-complete-badge.png",
-    "w": 1186,
-    "h": 169,
-    "lines": 1
-  },
   "Mission Failed": {
     "src": "/assets/titles/mission-failed-badge.png",
     "w": 1073,
     "h": 163,
+    "lines": 1
+  },
+  "Heist Complete": {
+    "src": "/assets/titles/heist-complete-badge.png",
+    "w": 1186,
+    "h": 169,
     "lines": 1
   }
 }
