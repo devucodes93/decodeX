@@ -1,11 +1,12 @@
 import { memo, useEffect, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { AnimatePresence, animate, motion } from "framer-motion";
-import { ArrowDown, ArrowUp, Crown, Expand, LayoutDashboard, RefreshCw, Shrink, WifiOff } from "lucide-react";
+import { ArrowDown, ArrowUp, Crown, Expand, LayoutDashboard, RefreshCw, Shrink, Volume2, VolumeX, WifiOff } from "lucide-react";
 import { EVENT } from "../../config/event";
 import { ASSETS } from "../../config/assets";
 import { CtfShell } from "../components/CtfShell";
 import { TeamAvatar } from "../components/TeamAvatar";
+import { AwaitOverlay, LaunchBanner, PreShow, useBeforeStart } from "../components/BoardStages";
 import { CTF_PATHS } from "../config";
 import { formatClock, useAdminSession, useLiveData, useNow } from "../hooks";
 import * as api from "../api";
@@ -106,6 +107,23 @@ function LiveBoard() {
   const ev = event.data;
   const feed: FeedState = board.error && ranked ? "reconnecting" : ev?.closed ? "final" : "live";
 
+  // Countdown -> GO! -> board. The burst only plays if this screen was open
+  // for the countdown (not when the page is loaded after the start).
+  const startMs = ev ? new Date(ev.startsAt).getTime() : null;
+  const beforeStart = useBeforeStart(startMs, Boolean(ev?.closed));
+  const [launching, setLaunching] = useState(false);
+  const wasBefore = useRef(beforeStart);
+  useEffect(() => {
+    if (wasBefore.current && !beforeStart && ev && !ev.closed) setLaunching(true);
+    wasBefore.current = beforeStart;
+  }, [beforeStart, ev]);
+  useEffect(() => {
+    if (!launching) return;
+    const id = window.setTimeout(() => setLaunching(false), 3200);
+    return () => window.clearTimeout(id);
+  }, [launching]);
+  const [sound, setSound] = useSoundSetting();
+
   return (
     <CtfShell art={BG} tone="dim" title="Live leaderboard" className="ctf--board">
       <div className="lb-wash" aria-hidden="true" />
@@ -123,7 +141,17 @@ function LiveBoard() {
             </span>
           </div>
           <div className="lb-top-r">
-            <EventClock event={ev} />
+            {!beforeStart && <EventClock event={ev} />}
+            <button
+              type="button"
+              className="lb-icon-btn"
+              onClick={() => setSound(!sound)}
+              title={sound ? "Countdown sound on" : "Countdown sound off"}
+              aria-label={sound ? "Turn countdown sound off" : "Turn countdown sound on"}
+              aria-pressed={sound}
+            >
+              {sound ? <Volume2 size={17} aria-hidden="true" /> : <VolumeX size={17} aria-hidden="true" />}
+            </button>
             <FullscreenButton />
             <Link to={CTF_PATHS.admin} className="lb-icon-btn" title="Control room" aria-label="Control room">
               <LayoutDashboard size={17} aria-hidden="true" />
@@ -144,8 +172,10 @@ function LiveBoard() {
             <feComposite in2="ring" operator="in" />
           </filter>
         </svg>
-        <div className="lb-ghost" aria-hidden="true">
-          Leaderboard
+        {/* Hidden during the countdown (nothing behind the clock), faint
+            until the first flag is captured, then fades up. */}
+        <div className={`lb-ghost-wrap${beforeStart ? " is-hidden" : scored.length ? "" : " is-dim"}`} aria-hidden="true">
+          <div className="lb-ghost">Leaderboard</div>
         </div>
 
         <main className="lb-main">
@@ -153,17 +183,19 @@ function LiveBoard() {
             <ErrorState onRetry={() => void board.reload()} retrying={board.loading} />
           ) : !ranked ? (
             <BoardSkeleton />
+          ) : beforeStart && startMs !== null ? (
+            <PreShow startMs={startMs} sound={sound} />
           ) : (
             <>
               <Podium teams={scored.slice(0, 3)} changes={changes} />
 
-              <p className="lb-caption" aria-live="polite">
+              <p className={`lb-caption${leader ? "" : " is-quiet"}`} aria-live="polite">
                 {leader ? (
                   <>
                     <b>{leader.teamName}</b> is on top of the leaderboard
                   </>
                 ) : (
-                  "Waiting for the first flag"
+                  "The podium is open"
                 )}
               </p>
 
@@ -183,15 +215,70 @@ function LiveBoard() {
                     </AnimatePresence>
                   </ol>
                 ) : (
-                  <p className="lb-empty">The board fills in live as teams capture flags.</p>
+                  <>
+                    <PlaceholderRows />
+                    {!ev?.closed && <AwaitOverlay event={ev} />}
+                  </>
                 )}
               </section>
             </>
           )}
         </main>
       </div>
+
+      <AnimatePresence>{launching && <LaunchBanner key="go" sound={sound} />}</AnimatePresence>
     </CtfShell>
   );
+}
+
+/* ---------------------------------------------------- placeholder rows */
+
+/** Open slots 1-10 while nobody has scored: looks intentional, not like loading. */
+function PlaceholderRows() {
+  return (
+    <ol className="lb-tbody is-placeholder" aria-hidden="true">
+      {Array.from({ length: TOP_N }, (_, i) => {
+        const medal = i < 3 ? MEDAL[i] : null;
+        return (
+          <li key={i} className="lb-tr is-open">
+            <span className="lb-team">
+              <span className="lb-open-av" />
+              <span className="lb-open-name" />
+            </span>
+            <span className="lb-place">
+              <span className={`lb-place-n${medal ? ` is-${medal}` : ""}`}>{i + 1}</span>
+            </span>
+            <span className="lb-flags">–</span>
+            <span className="lb-points">–</span>
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
+/* -------------------------------------------------------- sound setting */
+
+const SOUND_KEY = "decodex-board-sound";
+
+/** Countdown/GO sound on or off, remembered on this computer. Default on. */
+function useSoundSetting(): [boolean, (on: boolean) => void] {
+  const [on, setOn] = useState(() => {
+    try {
+      return localStorage.getItem(SOUND_KEY) !== "off";
+    } catch {
+      return true;
+    }
+  });
+  const set = (v: boolean) => {
+    setOn(v);
+    try {
+      localStorage.setItem(SOUND_KEY, v ? "on" : "off");
+    } catch {
+      /* storage blocked: setting lasts for this page only */
+    }
+  };
+  return [on, set];
 }
 
 /* -------------------------------------------------------- change tracking */
@@ -273,8 +360,8 @@ function Podium({ teams, changes }: { teams: Ranked[]; changes: Record<string, C
                 ) : (
                   <span className="lb-pod-void" aria-hidden="true" />
                 )}
-                <span className="lb-pod-name" title={t?.teamName}>
-                  {t ? t.teamName : "—"}
+                <span className={`lb-pod-name${t ? "" : " is-open"}`} title={t?.teamName}>
+                  {t ? t.teamName : "Open"}
                 </span>
               </motion.div>
             </AnimatePresence>

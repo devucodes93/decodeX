@@ -99,6 +99,14 @@
   }
 }
 
+.lb-ghost-wrap {
+  transition: opacity 1.4s ease;
+}
+
+.lb-ghost-wrap.is-dim {
+  opacity: 0.3;
+}
+
 .lb-svg-defs {
   position: absolute;
   width: 0;
@@ -966,5 +974,319 @@
   .lb-shine,
   .lb-spark {
     display: none;
+  }
+}
+
+/* ================================================================
+   Countdown (before the start)
+   One clean stack on a dark centre: label / clock / date.
+   ================================================================ */
+
+.lb-pre {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(18px, 3.4vh, 40px);
+  text-align: center;
+}
+
+/* soft dark pool behind the clock so it never fights the photo */
+.lb-pre::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(48% 42% at 50% 50%, rgba(8, 1, 5, 0.78), rgba(8, 1, 5, 0.35) 60%, transparent 80%);
+  pointer-events: none;
+}
+
+.lb-pre-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font: 700 clamp(13px, 1.9vh, 18px)/1 "Manrope", sans-serif;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+}
+
+.lb-pre-label i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 12px var(--pink);
+  animation: lb-soft-blink 1.6s ease-in-out infinite;
+}
+
+@keyframes lb-soft-blink {
+  50% {
+    opacity: 0.3;
+  }
+}
+
+/* fixed-height stage so clock -> race numbers doesn't shift the layout */
+.lb-pre-stage {
+  display: grid;
+  place-items: center;
+  height: clamp(200px, 38vh, 420px);
+}
+
+.lb-pre-clock {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(28px, 4.4vw, 84px);
+}
+
+.lb-pre-unit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(6px, 1.2vh, 12px);
+}
+
+.lb-pre-unit small {
+  color: var(--pink);
+  font: 700 clamp(11px, 1.5vh, 14px)/1 "Manrope", sans-serif;
+  letter-spacing: 0.34em;
+  text-transform: uppercase;
+}
+
+.lb-digits {
+  display: flex;
+  color: #fff;
+  font: 600 clamp(110px, 24vh, 270px)/1 "Teko", sans-serif;
+  font-variant-numeric: tabular-nums;
+  text-shadow: 0 10px 40px rgba(8, 1, 5, 0.6);
+}
+
+.lb-digit {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  width: 0.48em;
+  height: 0.86em;
+  overflow: hidden;
+}
+
+.lb-digit > span {
+  grid-area: 1 / 1;
+  padding-top: 0.06em;
+}
+
+.lb-pre-colon {
+  position: absolute;
+  top: calc(clamp(110px, 24vh, 270px) * 0.26);
+  right: calc(clamp(28px, 4.4vw, 84px) / -2);
+  width: 8px;
+  height: calc(clamp(110px, 24vh, 270px) * 0.32);
+  translate: 50% 0;
+  background:
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 3.5px, transparent 4px) top / 8px 8px no-repeat,
+    radial-gradient(circle, rgba(255, 255, 255, 0.55) 3.5px, transparent 4px) bottom / 8px 8px no-repeat;
+}
+
+.lb-pre-when {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.6);
+  font: 600 clamp(12px, 1.6vh, 15px)/1 "Manrope", sans-serif;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.lb-pre-when span {
+  width: clamp(30px, 5vw, 80px);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 79, 139, 0.7));
+}
+
+.lb-pre-when span:last-child {
+  background: linear-gradient(90deg, rgba(255, 79, 139, 0.7), transparent);
+}
+
+/* last 10 seconds: one number at a time */
+.lb-race {
+  display: grid;
+  place-items: center;
+}
+
+.lb-race-num {
+  grid-area: 1 / 1;
+  color: #fff;
+  font: 600 clamp(200px, 40vh, 440px)/0.8 "Teko", sans-serif;
+  font-variant-numeric: tabular-nums;
+  padding-top: 0.1em;
+  text-shadow: 0 14px 50px rgba(8, 1, 5, 0.65);
+}
+
+.lb-race-num.is-gold {
+  color: #ffd34d;
+}
+
+/* hide the outlined word during the countdown, dim it until the first flag */
+.lb-ghost-wrap.is-hidden {
+  opacity: 0;
+}
+
+/* ================================================================
+   Start pill
+   ================================================================ */
+
+.lb-launch {
+  position: fixed;
+  top: 70px;
+  left: 50%;
+  z-index: 50;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  translate: -50% 0;
+  padding: 12px 22px;
+  border: 1px solid rgba(255, 79, 139, 0.5);
+  border-radius: 999px;
+  background: rgba(16, 3, 10, 0.92);
+  color: #fff;
+  font: 800 clamp(13px, 1.8vh, 17px)/1 "Manrope", sans-serif;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  box-shadow: 0 16px 40px rgba(8, 1, 5, 0.6);
+}
+
+.lb-launch i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--pink);
+  animation: lb-pulse 1.6s ease-out infinite;
+}
+
+/* ================================================================
+   No flags yet: open slots + card on top
+   ================================================================ */
+
+.lb-table {
+  position: relative;
+}
+
+.lb-caption.is-quiet {
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+.lb-tbody.is-placeholder .lb-tr {
+  pointer-events: none;
+}
+
+.lb-tbody.is-placeholder .lb-tr:hover {
+  background: none;
+}
+
+.lb-pod-name.is-open {
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-size: clamp(11px, 1.4vh, 14px);
+}
+
+.lb-open-av {
+  flex: none;
+  width: var(--row-av);
+  height: var(--row-av);
+  border: 1.5px dashed rgba(255, 79, 139, 0.35);
+  border-radius: 50%;
+}
+
+.lb-open-name {
+  width: clamp(90px, 16vw, 200px);
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.lb-tbody.is-placeholder .lb-place-n:not(.is-gold):not(.is-silver):not(.is-bronze),
+.lb-tbody.is-placeholder .lb-flags,
+.lb-tbody.is-placeholder .lb-points {
+  color: rgba(255, 255, 255, 0.3);
+}
+
+.lb-tbody.is-placeholder .lb-place-n.is-gold,
+.lb-tbody.is-placeholder .lb-place-n.is-silver,
+.lb-tbody.is-placeholder .lb-place-n.is-bronze {
+  opacity: 0.55;
+  box-shadow: none;
+}
+
+/* card sits over the rows; rows behind fade out toward the card */
+.lb-await {
+  position: absolute;
+  inset: clamp(34px, 4.6vh, 48px) 0 0;
+  display: grid;
+  place-items: center;
+  background: radial-gradient(60% 55% at 50% 50%, rgba(16, 3, 10, 0.85), rgba(16, 3, 10, 0.35) 75%);
+}
+
+.lb-await-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: clamp(14px, 2.2vh, 22px) clamp(20px, 2.4vw, 32px);
+  border: 1px solid rgba(255, 79, 139, 0.4);
+  border-radius: 14px;
+  background: rgba(16, 3, 10, 0.94);
+  box-shadow: 0 20px 50px rgba(8, 1, 5, 0.6);
+  text-align: left;
+}
+
+.lb-await-flag {
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: rgba(255, 79, 139, 0.14);
+  color: var(--pink);
+  animation: lb-flag-wave 2.4s ease-in-out infinite;
+}
+
+@keyframes lb-flag-wave {
+  50% {
+    box-shadow: 0 0 0 8px rgba(255, 79, 139, 0.08);
+  }
+}
+
+.lb-await-card b {
+  display: block;
+  color: #fff;
+  font: 600 clamp(24px, 3.4vh, 34px)/1 "Teko", sans-serif;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding-top: 3px;
+}
+
+.lb-await-card small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.6);
+  font: 600 clamp(12px, 1.5vh, 14px)/1.3 "Manrope", sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lb-pre-label i,
+  .lb-launch i,
+  .lb-await-flag {
+    animation: none !important;
   }
 }
