@@ -32,6 +32,7 @@ backend/
     migrations/20261124000000_ctf_case_sensitive_flags.sql   flags must match capitals exactly
     migrations/20261125000000_site_maintenance.sql          website maintenance switch (Event control)
     migrations/20261127000000_ctf_penalties.sql             point penalties per team
+    migrations/20261127010000_ctf_penalty_admin.sql         Penalty button in the control room
     make-admin.sql                               give an Auth user control-room access
 ```
 

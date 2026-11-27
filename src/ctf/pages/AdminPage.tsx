@@ -157,7 +157,7 @@ function ControlRoom() {
         </div>
 
         <section className="ctf-panel" role="tabpanel" id={`panel-${tab}`} aria-labelledby={`tab-${tab}`}>
-          {tab === "leaderboard" && <LeaderboardTab rows={rows} loading={!board.data} />}
+          {tab === "leaderboard" && <LeaderboardTab rows={rows} loading={!board.data} notify={notify} />}
           {tab === "teams" && (
             <TeamsTab teams={teams.data} board={rows} notify={notify} onRefresh={refreshAll} refreshing={teams.loading} />
           )}

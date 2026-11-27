@@ -452,6 +452,15 @@ export async function updateEvent(patch: Partial<EventState>): Promise<void> {
   ping("event");
 }
 
+/* -------- penalties */
+
+/** Sets a team's point penalty (0 removes it). Admin only, logged. */
+export async function setPenalty(teamId: string, points: number, note: string): Promise<void> {
+  if (!Number.isFinite(points) || points < 0) throw new Error("Penalty must be 0 or more points.");
+  await rpc("ctf_admin_set_penalty", { p_team_id: teamId, p_points: Math.round(points), p_note: note.trim() });
+  ping("teams");
+}
+
 /* -------- website maintenance */
 
 /** Whether the public website shows the maintenance page. */
