@@ -15,4 +15,4 @@ export const CTF_PATHS = {
 } as const;
 
 /** Flag format shown to players. */
-export const FLAG_FORMAT = "DECODEX{...}";
+export const FLAG_FORMAT = "";
