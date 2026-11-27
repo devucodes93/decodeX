@@ -74,7 +74,11 @@ export type LeaderboardRow = {
   teamId: string;
   teamName: string;
   institution: string;
+  /** Points from flags minus any penalty. */
   score: number;
+  /** Penalty points subtracted (0 = none). Missing before the 20261127 migration. */
+  penalty?: number;
+  penaltyNote?: string;
   solved: number;
   total: number;
   /** From the event start (set by organisers) to the team's last scoring flag. */

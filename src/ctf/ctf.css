@@ -3173,3 +3173,13 @@
   flex-wrap: wrap;
   gap: 10px;
 }
+
+/* Leaderboard: points removed as a penalty (hover shows the reason). */
+.ctf-penalty {
+  display: block;
+  margin-top: 2px;
+  color: var(--red);
+  font: 600 11px/1.2 var(--f-tech);
+  letter-spacing: 0.06em;
+  cursor: help;
+}

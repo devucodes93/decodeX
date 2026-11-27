@@ -18,13 +18,14 @@ export function LeaderboardTab({ rows, loading }: { rows: LeaderboardRow[]; load
   const exportCsv = () =>
     downloadCsv(
       "decodex-ctf-leaderboard",
-      ["Rank", "Team", "Team ID", "Institution", "Points", "Flags", "Since event start", "Last flag"],
+      ["Rank", "Team", "Team ID", "Institution", "Points", "Penalty", "Flags", "Since event start", "Last flag"],
       ranked.map((r) => [
         r.rank,
         r.teamName,
         r.teamId,
         r.institution,
         r.score,
+        r.penalty ? -r.penalty : 0,
         `${r.solved}/${r.total}`,
         formatDuration(r.timeTakenMs),
         r.lastSolveAt ? new Date(r.lastSolveAt).toISOString() : "",
@@ -93,6 +94,11 @@ export function LeaderboardTab({ rows, loading }: { rows: LeaderboardRow[]; load
                   </td>
                   <td className="is-num">
                     <b className="ctf-points">{r.score.toLocaleString("en-IN")}</b>
+                    {r.penalty ? (
+                      <small className="ctf-penalty" title={r.penaltyNote || "Penalty"}>
+                        −{r.penalty.toLocaleString("en-IN")} penalty
+                      </small>
+                    ) : null}
                   </td>
                   <td className="is-num ctf-mono">{formatDuration(r.timeTakenMs)}</td>
                   <td className="is-num is-hide-sm ctf-mono ctf-muted">{formatTime(r.lastSolveAt)}</td>
@@ -109,7 +115,7 @@ export function LeaderboardTab({ rows, loading }: { rows: LeaderboardRow[]; load
           </tbody>
         </table>
       </div>
-      <p className="ctf-muted ctf-small">Ranked by points. Teams with the same points are ranked by who scored their last flag first, in real time. "Since start" counts from the event start. Only organisers can see this board.</p>
+      <p className="ctf-muted ctf-small">Ranked by points (after any penalty). Teams with the same points are ranked by who scored their last flag first, in real time. "Since start" counts from the event start. Only organisers can see this board.</p>
     </>
   );
 }
